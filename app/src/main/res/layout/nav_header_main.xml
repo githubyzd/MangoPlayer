@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/nav_header_height"
+    android:background="@mipmap/side_nav_bar_default"
+    android:gravity="bottom"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark">
+
+
+    <LinearLayout
+        android:id="@+id/user_unlogin"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_unlongin_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/nav_unlongin_top" />
+
+        <TextView
+            android:id="@+id/tv_unlongin_bottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/nav_unlongin_bottom" />
+
+        <Button
+            android:id="@+id/bt_login"
+            android:layout_width="@dimen/nav_bt_login_width"
+            android:layout_height="@dimen/nav_bt_login_height"
+            android:layout_marginTop="@dimen/nav_bt_margintop"
+            android:background="@drawable/selector_nav_login"
+            android:text="@string/nav_bt_login" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imageview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/nav_header_vertical_spacing"
+        android:src="@android:drawable/sym_def_app_icon"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/nav_tv1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/nav_header_vertical_spacing"
+        android:text="京东电商云"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/nav_tv2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="http://www.jcloud.com/"
+        android:visibility="gone" />
+
+
+</LinearLayout>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item
+        android:id="@+id/video_online"
+        android:checkable="true"
+        android:checked="true"
+        android:icon="@drawable/video_online"
+        android:title="在线影视" />
+    <item
+        android:id="@+id/video_native"
+        android:icon="@drawable/video_native"
+        android:title="本地视频" />
+    <item
+        android:id="@+id/music_online"
+        android:icon="@drawable/music_online"
+        android:title="在线音乐" />
+
+    <item
+        android:id="@+id/music_native"
+        android:icon="@drawable/music_native"
+        android:title="本地音频" />
+
+    <group android:id="@+id/group">
+        <item
+            android:id="@+id/common_scan"
+            android:icon="@drawable/scan"
+            android:title="@string/common_scan" />
+        <item
+            android:id="@+id/common_welfare"
+            android:icon="@drawable/welfare"
+            android:title="@string/common_welfare" />
+        <item
+            android:id="@+id/common_setting"
+            android:icon="@drawable/setting"
+            android:title="@string/common_setting" />
+
+    </group>
+</menu>
