@@ -32,9 +32,10 @@ import com.mango.player.util.AppUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 
-public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.fab)
@@ -54,16 +55,24 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private final int FRAGMENT_MUSIC_NATIVE = FRAGMENT_MUSIC_ONLINE + 1;
     private final int FRAGMENT_WELFARE = FRAGMENT_MUSIC_NATIVE + 1;
     private int fragmentType = 0;
+    private Unbinder unbinder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        unbinder = ButterKnife.bind(this);
         setStatus();
         initView();
         initListener();
         initToobar();
         initDrawerLayout();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbinder.unbind();
     }
 
     private void initView() {
