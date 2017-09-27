@@ -4,7 +4,7 @@ import android.content.pm.ApplicationInfo;
 import android.graphics.drawable.Drawable;
 
 /**
- * Created by Beyond on 2015/12/7.
+ * Created by yzd on 2015/12/7.
  */
 public class AppInfo {
 

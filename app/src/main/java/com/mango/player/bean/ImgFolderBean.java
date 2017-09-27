@@ -1,7 +1,7 @@
 package com.mango.player.bean;
 
 /**
- * @创建人 chaychan
+ * @创建人
  * @创建时间 2016/7/24  10:05
  * @描述 图片文件夹的bean类
  */

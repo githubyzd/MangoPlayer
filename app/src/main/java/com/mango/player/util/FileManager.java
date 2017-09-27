@@ -25,7 +25,7 @@ import java.util.List;
 
 
 /**
- * @创建人 chaychan
+ * @创建人
  * @创建时间 2016/7/23  14:34
  * @描述 文件管理者, 可以获取本机的各种文件
  */
@@ -36,21 +36,22 @@ public class FileManager {
     public static ContentResolver mContentResolver;
     private static Object mLock = new Object();
 
-    public static FileManager getInstance(Context context){
-         if (mInstance == null){
-             synchronized (mLock){
-                 if (mInstance == null){
-                     mInstance = new FileManager();
-                     mContext = context;
-                     mContentResolver = context.getContentResolver();
-                 }
-             }
-         }
+    public static FileManager getInstance(Context context) {
+        if (mInstance == null) {
+            synchronized (mLock) {
+                if (mInstance == null) {
+                    mInstance = new FileManager();
+                    mContext = context;
+                    mContentResolver = context.getContentResolver();
+                }
+            }
+        }
         return mInstance;
     }
 
     /**
      * 获取本机音乐列表
+     *
      * @return
      */
     private static List<Music> getMusics() {
@@ -91,6 +92,7 @@ public class FileManager {
 
     /**
      * 获取本机视频列表
+     *
      * @return
      */
     public static List<Video> getVideos() {
@@ -115,7 +117,12 @@ public class FileManager {
                 long duration = c.getLong(c.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION));// 时长
                 long date = c.getLong(c.getColumnIndexOrThrow(MediaStore.Video.Media.DATE_MODIFIED));//修改时间
 
-                Video video = new Video(id, path, name, resolution, size, date, duration);
+                String sizeStr = AppUtil.getDataSize(size);
+                String dateStr = AppUtil.timeStamp2Date(date + "", "");
+                String dutationStr = AppUtil.timeLenghtFormast(duration);
+                Bitmap bitmap = getVideoThumbnail(id);
+
+                Video video = new Video(id, path, name, resolution, sizeStr, dateStr, dutationStr, bitmap);
                 videos.add(video);
             }
         } catch (Exception e) {

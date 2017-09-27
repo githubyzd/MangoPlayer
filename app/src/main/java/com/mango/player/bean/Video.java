@@ -1,19 +1,22 @@
 package com.mango.player.bean;
 
+import android.graphics.Bitmap;
+
 /**
- * @创建人 chaychan
+ * @创建人
  * @创建时间 2016/7/23  17:20
  */
 public class Video {
-    private int id = 0;
-    private String path = null;
-    private String name = null;
+    private int id = 0;//视频id
+    private String path = null;//视频路径
+    private String name = null;//视频名字
     private String resolution = null;// 分辨率
-    private long size = 0;
-    private long date = 0;
-    private long duration = 0;
+    private String size = "";//视频大小
+    private String date = "";//视频日期
+    private String duration = "";//视频长度
+    private Bitmap thumbnail = null;//缩略图
 
-    public Video(int id, String path, String name, String resolution, long size, long date, long duration) {
+    public Video(int id, String path, String name, String resolution, String size, String date, String duration, Bitmap bitmap) {
         this.id = id;
         this.path = path;
         this.name = name;
@@ -21,9 +24,8 @@ public class Video {
         this.size = size;
         this.date = date;
         this.duration = duration;
-    }
+        this.thumbnail = bitmap;
 
-    public Video() {
     }
 
     public int getId() {
@@ -58,34 +60,49 @@ public class Video {
         this.name = name;
     }
 
-    public long getSize() {
+    public String getSize() {
         return size;
     }
 
-    public void setSize(long size) {
+    public void setSize(String size) {
         this.size = size;
     }
 
-    public long getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(long date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
-    public long getDuration() {
+    public String getDuration() {
         return duration;
     }
 
-    public void setDuration(long duration) {
+    public void setDuration(String duration) {
         this.duration = duration;
+    }
+
+    public Bitmap getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(Bitmap thumbnail) {
+        this.thumbnail = thumbnail;
     }
 
     @Override
     public String toString() {
-        return "Video [id=" + id + ", path=" + path + ", name=" + name + ", resolution=" + resolution + ", size=" + size + ", date=" + date
-                + ", duration=" + duration + "]";
+        return "Video{" +
+                "id=" + id +
+                ", path='" + path + '\'' +
+                ", name='" + name + '\'' +
+                ", resolution='" + resolution + '\'' +
+                ", size='" + size + '\'' +
+                ", date='" + date + '\'' +
+                ", duration='" + duration + '\'' +
+                ", thumbnail=" + thumbnail +
+                '}';
     }
-
 }

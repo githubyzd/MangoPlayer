@@ -3,7 +3,7 @@ package com.mango.player.util;
 import com.orhanobut.logger.Logger;
 
 /**
- * Created by lenovo on 2017/2/8.
+ * Created by yzd on 2017/2/8.
  */
 public class LogUtil {
     private static final String TAG = "LogUtil";

@@ -22,7 +22,6 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.mango.player.R;
-import com.mango.player.base.BaseActivity;
 import com.mango.player.base.BaseFragment;
 import com.mango.player.fragment.MusicNativeFragment;
 import com.mango.player.fragment.MusicOnlineFragment;
@@ -97,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     //设置Toolbar
     private void initToobar() {
-        onNavigationItemSelected(navView.getMenu().getItem(0));
+        onNavigationItemSelected(navView.getMenu().getItem(1));
         setSupportActionBar(toolbar);
     }
 

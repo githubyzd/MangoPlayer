@@ -1,7 +1,7 @@
 package com.mango.player.bean;
 
 /**
- * @创建者 chaychan
+ * @创建者
  * @创建时间 2016/7/24
  * @描述 文件的Bean（文件管理/浏览模块中的一个item）
  */
