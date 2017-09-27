@@ -15,6 +15,7 @@
     <dimen name="video_native_item_image_width">100dp</dimen>
     <dimen name="video_native_item_more">30dp</dimen>
     <dimen name="video_native_item_right_width">80dp</dimen>
+    <dimen name="video_native_item_popu_item_height">40dp</dimen>
     <dimen name="margin_1dp">1dp</dimen>
     <dimen name="margin_2dp">2dp</dimen>
     <dimen name="margin_4dp">4dp</dimen>
@@ -22,4 +23,5 @@
     <dimen name="margin_6dp">6dp</dimen>
     <dimen name="margin_8dp">8dp</dimen>
     <dimen name="margin_10dp">10dp</dimen>
+    <dimen name="margin_20dp">20dp</dimen>
 </resources>

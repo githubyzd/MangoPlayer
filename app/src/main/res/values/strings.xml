@@ -13,6 +13,12 @@
     <string name="nav_unlongin_top">登录芒果</string>
     <string name="nav_unlongin_bottom">马上开启极致视听体验</string>
     <string name="nav_bt_login">立即登录</string>
+    <string name="play">播放</string>
+    <string name="detail">详情</string>
+    <string name="edit">编辑</string>
+    <string name="path">打开路径</string>
+    <string name="video">视频</string>
+    <string name="music">音乐</string>
     <string name="title_activity_login">Sign in</string>
 
     <!-- Strings related to login -->

@@ -12,12 +12,13 @@ import com.mango.player.R;
  */
 
 public class VideoNativeHolder extends RecyclerView.ViewHolder {
-    private View mItemView = null;
+    public View mItemView = null;
     public ImageView iv_thumbnail = null;
     public TextView name = null;
     public TextView duration = null;
     public TextView size = null;
     public TextView resolution = null;
+    public ImageView iv_more = null;
 
     public VideoNativeHolder(View itemView) {
         super(itemView);
@@ -27,5 +28,6 @@ public class VideoNativeHolder extends RecyclerView.ViewHolder {
         duration = (TextView) mItemView.findViewById(R.id.tv_duration);
         size = (TextView) mItemView.findViewById(R.id.tv_size);
         resolution = (TextView) mItemView.findViewById(R.id.tv_resolution);
+        iv_more = (ImageView) mItemView.findViewById(R.id.iv_more);
     }
 }
