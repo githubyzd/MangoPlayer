@@ -1,5 +1,6 @@
 package com.mango.player.fragment;
 
+import android.content.Intent;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.mango.player.R;
+import com.mango.player.activity.VideoPlayActivity;
 import com.mango.player.adapter.VideoNativeAdapter;
 import com.mango.player.base.BaseFragment;
 import com.mango.player.bean.Video;
@@ -118,7 +120,9 @@ public class VideoNativeFragment extends BaseFragment implements VideoNativeAdap
     }
 
     private void play(View view, int position) {
-
+        Intent intent = new Intent(getContext(), VideoPlayActivity.class);
+        intent.putExtra("path",videos.get(position).getPath());
+        getContext().startActivity(intent);
     }
 
 }

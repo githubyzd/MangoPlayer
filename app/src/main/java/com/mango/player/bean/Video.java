@@ -2,11 +2,13 @@ package com.mango.player.bean;
 
 import android.graphics.Bitmap;
 
+import java.io.Serializable;
+
 /**
  * @创建人
  * @创建时间 2016/7/23  17:20
  */
-public class Video {
+public class Video implements Serializable {
     private int id = 0;//视频id
     private String path = null;//视频路径
     private String name = null;//视频名字
