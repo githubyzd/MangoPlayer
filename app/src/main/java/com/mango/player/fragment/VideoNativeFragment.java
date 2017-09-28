@@ -121,7 +121,7 @@ public class VideoNativeFragment extends BaseFragment implements VideoNativeAdap
 
     private void play(View view, int position) {
         Intent intent = new Intent(getContext(), VideoPlayActivity.class);
-        intent.putExtra("path",videos.get(position).getPath());
+        intent.putExtra("video",videos.get(position));
         getContext().startActivity(intent);
     }
 

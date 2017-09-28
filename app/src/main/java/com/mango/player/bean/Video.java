@@ -1,14 +1,14 @@
 package com.mango.player.bean;
 
 import android.graphics.Bitmap;
-
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /**
  * @创建人
  * @创建时间 2016/7/23  17:20
  */
-public class Video implements Serializable {
+public class Video implements Parcelable {
     private int id = 0;//视频id
     private String path = null;//视频路径
     private String name = null;//视频名字
@@ -107,4 +107,44 @@ public class Video implements Serializable {
                 ", thumbnail=" + thumbnail +
                 '}';
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.id);
+        dest.writeString(this.path);
+        dest.writeString(this.name);
+        dest.writeString(this.resolution);
+        dest.writeString(this.size);
+        dest.writeString(this.date);
+        dest.writeString(this.duration);
+        dest.writeParcelable(this.thumbnail, flags);
+    }
+
+    protected Video(Parcel in) {
+        this.id = in.readInt();
+        this.path = in.readString();
+        this.name = in.readString();
+        this.resolution = in.readString();
+        this.size = in.readString();
+        this.date = in.readString();
+        this.duration = in.readString();
+        this.thumbnail = in.readParcelable(Bitmap.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<Video> CREATOR = new Parcelable.Creator<Video>() {
+        @Override
+        public Video createFromParcel(Parcel source) {
+            return new Video(source);
+        }
+
+        @Override
+        public Video[] newArray(int size) {
+            return new Video[size];
+        }
+    };
 }

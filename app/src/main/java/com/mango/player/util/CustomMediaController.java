@@ -26,7 +26,7 @@ import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
 
 /**
- * Created by xhb on 2016/3/1.
+ * Created by yzd on 2017/3/1.
  * 自定义视频控制器
  */
 public class CustomMediaController extends MediaController {
@@ -66,7 +66,7 @@ public class CustomMediaController extends MediaController {
         }
     };
 
-
+    //全屏监听
     private OnClickListener scaleListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -111,6 +111,7 @@ public class CustomMediaController extends MediaController {
 
     }
 
+    //初始化控制view
     @Override
     protected View makeControllerView() {
         //此处的   mymediacontroller  为我们自定义控制器的布局文件名称
@@ -142,7 +143,7 @@ public class CustomMediaController extends MediaController {
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        System.out.println("MYApp-MyMediaController-dispatchKeyEvent");
+        LogUtil.logByD("MYApp-MyMediaController-dispatchKeyEvent");
         return true;
     }
 
@@ -169,6 +170,7 @@ public class CustomMediaController extends MediaController {
         myHandler.sendEmptyMessageDelayed(HIDEFRAM, 1);
     }
 
+    //手势识别器
     private class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
         @Override
         public boolean onSingleTapUp(MotionEvent e) {

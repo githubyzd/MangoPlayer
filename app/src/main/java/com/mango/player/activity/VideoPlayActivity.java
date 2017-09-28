@@ -12,6 +12,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.mango.player.R;
+import com.mango.player.bean.Video;
 import com.mango.player.util.CustomMediaController;
 import com.mango.player.util.ExceptionUtil;
 
@@ -19,7 +20,7 @@ import io.vov.vitamio.MediaPlayer;
 import io.vov.vitamio.Vitamio;
 import io.vov.vitamio.widget.VideoView;
 
-public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.OnInfoListener, MediaPlayer.OnBufferingUpdateListener{
+public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.OnInfoListener, MediaPlayer.OnBufferingUpdateListener {
     //视频地址
     private String path = "http://baobab.wdjcdn.com/145076769089714.mp4";
     private Uri uri;
@@ -27,9 +28,19 @@ public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.
     private TextView downloadRateView, loadRateView;
     private CustomMediaController mCustomMediaController;
     private VideoView mVideoView;
+    private Video video;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initConfig();
+        setContentView(R.layout.activity_video_play);
+        //获取上一次保存的进度
+        initView();
+        initData();
+    }
+
+    private void initConfig() {
         //定义全屏参数
         int flag = WindowManager.LayoutParams.FLAG_FULLSCREEN;
         //获得当前窗体对象
@@ -38,17 +49,12 @@ public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.
         window.setFlags(flag, flag);
         //必须写这个，初始化加载库文件
         Vitamio.isInitialized(this);
-        setContentView(R.layout.activity_video_play);
-
-        initView();
-        initData();
     }
 
     //初始化控件
     private void initView() {
         mVideoView = (VideoView) findViewById(R.id.buffer);
-        mCustomMediaController=new CustomMediaController(this,mVideoView,this);
-        mCustomMediaController.setVideoName("白火锅 x 红火锅");
+        mCustomMediaController = new CustomMediaController(this, mVideoView, this);
         pb = (ProgressBar) findViewById(R.id.probar);
         downloadRateView = (TextView) findViewById(R.id.download_rate);
         loadRateView = (TextView) findViewById(R.id.load_rate);
@@ -60,12 +66,16 @@ public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.
         if (intent == null) {
             ExceptionUtil.illegaArgument("intent is null");
         }
-        path = intent.getStringExtra("path");
-        uri = Uri.parse(path);
-        mVideoView.setVideoURI(uri);//设置视频播放地址
+
+        video = intent.getParcelableExtra("video");
+        mCustomMediaController.setVideoName(video.getName());
+        uri = Uri.parse(video.getPath());
+        //设置视频播放地址
+        mVideoView.setVideoURI(uri);
         mCustomMediaController.show(5000);
         mVideoView.setMediaController(mCustomMediaController);
-        mVideoView.setVideoQuality(MediaPlayer.VIDEOQUALITY_HIGH);//高画质
+        //高画质
+        mVideoView.setVideoQuality(MediaPlayer.VIDEOQUALITY_HIGH);
         mVideoView.requestFocus();
         mVideoView.setOnInfoListener(this);
         mVideoView.setOnBufferingUpdateListener(this);
@@ -113,7 +123,7 @@ public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         //屏幕切换时，设置全屏
-        if (mVideoView != null){
+        if (mVideoView != null) {
             mVideoView.setVideoLayout(VideoView.VIDEO_LAYOUT_SCALE, 0);
         }
         super.onConfigurationChanged(newConfig);
