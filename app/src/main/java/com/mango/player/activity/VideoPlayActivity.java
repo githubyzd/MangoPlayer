@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
@@ -15,6 +16,7 @@ import com.mango.player.R;
 import com.mango.player.bean.Video;
 import com.mango.player.util.CustomMediaController;
 import com.mango.player.util.ExceptionUtil;
+import com.mango.player.util.LogUtil;
 
 import io.vov.vitamio.MediaPlayer;
 import io.vov.vitamio.Vitamio;
@@ -29,10 +31,14 @@ public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.
     private CustomMediaController mCustomMediaController;
     private VideoView mVideoView;
     private Video video;
-
+    private long currentPosition;
+    private boolean isOrientation = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null)
+        currentPosition = savedInstanceState.getLong("currentPosition");
+        LogUtil.logByD("test:onCreate" + currentPosition);
         initConfig();
         setContentView(R.layout.activity_video_play);
         //获取上一次保存的进度
@@ -62,12 +68,14 @@ public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.
 
     //初始化数据
     private void initData() {
-        Intent intent = getIntent();
-        if (intent == null) {
-            ExceptionUtil.illegaArgument("intent is null");
+        if (!isOrientation) {
+            Intent intent = getIntent();
+            if (intent == null) {
+                ExceptionUtil.illegaArgument("intent is null");
+            }
+            video = intent.getParcelableExtra("video");
         }
 
-        video = intent.getParcelableExtra("video");
         mCustomMediaController.setVideoName(video.getName());
         uri = Uri.parse(video.getPath());
         //设置视频播放地址
@@ -120,12 +128,49 @@ public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.
     }
 
 
+
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
+        LogUtil.logByE("test屏幕切换");
         //屏幕切换时，设置全屏
         if (mVideoView != null) {
             mVideoView.setVideoLayout(VideoView.VIDEO_LAYOUT_SCALE, 0);
         }
         super.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LogUtil.logByD("test:onDestroy");
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LogUtil.logByD("test:onPause");
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LogUtil.logByD("test:onResume");
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        LogUtil.logByD("test:onStart");
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+       LogUtil.logByD("test:onStop");
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+        currentPosition = mVideoView.getCurrentPosition();
+        outState.putLong("currentPosition",currentPosition);
+        LogUtil.logByD("test:onSaveInstanceState" + currentPosition);
     }
 }
