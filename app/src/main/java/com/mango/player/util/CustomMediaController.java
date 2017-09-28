@@ -14,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -29,19 +28,17 @@ import io.vov.vitamio.widget.VideoView;
  * Created by yzd on 2017/3/1.
  * 自定义视频控制器
  */
-public class CustomMediaController extends MediaController {
+public class CustomMediaController extends MediaController implements View.OnClickListener{
     private static final int HIDEFRAM = 0;//控制提示窗口的显示
 
     private GestureDetector mGestureDetector;
-    private ImageButton img_back;//返回按钮
+    private ImageView img_back;//返回按钮
     private TextView mFileName;//文件名
     private VideoView videoView;
     private Activity activity;
     private Context context;
     private String videoname;//视频名称
     private int controllerWidth = 0;//设置mediaController高度为了使横屏时top显示在屏幕顶端
-
-
     private View mVolumeBrightnessLayout;//提示窗口
     private ImageView mOperationBg;//提示图片
     private TextView mOperationTv;//提示文字
@@ -49,40 +46,24 @@ public class CustomMediaController extends MediaController {
     private SeekBar progress;
     private boolean mDragging;
     private MediaPlayerControl player;
+    private ImageView list;
+    private ImageView more;
     //最大声音
     private int mMaxVolume;
     // 当前声音
     private int mVolume = -1;
     //当前亮度
     private float mBrightness = -1f;
-
-
-    //返回监听
-    private OnClickListener backListener = new OnClickListener() {
-        public void onClick(View v) {
-            if (activity != null) {
-                activity.finish();
-            }
-        }
-    };
-
-    //全屏监听
-    private OnClickListener scaleListener = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (activity != null) {
-                switch (activity.getResources().getConfiguration().orientation) {
-                    case Configuration.ORIENTATION_LANDSCAPE://横屏
-                        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                        break;
-                    case Configuration.ORIENTATION_PORTRAIT://竖屏
-                        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                        break;
-                }
-
-            }
-        }
-    };
+    private ImageView mIvScale;
+    private ImageView mediacontroller_list;
+    private ImageView mediacontroller_more;
+    private ImageView speed_up;
+    private ImageView speed_increase;
+    private ImageView lock;
+    private ImageView pre;
+    private ImageView speed;
+    private ImageView back_speed;
+    private ImageView beh;
 
     private Handler myHandler = new Handler() {
         @Override
@@ -96,7 +77,6 @@ public class CustomMediaController extends MediaController {
             }
         }
     };
-    private ImageView mIvScale;
 
 
     //videoview 用于对视频进行控制的等，activity为了退出
@@ -118,10 +98,22 @@ public class CustomMediaController extends MediaController {
         View v = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(getResources().getIdentifier("mymediacontroller", "layout", getContext().getPackageName()), this);
         v.setMinimumHeight(controllerWidth);
         //获取控件
-        img_back = (ImageButton) v.findViewById(getResources().getIdentifier("mediacontroller_top_back", "id", context.getPackageName()));
+        img_back = (ImageView) v.findViewById(getResources().getIdentifier("mediacontroller_top_back", "id", context.getPackageName()));
         mFileName = (TextView) v.findViewById(getResources().getIdentifier("mediacontroller_filename", "id", context.getPackageName()));
         //缩放控件
         mIvScale = (ImageView) v.findViewById(getResources().getIdentifier("mediacontroller_scale", "id", context.getPackageName()));
+
+        mediacontroller_list = (ImageView) v.findViewById(getResources().getIdentifier("mediacontroller_list", "id", context.getPackageName()));
+        mediacontroller_more = (ImageView) v.findViewById(getResources().getIdentifier("mediacontroller_more", "id", context.getPackageName()));
+
+        speed_up = (ImageView) v.findViewById(getResources().getIdentifier("speed_up", "id", context.getPackageName()));
+        speed_increase = (ImageView) v.findViewById(getResources().getIdentifier("speed_increase", "id", context.getPackageName()));
+
+        lock = (ImageView) v.findViewById(getResources().getIdentifier("lock", "id", context.getPackageName()));
+        pre = (ImageView) v.findViewById(getResources().getIdentifier("pre", "id", context.getPackageName()));
+        back_speed = (ImageView) v.findViewById(getResources().getIdentifier("back_speed", "id", context.getPackageName()));
+        speed = (ImageView) v.findViewById(getResources().getIdentifier("speed", "id", context.getPackageName()));
+        beh = (ImageView) v.findViewById(getResources().getIdentifier("beh", "id", context.getPackageName()));
 
         if (mFileName != null) {
             mFileName.setText(videoname);
@@ -136,8 +128,20 @@ public class CustomMediaController extends MediaController {
                 .getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 
         //注册事件监听
-        img_back.setOnClickListener(backListener);
-        mIvScale.setOnClickListener(scaleListener);
+        img_back.setOnClickListener(this);
+        mIvScale.setOnClickListener(this);
+
+        mediacontroller_list.setOnClickListener(this);
+        mediacontroller_more.setOnClickListener(this);
+
+        speed_up.setOnClickListener(this);
+        speed_increase.setOnClickListener(this);
+
+        lock.setOnClickListener(this);
+        pre.setOnClickListener(this);
+        back_speed.setOnClickListener(this);
+        speed.setOnClickListener(this);
+        beh.setOnClickListener(this);
         return v;
     }
 
@@ -168,6 +172,54 @@ public class CustomMediaController extends MediaController {
         // 隐藏
         myHandler.removeMessages(HIDEFRAM);
         myHandler.sendEmptyMessageDelayed(HIDEFRAM, 1);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.mediacontroller_top_back:
+                if (activity != null) {
+                    activity.finish();
+                }
+                break;
+            case R.id.mediacontroller_list:
+                break;
+            case R.id.mediacontroller_more:
+                break;
+            case R.id.speed_up:
+                break;
+            case R.id.speed_increase:
+                break;
+            case R.id.lock:
+                break;
+            case R.id.pre:
+                break;
+            case R.id.beh:
+                break;
+            case R.id.back_speed:
+                break;
+            case R.id.speed:
+                break;
+            case R.id.mediacontroller_scale:
+                switchScreenOrientation();
+                break;
+
+        }
+    }
+
+    //切换横竖屏
+    private void switchScreenOrientation() {
+        if (activity != null) {
+            switch (activity.getResources().getConfiguration().orientation) {
+                case Configuration.ORIENTATION_LANDSCAPE://横屏
+                    activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                    break;
+                case Configuration.ORIENTATION_PORTRAIT://竖屏
+                    activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                    break;
+            }
+
+        }
     }
 
     //手势识别器

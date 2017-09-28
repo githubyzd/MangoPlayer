@@ -16,12 +16,11 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <ImageButton
+            <ImageView
                 android:id="@+id/mediacontroller_top_back"
                 android:layout_width="@dimen/scan_height"
                 android:layout_height="match_parent"
                 android:layout_alignParentLeft="true"
-                android:background="@null"
                 android:src="@drawable/ic_player_close_white" />
 
             <TextView
@@ -37,24 +36,24 @@
                 android:maxLines="1"
                 android:text="file name" />
 
-            <ImageButton
-                android:id="@+id/mediacontroller_share"
+            <ImageView
+                android:id="@+id/mediacontroller_list"
                 android:layout_width="@dimen/scan_height"
                 android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
-                android:background="@null"
-                android:src="@drawable/ic_action_share_without_padding" />
+                android:padding="@dimen/margin_10dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/video_list" />
 
-            <ImageButton
-                android:id="@+id/mediacontroller_favorite"
+            <ImageView
+                android:id="@+id/mediacontroller_more"
                 android:layout_width="@dimen/scan_height"
                 android:layout_height="match_parent"
                 android:layout_alignParentTop="true"
                 android:layout_marginRight="@dimen/margin_4dp"
-                android:layout_toLeftOf="@+id/mediacontroller_share"
-                android:layout_toStartOf="@+id/mediacontroller_share"
-                android:background="@null"
-                android:src="@drawable/ic_action_favorites" />
+                android:padding="@dimen/margin_6dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/video_more" />
         </LinearLayout>
 
         <RelativeLayout
@@ -98,10 +97,10 @@
 
             <ImageView
                 android:id="@+id/speed_up"
-                android:src="@drawable/speed_up"
-                android:padding="@dimen/margin_4dp"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/dp_30dp" />
+                android:layout_height="@dimen/dp_30dp"
+                android:padding="@dimen/margin_4dp"
+                android:src="@drawable/speed_up" />
 
             <View
                 android:layout_width="match_parent"
@@ -124,10 +123,10 @@
 
             <ImageView
                 android:id="@+id/speed_increase"
-                android:padding="@dimen/margin_4dp"
-                android:src="@drawable/speed_increase"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/dp_30dp" />
+                android:layout_height="@dimen/dp_30dp"
+                android:padding="@dimen/margin_4dp"
+                android:src="@drawable/speed_increase" />
         </LinearLayout>
 
         <LinearLayout
@@ -181,18 +180,21 @@
                 android:paddingRight="@dimen/margin_10dp">
 
                 <ImageView
+                    android:id="@+id/lock"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/dp_26dp"
                     android:layout_weight="1"
                     android:src="@drawable/unlock" />
 
                 <ImageView
+                    android:id="@+id/pre"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/dp_30dp"
                     android:layout_weight="1"
                     android:src="@drawable/pre" />
 
                 <ImageView
+                    android:id="@+id/back_speed"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/dp_30dp"
                     android:layout_weight="1"
@@ -206,12 +208,14 @@
                     android:src="@drawable/paly_selector" />
 
                 <ImageView
+                    android:id="@+id/speed"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/dp_30dp"
                     android:layout_weight="1"
                     android:src="@drawable/speed" />
 
                 <ImageView
+                    android:id="@+id/beh"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/dp_30dp"
                     android:layout_weight="1"
