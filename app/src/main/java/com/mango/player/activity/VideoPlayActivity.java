@@ -1,46 +1,70 @@
 package com.mango.player.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.mango.player.R;
+import com.mango.player.adapter.VideoNativePopuAdapter;
 import com.mango.player.bean.Video;
+import com.mango.player.util.AppUtil;
+import com.mango.player.util.ApplicationConstant;
 import com.mango.player.util.CustomMediaController;
 import com.mango.player.util.ExceptionUtil;
 import com.mango.player.util.LogUtil;
+import com.mango.player.util.PopupHelper;
+import com.mango.player.view.DividerItemDecoration;
 
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import io.vov.vitamio.MediaPlayer;
 import io.vov.vitamio.Vitamio;
 import io.vov.vitamio.widget.VideoView;
 
-public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.OnInfoListener, MediaPlayer.OnBufferingUpdateListener {
+
+public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.OnInfoListener,
+        MediaPlayer.OnBufferingUpdateListener,View.OnClickListener {
+    @BindView(R.id.buffer)
+    VideoView mVideoView;
+    @BindView(R.id.probar)
+    ProgressBar pb;
+    @BindView(R.id.download_rate)
+    TextView downloadRateView;
+    @BindView(R.id.load_rate)
+    TextView loadRateView;
     //视频地址
     private String path = "http://baobab.wdjcdn.com/145076769089714.mp4";
     private Uri uri;
-    private ProgressBar pb;
-    private TextView downloadRateView, loadRateView;
     private CustomMediaController mCustomMediaController;
-    private VideoView mVideoView;
+    private MediaPlayer mMediaPlayer;
+    private int currentPosition;
     private Video video;
-    private long currentPosition;
-    private boolean isOrientation = false;
+    private List<Video> videos;
+    private float playSpeed = 1.0f;
+    private PopupHelper popupHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null)
-        currentPosition = savedInstanceState.getLong("currentPosition");
-        LogUtil.logByD("test:onCreate" + currentPosition);
-        initConfig();
+            initConfig();
         setContentView(R.layout.activity_video_play);
+        ButterKnife.bind(this);
         //获取上一次保存的进度
         initView();
         initData();
@@ -68,14 +92,22 @@ public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.
 
     //初始化数据
     private void initData() {
-        if (!isOrientation) {
-            Intent intent = getIntent();
-            if (intent == null) {
-                ExceptionUtil.illegaArgument("intent is null");
-            }
-            video = intent.getParcelableExtra("video");
+        Intent intent = getIntent();
+        if (intent == null) {
+            ExceptionUtil.illegaArgument("intent is null");
         }
+        Bundle bundle = intent.getBundleExtra(ApplicationConstant.VIDEO_DATA_KEY);
+        if (bundle == null) {
+            ExceptionUtil.illegaArgument("bundle is null");
+        }
+        videos = bundle.getParcelableArrayList(ApplicationConstant.VIDEO_LIST_KEY);
+        currentPosition = bundle.getInt(ApplicationConstant.VIDEO_POSITION_KEY);
+        video = videos.get(currentPosition);
 
+        toPlay();
+    }
+
+    private void toPlay() {
         mCustomMediaController.setVideoName(video.getName());
         uri = Uri.parse(video.getPath());
         //设置视频播放地址
@@ -90,7 +122,10 @@ public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.
         mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mediaPlayer) {
-                mediaPlayer.setPlaybackSpeed(1.0f);
+                mMediaPlayer = mediaPlayer;
+                mediaPlayer.setPlaybackSpeed(playSpeed);
+                enablePre(true);
+                enableBeh(true);
             }
         });
     }
@@ -128,11 +163,8 @@ public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.
     }
 
 
-
-
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
-        LogUtil.logByE("test屏幕切换");
         //屏幕切换时，设置全屏
         if (mVideoView != null) {
             mVideoView.setVideoLayout(VideoView.VIDEO_LAYOUT_SCALE, 0);
@@ -140,37 +172,139 @@ public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.
         super.onConfigurationChanged(newConfig);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        LogUtil.logByD("test:onDestroy");
-    }
-    @Override
-    protected void onPause() {
-        super.onPause();
-        LogUtil.logByD("test:onPause");
-    }
-    @Override
-    protected void onResume() {
-        super.onResume();
-        LogUtil.logByD("test:onResume");
-    }
-    @Override
-    protected void onStart() {
-        super.onStart();
-        LogUtil.logByD("test:onStart");
-    }
-    @Override
-    protected void onStop() {
-        super.onStop();
-       LogUtil.logByD("test:onStop");
+    public void oniItemClick(View v) {
+        switch (v.getId()) {
+            case R.id.mediacontroller_list:
+                showList();
+                break;
+            case R.id.mediacontroller_more:
+                break;
+            case R.id.speed_up:
+                changePlaySpeed(true);
+                break;
+            case R.id.speed_increase:
+                changePlaySpeed(false);
+                break;
+            case R.id.lock:
+                LogUtil.logByD("lock");
+                break;
+            case R.id.pre:
+                playPre();
+                break;
+            case R.id.beh:
+                playBeh();
+                break;
+            case R.id.back_speed:
+                mVideoView.seekTo(mVideoView.getCurrentPosition() - mVideoView.getDuration() / 50);
+                break;
+            case R.id.speed:
+                mVideoView.seekTo(mVideoView.getCurrentPosition() + mVideoView.getDuration() / 50);
+                break;
+        }
     }
 
+
     @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        super.onSaveInstanceState(outState, outPersistentState);
-        currentPosition = mVideoView.getCurrentPosition();
-        outState.putLong("currentPosition",currentPosition);
-        LogUtil.logByD("test:onSaveInstanceState" + currentPosition);
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.popu_list_close:
+                if (popupHelper != null) {
+                    popupHelper.dismiss();
+                }
+                break;
+        }
+    }
+
+    private void playPre() {
+        if (enablePre(false)) {
+            currentPosition = currentPosition - 1;
+            video = videos.get(currentPosition);
+            toPlay();
+        }
+    }
+
+    private void playBeh() {
+        if (enableBeh(false)) {
+            currentPosition = currentPosition + 1;
+            video = videos.get(currentPosition);
+            toPlay();
+        }
+    }
+
+    private void changePlaySpeed(boolean isUp) {
+        playSpeed = AppUtil.changePlaySpeed(playSpeed, isUp);
+        mMediaPlayer.setPlaybackSpeed(playSpeed);
+        mCustomMediaController.setPlaySpeed(playSpeed);
+    }
+
+    private void showList() {
+        View contentView = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(getResources().getIdentifier("video_native_list", "layout", getPackageName()), null);
+        ImageView iv_close = (ImageView) contentView.findViewById(R.id.popu_list_close);
+        RecyclerView recyclerView = (RecyclerView) contentView.findViewById(R.id.popu_list_recycler);
+
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.addItemDecoration(new DividerItemDecoration(
+                this, DividerItemDecoration.HORIZONTAL_LIST));
+
+
+        VideoNativePopuAdapter adapter = new VideoNativePopuAdapter(videos);
+        iv_close.setOnClickListener(this);
+        int width = AppUtil.getScreenWidth(this);
+        int height = AppUtil.getScreenHeight(this);
+
+        popupHelper = new PopupHelper.Builder(this)
+                .contentView(contentView)
+                .height(500)
+                .width(800)
+                .anchorView(loadRateView)
+                .gravity(Gravity.CENTER)
+                .parentView(loadRateView)
+                .outSideTouchable(true)
+                .animationStyle(R.style.anim_center)
+                .build()
+                .showAtLocation();
+    }
+
+    private boolean enablePre(boolean isInit) {
+        if (videos.size() == 1) {
+            if (!isInit) {
+                AppUtil.showToastMsg(this, "当前列表仅有本视频");
+            }
+            mCustomMediaController.enablePre(false);
+            mCustomMediaController.enableBeh(false);
+            return false;
+        }
+        if (currentPosition == 0) {
+            if (!isInit) {
+                AppUtil.showToastMsg(this, "没有上一个视频了");
+            }
+            mCustomMediaController.enablePre(false);
+            mCustomMediaController.enableBeh(true);
+            return false;
+        }
+
+        return true;
+
+    }
+
+    public boolean enableBeh(boolean isInit) {
+        if (videos.size() == 1) {
+            if (!isInit) {
+                AppUtil.showToastMsg(this, "当前列表仅有本视频");
+            }
+            mCustomMediaController.enablePre(false);
+            mCustomMediaController.enableBeh(false);
+            return false;
+        }
+        if (currentPosition == videos.size() - 1) {
+            if (!isInit) {
+                AppUtil.showToastMsg(this, "没有下一个视频了");
+            }
+            mCustomMediaController.enablePre(true);
+            mCustomMediaController.enableBeh(false);
+            return false;
+        }
+        return true;
     }
 }

@@ -95,9 +95,9 @@ public class FileManager {
      *
      * @return
      */
-    public static List<Video> getVideos() {
+    public static ArrayList<Video> getVideos() {
 
-        List<Video> videos = new ArrayList<Video>();
+        ArrayList<Video> videos = new ArrayList<Video>();
 
         Cursor c = null;
         try {

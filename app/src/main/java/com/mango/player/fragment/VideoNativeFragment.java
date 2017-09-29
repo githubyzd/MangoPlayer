@@ -1,6 +1,7 @@
 package com.mango.player.fragment;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,13 +17,13 @@ import com.mango.player.adapter.VideoNativeAdapter;
 import com.mango.player.base.BaseFragment;
 import com.mango.player.bean.Video;
 import com.mango.player.util.AppUtil;
+import com.mango.player.util.ApplicationConstant;
 import com.mango.player.util.FileManager;
 import com.mango.player.util.LogUtil;
 import com.mango.player.util.PopupHelper;
 import com.mango.player.view.DividerItemDecoration;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 
@@ -30,13 +31,13 @@ import butterknife.BindView;
  * Created by yzd on 2017/9/25 0025.
  */
 
-public class VideoNativeFragment extends BaseFragment implements VideoNativeAdapter.OnItemClickListener,View.OnClickListener {
+public class VideoNativeFragment extends BaseFragment implements VideoNativeAdapter.OnItemClickListener, View.OnClickListener {
 
     @BindView(R.id.recyclerview)
     RecyclerView recyclerview;
     private LinearLayoutManager mLayoutManager;
     private VideoNativeAdapter mAdapter;
-    private List<Video> videos = new ArrayList<>();
+    private ArrayList<Video> videos = new ArrayList<>();
     private PopupHelper popupHelper;
 
     @Override
@@ -79,20 +80,21 @@ public class VideoNativeFragment extends BaseFragment implements VideoNativeAdap
                 break;
         }
     }
+
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.video_native_play:
-                AppUtil.showSnackbar(v,"播放");
+                AppUtil.showSnackbar(v, "播放");
                 break;
             case R.id.video_native_detail:
-                AppUtil.showSnackbar(v,"详情");
+                AppUtil.showSnackbar(v, "详情");
                 break;
             case R.id.video_native_edit:
-                AppUtil.showSnackbar(v,"编辑");
+                AppUtil.showSnackbar(v, "编辑");
                 break;
             case R.id.video_native_openpath:
-                AppUtil.showSnackbar(v,"打开路径");
+                AppUtil.showSnackbar(v, "打开路径");
                 break;
         }
     }
@@ -121,7 +123,10 @@ public class VideoNativeFragment extends BaseFragment implements VideoNativeAdap
 
     private void play(View view, int position) {
         Intent intent = new Intent(getContext(), VideoPlayActivity.class);
-        intent.putExtra("video",videos.get(position));
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList(ApplicationConstant.VIDEO_LIST_KEY, videos);
+        bundle.putInt(ApplicationConstant.VIDEO_POSITION_KEY, position);
+        intent.putExtra(ApplicationConstant.VIDEO_DATA_KEY, bundle);
         getContext().startActivity(intent);
     }
 

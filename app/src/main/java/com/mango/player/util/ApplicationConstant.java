@@ -1,11 +1,33 @@
 package com.mango.player.util;
 
+import io.vov.vitamio.MediaPlayer;
+
 /**
  * Created by yzd on 2017/9/26 0026.
  */
 
 public class ApplicationConstant {
     public final static boolean DEBUG = true;
+
+    public final static long DEFAULT_CUSTOM_MEDIA_CONTROLLER_SHOW_TIME = 5000;
+    //设置视频质量，低、中、高
+    public final static int DEFAULT_VIDEO_QUALITY = MediaPlayer.VIDEOQUALITY_HIGH;
+    //视频播放速度
+    public final static float DEFAULT_PLAY_SPEED = 1.0F;
+    //设置缓存大小，默认1024KB
+    public final static long DEFAULT_BUFFER_SIZE = 1024;
+    //设置是否显示字幕
+    public final static boolean DEFAULT_SUB_SHOWN = false;
+    //设置音轨
+    public final static int DEFAULT_AUDIO_TRACK = 0;
+    //音量
+    public final static float DEFAULT_VOLUME = 0;
+    //视频缩放
+    public final static float DEFAULT_ASPECTRATIO = 0f;
+
+    public static final String VIDEO_LIST_KEY = "video_list_key";
+    public static final String VIDEO_POSITION_KEY = "video_position_key";
+    public static final String VIDEO_DATA_KEY = "video_data_key";
 
 
     public final static int ACTIVITY_REQUEST_TK_CODE = 1024;
@@ -20,4 +42,5 @@ public class ApplicationConstant {
     public static final int ACTIVITY_REQUEST_BIND_PHONE = ACTIVITY_REQUEST_LOCATION + 1;
     public static final int ACTIVITY_REQUEST_BIND_CARD = ACTIVITY_REQUEST_BIND_PHONE + 1;
     public static final int ACTIVITY_REQUEST_GET_PHOTO = ACTIVITY_REQUEST_BIND_CARD + 1;
+
 }

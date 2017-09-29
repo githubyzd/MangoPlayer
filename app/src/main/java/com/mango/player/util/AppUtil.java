@@ -1,9 +1,13 @@
 package com.mango.player.util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.Snackbar;
+import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.mango.player.activity.ScanActivity;
 
@@ -101,19 +105,99 @@ public class AppUtil {
             }
             int myu = (int) (time % (1000 * 60 * 60));
             int m = myu / (1000 * 60);
-            if (m <10) {
+            if (m < 10) {
                 sb = sb.append("0").append(m).append(":");
-            }else {
+            } else {
                 sb = sb.append(m).append(":");
             }
-            int syu = (int) (time % (1000 * 60 * 60 *60));
+            int syu = (int) (time % (1000 * 60 * 60 * 60));
             int s = syu / (1000 * 60 * 60);
             if (s < 10) {
                 sb = sb.append("0").append(s);
-            }else {
+            } else {
                 sb.append(s);
             }
         }
         return sb.toString();
     }
+
+    public static float changePlaySpeed(float playSpped, boolean isUp) {
+        if (playSpped == 0.5f) {
+            playSpped = isUp ? 0.6f : 0.5f;
+        } else if (playSpped == 0.6f) {
+            playSpped = isUp ? 0.7f : 0.5f;
+        } else if (playSpped == 0.7f) {
+            playSpped = isUp ? 0.8f : 0.6f;
+        } else if (playSpped == 0.8f) {
+            playSpped = isUp ? 0.9f : 0.7f;
+        } else if (playSpped == 0.9f) {
+            playSpped = isUp ? 1.0f : 0.8f;
+        } else if (playSpped == 1.0f) {
+            playSpped = isUp ? 1.1f : 0.9f;
+        } else if (playSpped == 1.1f) {
+            playSpped = isUp ? 1.2f : 1.0f;
+        } else if (playSpped == 1.2f) {
+            playSpped = isUp ? 1.3f : 1.1f;
+        } else if (playSpped == 1.3f) {
+            playSpped = isUp ? 1.4f : 1.2f;
+        } else if (playSpped == 1.4f) {
+            playSpped = isUp ? 1.5f : 1.3f;
+        } else if (playSpped == 1.5f) {
+            playSpped = isUp ? 1.6f : 1.4f;
+        } else if (playSpped == 1.6f) {
+            playSpped = isUp ? 1.7f : 1.5f;
+        } else if (playSpped == 1.7f) {
+            playSpped = isUp ? 1.8f : 1.6f;
+        } else if (playSpped == 1.8f) {
+            playSpped = isUp ? 1.9f : 1.7f;
+        } else if (playSpped == 1.9f) {
+            playSpped = isUp ? 2.0f : 1.8f;
+        } else if (playSpped == 2.0f) {
+            playSpped = isUp ? 2.0f : 1.9f;
+        }
+        return playSpped;
+    }
+
+    // Toast显示一条信息
+    public static void showToastMsg(Context context, String msg) {
+        AppUtil.showToastMsg(context, msg, 0);
+    }
+
+    // Toast显示一条信息
+    public static void showToastMsg(Context context, int msg) {
+        AppUtil.showToastMsg(context, context.getResources().getString(msg), 2);
+    }
+
+    // Toast显示一条信息
+    public static void showToastMsg(Context context, String msg, int time) {
+        if (msg != null && !"".equals(msg))
+            Toast.makeText(context, msg, time).show();
+    }
+
+    // 判断字符串为空
+    public static boolean isEmpty(String str) {
+        if (str == null || str.length() == 0)
+            return true;
+        else
+            return false;
+    }
+
+    // 取得屏幕宽度
+    public static int getScreenWidth(Activity activity) {
+        WindowManager manager = activity.getWindowManager();
+        DisplayMetrics outMetrics = new DisplayMetrics();
+        manager.getDefaultDisplay().getMetrics(outMetrics);
+        int width = outMetrics.widthPixels;
+        return width;
+    }
+
+    // 取得屏幕高度
+    public static int getScreenHeight(Activity activity) {
+        WindowManager manager = activity.getWindowManager();
+        DisplayMetrics outMetrics = new DisplayMetrics();
+        manager.getDefaultDisplay().getMetrics(outMetrics);
+        int height = outMetrics.heightPixels;
+        return height;
+    }
+
 }

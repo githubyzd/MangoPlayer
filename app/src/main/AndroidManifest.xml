@@ -50,7 +50,7 @@
             android:theme="@android:style/Theme.NoTitleBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity android:name=".activity.VideoPlayActivity"
-            android:configChanges="orientation"/>
+            android:configChanges="orientation|screenSize"/>
     </application>
 
 </manifest>

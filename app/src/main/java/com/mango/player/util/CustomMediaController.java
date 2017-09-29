@@ -20,6 +20,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.mango.player.R;
+import com.mango.player.activity.VideoPlayActivity;
 
 import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
@@ -28,7 +29,7 @@ import io.vov.vitamio.widget.VideoView;
  * Created by yzd on 2017/3/1.
  * 自定义视频控制器
  */
-public class CustomMediaController extends MediaController implements View.OnClickListener{
+public class CustomMediaController extends MediaController implements View.OnClickListener {
     private static final int HIDEFRAM = 0;//控制提示窗口的显示
 
     private GestureDetector mGestureDetector;
@@ -64,6 +65,7 @@ public class CustomMediaController extends MediaController implements View.OnCli
     private ImageView speed;
     private ImageView back_speed;
     private ImageView beh;
+    private TextView tv_speed;
 
     private Handler myHandler = new Handler() {
         @Override
@@ -77,7 +79,6 @@ public class CustomMediaController extends MediaController implements View.OnCli
             }
         }
     };
-
 
     //videoview 用于对视频进行控制的等，activity为了退出
     public CustomMediaController(Context context, VideoView videoView, Activity activity) {
@@ -114,6 +115,7 @@ public class CustomMediaController extends MediaController implements View.OnCli
         back_speed = (ImageView) v.findViewById(getResources().getIdentifier("back_speed", "id", context.getPackageName()));
         speed = (ImageView) v.findViewById(getResources().getIdentifier("speed", "id", context.getPackageName()));
         beh = (ImageView) v.findViewById(getResources().getIdentifier("beh", "id", context.getPackageName()));
+        tv_speed = (TextView) v.findViewById(getResources().getIdentifier("tv_speed", "id", context.getPackageName()));
 
         if (mFileName != null) {
             mFileName.setText(videoname);
@@ -176,34 +178,21 @@ public class CustomMediaController extends MediaController implements View.OnCli
 
     @Override
     public void onClick(View v) {
+        show(5000);
         switch (v.getId()) {
             case R.id.mediacontroller_top_back:
                 if (activity != null) {
                     activity.finish();
                 }
                 break;
-            case R.id.mediacontroller_list:
-                break;
-            case R.id.mediacontroller_more:
-                break;
-            case R.id.speed_up:
-                break;
-            case R.id.speed_increase:
-                break;
-            case R.id.lock:
-                break;
-            case R.id.pre:
-                break;
-            case R.id.beh:
-                break;
-            case R.id.back_speed:
-                break;
-            case R.id.speed:
-                break;
             case R.id.mediacontroller_scale:
                 switchScreenOrientation();
                 break;
-
+            default:
+                if (activity != null) {
+                    ((VideoPlayActivity) activity).oniItemClick(v);
+                }
+                break;
         }
     }
 
@@ -370,7 +359,6 @@ public class CustomMediaController extends MediaController implements View.OnCli
 
     }
 
-
     /**
      * 设置视频文件名
      *
@@ -380,6 +368,26 @@ public class CustomMediaController extends MediaController implements View.OnCli
         videoname = name;
         if (mFileName != null) {
             mFileName.setText(name);
+        }
+    }
+
+    public void setPlaySpeed(Float speed) {
+        tv_speed.setText(speed + "x");
+    }
+
+    public void enablePre(boolean enable){
+        if (enable){
+            pre.setAlpha(1.0f);
+        }else {
+            pre.setAlpha(0.7f);
+        }
+    }
+
+    public void enableBeh(boolean enable){
+        if (enable){
+            beh.setAlpha(1.0f);
+        }else {
+            beh.setAlpha(0.7f);
         }
     }
 
