@@ -11,6 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -26,6 +27,7 @@ import com.mango.player.util.ApplicationConstant;
 import com.mango.player.util.CustomMediaController;
 import com.mango.player.util.ExceptionUtil;
 import com.mango.player.util.LogUtil;
+import com.mango.player.util.PopupHelper;
 import com.mango.player.view.DividerItemDecoration;
 
 import java.util.List;
@@ -199,6 +201,7 @@ public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.
                 showList();
                 break;
             case R.id.mediacontroller_more:
+                showMore();
                 break;
             case R.id.speed_up:
                 changePlaySpeed(true);
@@ -223,7 +226,6 @@ public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.
                 break;
         }
     }
-
 
     @Override
     public void onClick(View v) {
@@ -289,20 +291,36 @@ public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.
         recyclerView.addItemDecoration(new DividerItemDecoration(
                 this, DividerItemDecoration.HORIZONTAL_LIST));
 
-
         mPopuAdapter = new VideoNativePopuAdapter(videos);
         recyclerView.setAdapter(mPopuAdapter);
         mPopuAdapter.setOnItemClickListener(this);
 
         iv_close.setOnClickListener(this);
-        int width = AppUtil.getScreenWidth(this);
-        int height = AppUtil.getScreenHeight(this);
-
-
-        alertDialog = new AlertDialog.Builder(this,R.style.dialog)
+        alertDialog = new AlertDialog.Builder(this, R.style.dialog)
                 .setView(contentView)
                 .show();
     }
+
+    private void showMore() {
+        View contentView = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).
+                inflate(getResources().getIdentifier("video_native_more", "layout", getPackageName()), null);
+
+        TextView setting = (TextView) contentView.findViewById(R.id.tv_setting);
+        TextView helper = (TextView) contentView.findViewById(R.id.tv_helper);
+        TextView quit = (TextView) contentView.findViewById(R.id.tv_quit);
+
+
+        PopupHelper popupHelper = new PopupHelper.Builder(this)
+                .contentView(contentView)
+                .height(ViewGroup.LayoutParams.WRAP_CONTENT)
+                .width(ViewGroup.LayoutParams.WRAP_CONTENT)
+                .anchorView(mCustomMediaController.mediacontroller_more)
+                .outSideTouchable(true)
+                .build()
+                .showAsDropDown();
+
+    }
+
 
     private boolean enablePre(boolean isInit) {
         if (videos.size() == 1) {

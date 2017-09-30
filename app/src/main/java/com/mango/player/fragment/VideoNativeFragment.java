@@ -39,6 +39,7 @@ public class VideoNativeFragment extends BaseFragment implements VideoNativeAdap
     private VideoNativeAdapter mAdapter;
     private ArrayList<Video> videos = new ArrayList<>();
     private PopupHelper popupHelper;
+    private int clickPosition;
 
     @Override
     public int getLayoutId() {
@@ -71,9 +72,10 @@ public class VideoNativeFragment extends BaseFragment implements VideoNativeAdap
 
     @Override
     public void onItemClick(View view, int position) {
+        clickPosition = position;
         switch (view.getId()) {
             case R.id.video_native_item:
-                play(view, position);
+                play(position);
                 break;
             case R.id.iv_more:
                 showMore(view, position);
@@ -85,7 +87,10 @@ public class VideoNativeFragment extends BaseFragment implements VideoNativeAdap
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.video_native_play:
-                AppUtil.showSnackbar(v, "播放");
+                play(clickPosition);
+                if (popupHelper != null) {
+                    popupHelper.dismiss();
+                }
                 break;
             case R.id.video_native_detail:
                 AppUtil.showSnackbar(v, "详情");
@@ -121,7 +126,7 @@ public class VideoNativeFragment extends BaseFragment implements VideoNativeAdap
                 .showAtLocation();
     }
 
-    private void play(View view, int position) {
+    private void play(int position) {
         Intent intent = new Intent(getContext(), VideoPlayActivity.class);
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList(ApplicationConstant.VIDEO_LIST_KEY, videos);

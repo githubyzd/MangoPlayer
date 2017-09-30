@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/dp_80dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/shape_video_native_more_bg"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_setting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_6dp"
+        android:text="设置"
+        android:textColor="@color/black" />
+
+    <View
+        android:layout_width="match_parent"
+        android:background="#AAA"
+        android:layout_height="@dimen/margin_1dp" />
+
+    <TextView
+        android:id="@+id/tv_helper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_6dp"
+        android:text="帮助"
+        android:textColor="@color/black" />
+
+    <View
+        android:layout_width="match_parent"
+        android:background="#AAA"
+        android:layout_height="@dimen/margin_1dp" />
+
+    <TextView
+        android:id="@+id/tv_quit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_6dp"
+        android:text="退出"
+        android:textColor="@color/black" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/margin_1dp" />
+
+</LinearLayout>

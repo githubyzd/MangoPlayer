@@ -47,8 +47,6 @@ public class CustomMediaController extends MediaController implements View.OnCli
     private SeekBar progress;
     private boolean mDragging;
     private MediaPlayerControl player;
-    private ImageView list;
-    private ImageView more;
     //最大声音
     private int mMaxVolume;
     // 当前声音
@@ -57,7 +55,7 @@ public class CustomMediaController extends MediaController implements View.OnCli
     private float mBrightness = -1f;
     private ImageView mIvScale;
     private ImageView mediacontroller_list;
-    private ImageView mediacontroller_more;
+    public ImageView mediacontroller_more;
     private ImageView speed_up;
     private ImageView speed_increase;
     private ImageView lock;
