@@ -190,7 +190,7 @@ public class CustomMediaController extends MediaController implements View.OnCli
                 break;
             default:
                 if (activity != null) {
-                    ((VideoPlayActivity) activity).oniItemClick(v);
+                    ((VideoPlayActivity) activity).onItemClick(v);
                 }
                 break;
         }

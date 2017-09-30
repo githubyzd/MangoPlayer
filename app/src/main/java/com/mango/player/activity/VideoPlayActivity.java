@@ -1,5 +1,6 @@
 package com.mango.player.activity;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -8,13 +9,13 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mango.player.R;
@@ -25,7 +26,6 @@ import com.mango.player.util.ApplicationConstant;
 import com.mango.player.util.CustomMediaController;
 import com.mango.player.util.ExceptionUtil;
 import com.mango.player.util.LogUtil;
-import com.mango.player.util.PopupHelper;
 import com.mango.player.view.DividerItemDecoration;
 
 import java.util.List;
@@ -38,7 +38,7 @@ import io.vov.vitamio.widget.VideoView;
 
 
 public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.OnInfoListener,
-        MediaPlayer.OnBufferingUpdateListener,View.OnClickListener {
+        MediaPlayer.OnBufferingUpdateListener, View.OnClickListener, VideoNativePopuAdapter.OnItemClickListener {
     @BindView(R.id.buffer)
     VideoView mVideoView;
     @BindView(R.id.probar)
@@ -47,6 +47,8 @@ public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.
     TextView downloadRateView;
     @BindView(R.id.load_rate)
     TextView loadRateView;
+    @BindView(R.id.container)
+    RelativeLayout container;
     //视频地址
     private String path = "http://baobab.wdjcdn.com/145076769089714.mp4";
     private Uri uri;
@@ -56,7 +58,8 @@ public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.
     private Video video;
     private List<Video> videos;
     private float playSpeed = 1.0f;
-    private PopupHelper popupHelper;
+    private VideoNativePopuAdapter mPopuAdapter;
+    private AlertDialog alertDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -172,7 +175,25 @@ public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.
         super.onConfigurationChanged(newConfig);
     }
 
-    public void oniItemClick(View v) {
+    //popu的item的点击事件
+    @Override
+    public void onItemClick(View view, int position) {
+        if (alertDialog != null) {
+            alertDialog.dismiss();
+        }
+        switch (view.getId()) {
+            case R.id.video_native_item_popu:
+                video = videos.get(position);
+                toPlay();
+                break;
+            case R.id.tv_delete:
+                deletePlayList(position);
+                break;
+        }
+    }
+
+    //播放控制器的点击事件
+    public void onItemClick(View v) {
         switch (v.getId()) {
             case R.id.mediacontroller_list:
                 showList();
@@ -206,14 +227,34 @@ public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.popu_list_close:
-                if (popupHelper != null) {
-                    popupHelper.dismiss();
-                }
+                if (alertDialog != null)
+                    alertDialog.dismiss();
                 break;
         }
     }
+
+    private void deletePlayList(int position) {
+        if (position == currentPosition) {
+            if (videos.size() == 1) {
+                return;
+            }
+            if (position == videos.size() - 1) {
+                currentPosition = 0;
+            } else {
+                currentPosition = position + 1;
+            }
+            video = videos.get(position);
+            toPlay();
+
+        }
+        videos.remove(position);
+        if (mPopuAdapter != null) {
+            mPopuAdapter.setData(videos);
+        }
+    }
+
 
     private void playPre() {
         if (enablePre(false)) {
@@ -238,7 +279,8 @@ public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.
     }
 
     private void showList() {
-        View contentView = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(getResources().getIdentifier("video_native_list", "layout", getPackageName()), null);
+        View contentView = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).
+                inflate(getResources().getIdentifier("video_native_list", "layout", getPackageName()), null);
         ImageView iv_close = (ImageView) contentView.findViewById(R.id.popu_list_close);
         RecyclerView recyclerView = (RecyclerView) contentView.findViewById(R.id.popu_list_recycler);
 
@@ -248,22 +290,18 @@ public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.
                 this, DividerItemDecoration.HORIZONTAL_LIST));
 
 
-        VideoNativePopuAdapter adapter = new VideoNativePopuAdapter(videos);
+        mPopuAdapter = new VideoNativePopuAdapter(videos);
+        recyclerView.setAdapter(mPopuAdapter);
+        mPopuAdapter.setOnItemClickListener(this);
+
         iv_close.setOnClickListener(this);
         int width = AppUtil.getScreenWidth(this);
         int height = AppUtil.getScreenHeight(this);
 
-        popupHelper = new PopupHelper.Builder(this)
-                .contentView(contentView)
-                .height(500)
-                .width(800)
-                .anchorView(loadRateView)
-                .gravity(Gravity.CENTER)
-                .parentView(loadRateView)
-                .outSideTouchable(true)
-                .animationStyle(R.style.anim_center)
-                .build()
-                .showAtLocation();
+
+        alertDialog = new AlertDialog.Builder(this,R.style.dialog)
+                .setView(contentView)
+                .show();
     }
 
     private boolean enablePre(boolean isInit) {
@@ -307,4 +345,5 @@ public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.
         }
         return true;
     }
+
 }

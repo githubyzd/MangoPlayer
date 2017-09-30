@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 
 import com.mango.player.R;
 import com.mango.player.bean.Video;
-import com.mango.player.holder.VideoNativeHolder;
+import com.mango.player.holder.VideoNativePopuHolder;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import java.util.List;
  * Created by yzd on 2017/9/27 0027.
  */
 
-public class VideoNativePopuAdapter extends RecyclerView.Adapter<VideoNativeHolder> implements View.OnClickListener {
+public class VideoNativePopuAdapter extends RecyclerView.Adapter<VideoNativePopuHolder> implements View.OnClickListener {
     private List<Video> mVideo = null;
     private OnItemClickListener mOnItemClickListener = null;
 
@@ -24,28 +24,25 @@ public class VideoNativePopuAdapter extends RecyclerView.Adapter<VideoNativeHold
     }
 
     @Override
-    public VideoNativeHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        VideoNativeHolder mHolder = new VideoNativeHolder(LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_video_native, parent, false));
+    public VideoNativePopuHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        VideoNativePopuHolder mHolder = new VideoNativePopuHolder(LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_video_native_popu, parent, false));
         mHolder.mItemView.setOnClickListener(this);
         return mHolder;
     }
 
     @Override
-    public void onBindViewHolder(VideoNativeHolder holder, int position) {
+    public void onBindViewHolder(VideoNativePopuHolder holder, int position) {
         Video video = mVideo.get(position);
-        holder.iv_thumbnail.setImageBitmap(video.getThumbnail());
         holder.name.setText(video.getName());
-        holder.resolution.setText(video.getResolution());
-        holder.size.setText(video.getSize());
-        holder.duration.setText(video.getDuration());
         holder.itemView.setTag(position);
-        holder.iv_more.setTag(position);
+        holder.delete.setTag(position);
         setViewOnclickLisenner(holder);
     }
 
-    private void setViewOnclickLisenner(VideoNativeHolder holder) {
-        holder.iv_more.setOnClickListener(this);
+
+    private void setViewOnclickLisenner(VideoNativePopuHolder holder) {
+        holder.delete.setOnClickListener(this);
     }
 
     @Override

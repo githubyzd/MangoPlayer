@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/video_native_item_popu"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/dp_40dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:padding="@dimen/margin_2dp">
+
+
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/dp_30dp"
+        android:layout_marginLeft="@dimen/dp_10dp"
+        android:layout_weight="1"
+        android:ellipsize="marquee"
+        android:maxLines="1"
+        android:paddingTop="@dimen/margin_6dp"
+        android:text="名字"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_16sp" />
+
+    <ImageView
+        android:id="@+id/tv_delete"
+        android:layout_width="@dimen/dp_20dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/dp_10dp"
+        android:src="@drawable/close_video_list" />
+
+</LinearLayout>
