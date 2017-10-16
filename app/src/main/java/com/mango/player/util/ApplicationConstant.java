@@ -9,6 +9,8 @@ import io.vov.vitamio.MediaPlayer;
 public class ApplicationConstant {
     public final static boolean DEBUG = true;
 
+    public final static boolean VIDEO_DEBUG = false;
+
     public final static long DEFAULT_CUSTOM_MEDIA_CONTROLLER_SHOW_TIME = 5000;
     //设置视频质量，低、中、高
     public final static int DEFAULT_VIDEO_QUALITY = MediaPlayer.VIDEOQUALITY_HIGH;
@@ -28,6 +30,7 @@ public class ApplicationConstant {
     public static final String VIDEO_LIST_KEY = "video_list_key";
     public static final String VIDEO_POSITION_KEY = "video_position_key";
     public static final String VIDEO_DATA_KEY = "video_data_key";
+    public static final String URL = "url";
 
 
     public final static int ACTIVITY_REQUEST_TK_CODE = 1024;

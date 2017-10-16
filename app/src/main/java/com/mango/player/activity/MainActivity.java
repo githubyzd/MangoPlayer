@@ -26,8 +26,10 @@ import com.mango.player.base.BaseFragment;
 import com.mango.player.fragment.MusicNativeFragment;
 import com.mango.player.fragment.MusicOnlineFragment;
 import com.mango.player.fragment.VideoNativeFragment;
+import com.mango.player.fragment.VideoOnlineDebugFragment;
 import com.mango.player.fragment.VideoOnlineFragment;
 import com.mango.player.util.AppUtil;
+import com.mango.player.util.ApplicationConstant;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -53,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private final int FRAGMENT_MUSIC_ONLINE = FRAGMENT_VIDEO_NATIVE + 1;
     private final int FRAGMENT_MUSIC_NATIVE = FRAGMENT_MUSIC_ONLINE + 1;
     private final int FRAGMENT_WELFARE = FRAGMENT_MUSIC_NATIVE + 1;
+    private final int FRAGMENT_VIDEO_ONLINE_DEBUG = FRAGMENT_WELFARE + 1;
     private int fragmentType = 0;
     private Unbinder unbinder;
 
@@ -96,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     //设置Toolbar
     private void initToobar() {
-        onNavigationItemSelected(navView.getMenu().getItem(1));
+        onNavigationItemSelected(navView.getMenu().getItem(0));
         setSupportActionBar(toolbar);
     }
 
@@ -136,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawerLayout.closeDrawer(GravityCompat.START);
         switch (item.getItemId()) {
             case R.id.video_online:
-                fragmentType = FRAGMENT_VIDEO_ONLINE;
+                fragmentType = ApplicationConstant.VIDEO_DEBUG ? FRAGMENT_VIDEO_ONLINE_DEBUG : FRAGMENT_VIDEO_ONLINE;
                 break;
             case R.id.video_native:
                 fragmentType = FRAGMENT_VIDEO_NATIVE;
@@ -167,6 +170,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (fragmentType) {
             case FRAGMENT_VIDEO_ONLINE:
                 fragment = new VideoOnlineFragment();
+                break;
+            case FRAGMENT_VIDEO_ONLINE_DEBUG:
+                fragment = new VideoOnlineDebugFragment();
                 break;
             case FRAGMENT_VIDEO_NATIVE:
                 fragment = new VideoNativeFragment();

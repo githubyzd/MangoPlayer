@@ -210,6 +210,7 @@ public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.
                 break;
             case R.id.lock:
                 LogUtil.logByD("lock");
+                // TODO: 2017/10/16 0016 锁屏
                 break;
             case R.id.pre:
                 playPre();
@@ -234,10 +235,10 @@ public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.
                     alertDialog.dismiss();
                 break;
             case R.id.tv_setting:
-
+                // TODO: 2017/10/16 0016 设置
                 break;
             case R.id.tv_helper:
-
+                // TODO: 2017/10/16 0016 帮助
                 break;
             case R.id.tv_quit:
                 finish();
