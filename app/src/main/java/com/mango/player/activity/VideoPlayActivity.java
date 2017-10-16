@@ -9,9 +9,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -27,7 +27,6 @@ import com.mango.player.util.ApplicationConstant;
 import com.mango.player.util.CustomMediaController;
 import com.mango.player.util.ExceptionUtil;
 import com.mango.player.util.LogUtil;
-import com.mango.player.util.PopupHelper;
 import com.mango.player.view.DividerItemDecoration;
 
 import java.util.List;
@@ -234,6 +233,15 @@ public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.
                 if (alertDialog != null)
                     alertDialog.dismiss();
                 break;
+            case R.id.tv_setting:
+
+                break;
+            case R.id.tv_helper:
+
+                break;
+            case R.id.tv_quit:
+                finish();
+                break;
         }
     }
 
@@ -302,23 +310,30 @@ public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.
     }
 
     private void showMore() {
-        View contentView = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).
-                inflate(getResources().getIdentifier("video_native_more", "layout", getPackageName()), null);
-
+        View contentView = View.inflate(this,R.layout.video_native_more,null);
         TextView setting = (TextView) contentView.findViewById(R.id.tv_setting);
         TextView helper = (TextView) contentView.findViewById(R.id.tv_helper);
         TextView quit = (TextView) contentView.findViewById(R.id.tv_quit);
 
+        setting.setOnClickListener(this);
+        helper.setOnClickListener(this);
+        quit.setOnClickListener(this);
 
-        PopupHelper popupHelper = new PopupHelper.Builder(this)
-                .contentView(contentView)
-                .height(ViewGroup.LayoutParams.WRAP_CONTENT)
-                .width(ViewGroup.LayoutParams.WRAP_CONTENT)
-                .anchorView(mCustomMediaController.mediacontroller_more)
-                .outSideTouchable(true)
-                .build()
-                .showAsDropDown();
 
+        AlertDialog dialog = new AlertDialog.Builder(this,R.style.dialog2).create();
+        dialog.setView(contentView);
+        dialog.show();
+        WindowManager m = getWindowManager();
+        Display d = m.getDefaultDisplay();  //为获取屏幕宽、高
+        android.view.WindowManager.LayoutParams p = dialog.getWindow().getAttributes();  //获取对话框当前的参数值
+
+        Window dialogWindow = dialog.getWindow();
+
+        p.height = (int) (d.getHeight() * 0.5);   //高度设置为屏幕的0.3
+        p.width = (int) (d.getWidth() * 0.6);    //宽度设置为屏幕的0.5
+        p.x = 0;
+        p.y = 0;
+        dialogWindow.setAttributes(p);     //设置生效
     }
 
 
