@@ -3,6 +3,7 @@ package com.mango.player.activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
@@ -38,7 +39,9 @@ public class WebActivity extends AppCompatActivity {
     private void initView() {
         WebSettings ws = webview.getSettings();
         ws.setBuiltInZoomControls(true);// 隐藏缩放按钮
-
+        if (Build.VERSION.SDK_INT >= 21) {
+            ws.setMixedContentMode(0);
+        }
         ws.setUseWideViewPort(true);// 可任意比例缩放
         ws.setLoadWithOverviewMode(true);// setUseWideViewPort方法设置webview推荐使用的窗口。setLoadWithOverviewMode方法是设置webview加载的页面的模式。
 
@@ -66,7 +69,7 @@ public class WebActivity extends AppCompatActivity {
 
         @Override
         public boolean shouldOverrideUrlLoading(WebView webView, String s) {
-            LogUtil.logByD("url" + s);
+            LogUtil.logByD("url：" + s);
             if (s.startsWith("http:") || s.startsWith("https:")) {
 
                 return false;
@@ -99,7 +102,7 @@ public class WebActivity extends AppCompatActivity {
     }
 
     @OnClick(R.id.back)
-    void back(){
+    void back() {
         webview.goBack();
     }
 

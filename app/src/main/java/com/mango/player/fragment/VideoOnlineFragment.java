@@ -6,6 +6,7 @@ import android.widget.LinearLayout;
 import com.mango.player.R;
 import com.mango.player.activity.WebActivity;
 import com.mango.player.base.BaseFragment;
+import com.mango.player.util.AppUtil;
 import com.mango.player.util.ApplicationConstant;
 
 import butterknife.BindView;
@@ -78,5 +79,13 @@ public class VideoOnlineFragment extends BaseFragment {
         getActivity().startActivity(intent);
     }
 
+    @OnClick(R.id.download)
+    void download(){
+        AppUtil.showSnackbar(download,"暂未开放");
+    }
 
+    @OnClick(R.id.wait)
+    void mWait(){
+        AppUtil.showSnackbar(wait,"敬请期待");
+    }
 }
