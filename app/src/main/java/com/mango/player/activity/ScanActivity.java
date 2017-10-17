@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mango.player.R;
@@ -69,7 +68,9 @@ public class ScanActivity extends AppCompatActivity {
 
     private void onSuccess(String result) {
         AppUtil.showSnackbar(findViewById(R.id.btn_album), result);
-
+        Intent intent = new Intent(this,WebActivity.class);
+        intent.putExtra(ApplicationConstant.URL,result);
+        startActivity(intent);
     }
 
     private void selectPic() {

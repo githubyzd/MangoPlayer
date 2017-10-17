@@ -109,7 +109,27 @@ public class WebActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        webview = null;
         finish();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        webview.resumeTimers();
+        webview.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        webview.onPause();
+        webview.pauseTimers();
+    }
+
+    @Override
+    protected void onDestroy() {
+        webview.destroy();
+        webview = null;
+        super.onDestroy();
     }
 }

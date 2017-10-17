@@ -11,7 +11,6 @@ import com.mango.player.util.ApplicationConstant;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import butterknife.Unbinder;
 
 /**
  * Created by yzd on 2017/9/25 0025.
@@ -33,7 +32,6 @@ public class VideoOnlineFragment extends BaseFragment {
     LinearLayout download;
     @BindView(R.id.wait)
     LinearLayout wait;
-    Unbinder unbinder;
 
     @Override
     public int getLayoutId() {
