@@ -3,6 +3,7 @@ package com.mango.player.fragment;
 import android.support.v7.widget.RecyclerView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.mango.player.R;
@@ -36,6 +37,8 @@ public class MusicNativeHomeFragment extends BaseFragment {
     ImageView listArrow;
     @BindView(R.id.list_recyclerview)
     RecyclerView listRecyclerview;
+    @BindView(R.id.scrollView)
+    ScrollView scrollView;
     private MusicNativeFragment controller;
 
     @Override
@@ -45,18 +48,25 @@ public class MusicNativeHomeFragment extends BaseFragment {
 
     @Override
     public void initView() {
+        scrollView.post(new Runnable() {
+            @Override
+            public void run() {
 
+                scrollView.fullScroll(ScrollView.FOCUS_UP);
+            }
+        });
     }
 
     @OnClick(R.id.library)
-    void library(){
-         MusciNativeLibraryFragment fragment = new MusciNativeLibraryFragment();
-        if(controller != null){
+    void library() {
+        MusciNativeLibraryFragment fragment = new MusciNativeLibraryFragment();
+        if (controller != null) {
             controller.switchFragment(fragment);
         }
     }
 
-    public void setController(MusicNativeFragment controller){
+    public void setController(MusicNativeFragment controller) {
         this.controller = controller;
     }
+
 }
