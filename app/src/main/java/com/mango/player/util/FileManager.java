@@ -9,8 +9,8 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.provider.MediaStore;
-
 
 import com.mango.player.bean.AppInfo;
 import com.mango.player.bean.FileBean;
@@ -54,7 +54,7 @@ public class FileManager {
      *
      * @return
      */
-    private static List<Music> getMusics() {
+    public static List<Music> getMusics(Context context) {
         ArrayList<Music> musics = new ArrayList<>();
         Cursor c = null;
         try {
@@ -74,9 +74,10 @@ public class FileManager {
                 long size = c.getLong(c.getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE));// 大小
                 int duration = c.getInt(c.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION));// 时长
                 int time = c.getInt(c.getColumnIndexOrThrow(MediaStore.Audio.Media._ID));// 歌曲的id
-                // int albumId = c.getInt(c.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID));
+                int albumId = c.getInt(c.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID));
+                Bitmap bitmap = getCompressedBitmap(getAlbumArt(albumId,context),200,200);
 
-                Music music = new Music(name, path, album, artist, size, duration);
+                Music music = new Music(name, path, album, artist, size, duration, bitmap);
                 musics.add(music);
             }
 
@@ -88,6 +89,56 @@ public class FileManager {
             }
         }
         return musics;
+    }
+
+    public static Bitmap getCompressedBitmap(String filePath, int requireWidth,
+                                             int requireHeight) {
+        // 第一次解析将inJustDecodeBounds设置为true,用以获取图片大小,并且不需要将Bitmap对象加载到内存中
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(filePath, options); // 第一次解析
+        // 计算inSampleSize的值,并且赋值给Options.inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, requireWidth,
+                requireHeight);
+        // 使用获取到的inSampleSize再次解析图片
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeFile(filePath, options);
+    }
+
+    /**
+     * 计算压缩的inSampleSize的值,该值会在宽高上都进行压缩(也就是压缩前后比例是inSampleSize的平方倍)
+     */
+    private static int calculateInSampleSize(BitmapFactory.Options options,
+                                             int requireWidth, int requireHeight) {
+        // 获取源图片的实际的宽度和高度
+        int realWidth = options.outWidth;
+        int realHeight = options.outHeight;
+
+        int inSampleSize = 1;
+        if (realWidth > requireWidth || realHeight > requireHeight) {
+            // 计算出实际的宽高与目标宽高的比例
+            int widthRatio = Math.round((float) realWidth
+                    / (float) requireWidth);
+            int heightRatio = Math.round((float) realHeight
+                    / (float) requireHeight);
+            // 选择宽高比例最小的值赋值给inSampleSize,这样可以保证最终图片的宽高一定会大于或等于目标的宽高
+            inSampleSize = widthRatio < heightRatio ? widthRatio : heightRatio;
+        }
+        return inSampleSize;
+    }
+
+    private static String getAlbumArt(int album_id, Context context) {
+        String mUriAlbums = "content://media/external/audio/albums";
+        String[] projection = new String[]{"album_art"};
+        Cursor cur = context.getContentResolver().query(Uri.parse(mUriAlbums + "/" + Integer.toString(album_id)), projection, null, null, null);
+        String album_art = null;
+        if (cur.getCount() > 0 && cur.getColumnCount() > 0) {
+            cur.moveToNext();
+            album_art = cur.getString(0);
+        }
+        cur.close();
+        cur = null;
+        return album_art;
     }
 
     /**
@@ -134,6 +185,7 @@ public class FileManager {
         }
         return videos;
     }
+
 
     // 获取视频缩略图
     private static Bitmap getVideoThumbnail(int id) {

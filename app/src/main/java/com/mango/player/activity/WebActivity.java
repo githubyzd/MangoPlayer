@@ -11,6 +11,7 @@ import com.mango.player.R;
 import com.mango.player.util.ApplicationConstant;
 import com.mango.player.util.ExceptionUtil;
 import com.mango.player.util.LogUtil;
+import com.tencent.smtt.sdk.DownloadListener;
 import com.tencent.smtt.sdk.WebChromeClient;
 import com.tencent.smtt.sdk.WebSettings;
 import com.tencent.smtt.sdk.WebView;
@@ -53,6 +54,8 @@ public class WebActivity extends AppCompatActivity {
         ws.setSupportMultipleWindows(true);// 新加
         webview.setWebViewClient(new MyWebViewClient());
         webview.setWebChromeClient(new WebChromeClient());
+        webview.setDownloadListener(new MyDownloadListener());
+
         webview.loadUrl(url);
     }
 
@@ -99,6 +102,17 @@ public class WebActivity extends AppCompatActivity {
         }
 
 
+    }
+
+    private class MyDownloadListener implements DownloadListener {
+
+        @Override
+        public void onDownloadStart(String s, String s1, String s2, String s3, long l) {
+            LogUtil.logByD("ldm", url);
+            Uri uri = Uri.parse(url);
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(intent);
+        }
     }
 
     @OnClick(R.id.back)

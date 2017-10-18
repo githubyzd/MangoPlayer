@@ -1,105 +1,134 @@
 package com.mango.player.bean;
 
 
+import android.graphics.Bitmap;
+
 import com.mango.player.util.PinyinUtils;
 
 public class Music implements Comparable<Music> {
-	/**歌曲名*/
-	private String name;
-	/**路径*/
-	private String path;
-	/**所属专辑*/
-	private String album;
-	/**艺术家(作者)*/
-	private String artist;
-	/**文件大小*/
-	private long size;
-	/**时长*/
-	private int duration;
+    /**
+     * 歌曲名
+     */
+    private String name;
+    /**
+     * 路径
+     */
+    private String path;
+    /**
+     * 所属专辑
+     */
+    private String album;
+    /**
+     * 艺术家(作者)
+     */
+    private String artist;
+    /**
+     * 文件大小
+     */
+    private long size;
+    /**
+     * 时长
+     */
+    private int duration;
+    /**
+     * 专辑封面
+     */
+    private Bitmap thumbnail;
 
-	private String pinyin;
+    private String pinyin;
 
-	public Music(String name, String path, String album, String artist, long size, int duration) {
-		this.name = name;
-		this.path = path;
-		this.album = album;
-		this.artist = artist;
-		this.size = size;
-		this.duration = duration;
-		pinyin = PinyinUtils.getPinyin(name);
-	}
+    public Music(String name, String path, String album, String artist, long size, int duration, Bitmap bitmap) {
+        this.name = name;
+        this.path = path;
+        this.album = album;
+        this.artist = artist;
+        this.size = size;
+        this.duration = duration;
+        this.thumbnail = bitmap;
 
-	public String getName() {
-		return name;
-	}
+        pinyin = PinyinUtils.getPinyin(name);
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getPath() {
-		return path;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setPath(String path) {
-		this.path = path;
-	}
+    public String getPath() {
+        return path;
+    }
 
-	public String getAlbum() {
-		return album;
-	}
+    public void setPath(String path) {
+        this.path = path;
+    }
 
-	public void setAlbum(String album) {
-		this.album = album;
-	}
+    public String getAlbum() {
+        return album;
+    }
 
-	public String getArtist() {
-		return artist;
-	}
+    public void setAlbum(String album) {
+        this.album = album;
+    }
 
-	public void setArtist(String artist) {
-		this.artist = artist;
-	}
+    public String getArtist() {
+        return artist;
+    }
 
-	public long getSize() {
-		return size;
-	}
+    public void setArtist(String artist) {
+        this.artist = artist;
+    }
 
-	public void setSize(long size) {
-		this.size = size;
-	}
+    public long getSize() {
+        return size;
+    }
 
-	public int getDuration() {
-		return duration;
-	}
+    public void setSize(long size) {
+        this.size = size;
+    }
 
-	public void setDuration(int duration) {
-		this.duration = duration;
-	}
+    public int getDuration() {
+        return duration;
+    }
 
-	public String getPinyin() {
-		return pinyin;
-	}
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
 
-	public void setPinyin(String pinyin) {
-		this.pinyin = pinyin;
-	}
+    public String getPinyin() {
+        return pinyin;
+    }
 
-	@Override
-	public int compareTo(Music music) {
-		return this.pinyin.compareTo(music.getPinyin());
-	}
+    public void setPinyin(String pinyin) {
+        this.pinyin = pinyin;
+    }
 
-	@Override
-	public String toString() {
-		return "Music{" +
-				"name='" + name + '\'' +
-				", path='" + path + '\'' +
-				", album='" + album + '\'' +
-				", artist='" + artist + '\'' +
-				", size=" + size +
-				", duration=" + duration +
-				", pinyin='" + pinyin + '\'' +
-				'}';
-	}
+    public Bitmap getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(Bitmap thumbnail) {
+        this.thumbnail = thumbnail;
+    }
+
+    @Override
+    public int compareTo(Music music) {
+        return this.pinyin.compareTo(music.getPinyin());
+    }
+
+    @Override
+    public String toString() {
+        return "Music{" +
+                "name='" + name + '\'' +
+                ", path='" + path + '\'' +
+                ", album='" + album + '\'' +
+                ", artist='" + artist + '\'' +
+                ", size=" + size +
+                ", duration=" + duration +
+                ", thumbnail=" + thumbnail +
+                ", pinyin='" + pinyin + '\'' +
+                '}';
+    }
 }

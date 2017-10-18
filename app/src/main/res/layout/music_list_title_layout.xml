@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/dp_50dp"
+    android:background="#4182A0"
+    android:gravity="center_vertical"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <ImageView
+            android:id="@+id/iv_random"
+            android:layout_width="@dimen/dp_50dp"
+            android:layout_height="match_parent"
+            android:padding="@dimen/margin_10dp"
+            android:src="@drawable/random" />
+
+        <TextView
+            android:id="@+id/tv_random"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="全部随机(0)"
+            android:textColor="#F6FFFF"
+            android:textSize="@dimen/sp_18sp" />
+
+        <ImageView
+            android:id="@+id/edit"
+            android:layout_width="@dimen/dp_50dp"
+            android:layout_height="match_parent"
+            android:padding="@dimen/margin_12dp"
+            android:src="@drawable/edit" />
+
+        <ImageView
+            android:id="@+id/rank"
+            android:layout_width="@dimen/dp_50dp"
+            android:layout_height="match_parent"
+            android:padding="@dimen/margin_6dp"
+            android:src="@drawable/rank" />
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:background="#89BFDA"
+        android:layout_height="1px"/>
+
+</LinearLayout>

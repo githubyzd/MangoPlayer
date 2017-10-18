@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     FrameLayout mainContainer;
     private Button bt_login;
 
+    private final int DEFAULT_FRATGMENT  = 3;
 
     private final int FRAGMENT_VIDEO_ONLINE = 100;
     private final int FRAGMENT_VIDEO_NATIVE = FRAGMENT_VIDEO_ONLINE + 1;
@@ -99,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     //设置Toolbar
     private void initToobar() {
-        onNavigationItemSelected(navView.getMenu().getItem(0));
+        onNavigationItemSelected(navView.getMenu().getItem(DEFAULT_FRATGMENT));
         setSupportActionBar(toolbar);
     }
 
