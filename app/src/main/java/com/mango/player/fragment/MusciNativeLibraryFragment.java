@@ -42,6 +42,8 @@ public class MusciNativeLibraryFragment extends BaseFragment {
         }
         PagerAdapter adapter = new MyPagerAdapter();
         viewpager.setAdapter(adapter);
+
+
         viewpager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tablayout));
         tablayout.setOnTabSelectedListener(new MyOnTabSelectedListener());
     }
@@ -106,4 +108,5 @@ public class MusciNativeLibraryFragment extends BaseFragment {
             return tabs[position];
         }
     }
+
 }

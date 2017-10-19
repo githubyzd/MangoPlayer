@@ -13,15 +13,17 @@ import com.mango.player.base.BasePager;
 import com.mango.player.bean.Music;
 import com.mango.player.util.FileManager;
 import com.mango.player.util.LogUtil;
+import com.mango.player.util.MusicController;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 /**
  * Created by yzd on 2017/10/18 0018.
  */
 
-public class SongPager extends BasePager implements View.OnClickListener {
+public class SongPager extends BasePager implements View.OnClickListener, MusicSongListAdapter.OnItemClickListener {
 
     private View view;
     private ImageView ivRandom;
@@ -31,6 +33,7 @@ public class SongPager extends BasePager implements View.OnClickListener {
     private RecyclerView listRecyclerview;
     private List<Music> musics = new ArrayList<>();
     private MusicSongListAdapter adapter;
+    private int clickPosition;
 
     public SongPager(Context context) {
         super(context);
@@ -45,8 +48,10 @@ public class SongPager extends BasePager implements View.OnClickListener {
         rank = (ImageView) view.findViewById(R.id.rank);
         listRecyclerview = (RecyclerView) view.findViewById(R.id.list_recyclerview);
         listRecyclerview.setLayoutManager(new LinearLayoutManager(mContext));
+
         adapter = new MusicSongListAdapter(musics);
         listRecyclerview.setAdapter(adapter);
+        adapter.setOnItemClickListener(this);
 
         fl_basepager_container.removeAllViews();
         fl_basepager_container.addView(view);
@@ -84,6 +89,7 @@ public class SongPager extends BasePager implements View.OnClickListener {
         musics = new ArrayList<>();
         FileManager manager = FileManager.getInstance(mContext);
         musics = manager.getMusics(mContext);
+        tvRandom.setText("全部随机(" + musics.size() + ")");
         adapter.setData(musics);
         LogUtil.logByD("共有" + musics.size() + "首歌曲");
         for (Music music : musics) {
@@ -94,5 +100,25 @@ public class SongPager extends BasePager implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         processClick(v);
+    }
+
+    @Override
+    public void onItemClick(View view, int position) {
+        clickPosition = position;
+        switch (view.getId()) {
+            case R.id.music_native_lib_item:
+                playMusic();
+                break;
+            case R.id.detail:
+                // TODO: 2017/10/19 0019 显示音乐详情
+                LogUtil.logByD("点击音乐条目" + musics.get(position));
+                break;
+        }
+    }
+
+    private void playMusic() {
+        MusicController instance = MusicController.getInstance();
+        instance.initData(musics);
+        instance.playMusic(clickPosition);
     }
 }
