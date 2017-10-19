@@ -51,7 +51,8 @@ public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.
     @BindView(R.id.container)
     RelativeLayout container;
     //视频地址
-    private String path = "http://baobab.wdjcdn.com/145076769089714.mp4";
+//    private String path = "http://baobab.wdjcdn.com/145076769089714.mp4";
+    private String path = "http://www.t02y.com/get_file/3/fda4429d142ecdc0b178b8f2b4902b53/46000/46563/46563.mp4/?rnd=1508336799051";
     private Uri uri;
     private CustomMediaController mCustomMediaController;
     private MediaPlayer mMediaPlayer;
@@ -113,7 +114,8 @@ public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.
 
     private void toPlay() {
         mCustomMediaController.setVideoName(video.getName());
-        uri = Uri.parse(video.getPath());
+//        uri = Uri.parse(video.getPath());
+        uri = Uri.parse(path);
         //设置视频播放地址
         mVideoView.setVideoURI(uri);
         mCustomMediaController.show(5000);

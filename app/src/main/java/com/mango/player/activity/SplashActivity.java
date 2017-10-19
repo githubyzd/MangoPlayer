@@ -10,6 +10,7 @@ import com.mango.player.R;
 
 public class SplashActivity extends Activity {
     private final int SKIP_NUMBER = 100;
+
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {

@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mango.player.R;
+import com.mango.player.activity.App;
 import com.mango.player.adapter.MusicSongListAdapter;
 import com.mango.player.base.BasePager;
 import com.mango.player.bean.Music;
@@ -87,14 +88,14 @@ public class SongPager extends BasePager implements View.OnClickListener, MusicS
     public void initData() {
         super.initData();
         musics = new ArrayList<>();
-        FileManager manager = FileManager.getInstance(mContext);
-        musics = manager.getMusics(mContext);
+        if (App.musicList != null) {
+            musics = App.musicList;
+        }else {
+            musics = FileManager.getInstance(mContext).getMusics(mContext);
+        }
         tvRandom.setText("全部随机(" + musics.size() + ")");
         adapter.setData(musics);
         LogUtil.logByD("共有" + musics.size() + "首歌曲");
-        for (Music music : musics) {
-            LogUtil.logByD(music.toString());
-        }
     }
 
     @Override
