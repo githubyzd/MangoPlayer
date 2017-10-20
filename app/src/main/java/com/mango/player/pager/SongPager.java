@@ -1,6 +1,6 @@
 package com.mango.player.pager;
 
-import android.content.Context;
+import android.app.Activity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -36,7 +36,7 @@ public class SongPager extends BasePager implements View.OnClickListener, MusicS
     private MusicSongListAdapter adapter;
     private int clickPosition;
 
-    public SongPager(Context context) {
+    public SongPager(Activity context) {
         super(context);
     }
 
@@ -74,6 +74,7 @@ public class SongPager extends BasePager implements View.OnClickListener, MusicS
         switch (view.getId()) {
             case R.id.iv_random:
             case R.id.tv_random:
+
                 break;
             case R.id.edit:
                 break;
@@ -118,7 +119,7 @@ public class SongPager extends BasePager implements View.OnClickListener, MusicS
     }
 
     private void playMusic() {
-        MusicController instance = MusicController.getInstance();
+        MusicController instance = MusicController.getInstance(mContext);
         instance.initData(musics);
         instance.playMusic(clickPosition);
     }

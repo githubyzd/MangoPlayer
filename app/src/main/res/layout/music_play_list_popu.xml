@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_40dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/iv_random"
+            android:layout_width="@dimen/dp_40dp"
+            android:layout_height="match_parent"
+            android:padding="@dimen/margin_8dp"
+            android:src="@drawable/random_blue" />
+
+        <TextView
+            android:id="@+id/tv_random"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="播放队列(0)"
+            android:textColor="@color/dodgerblue"
+            android:textSize="@dimen/sp_16sp" />
+
+        <ImageView
+            android:id="@+id/delete"
+            android:layout_width="@dimen/dp_40dp"
+            android:layout_height="match_parent"
+            android:padding="@dimen/margin_10dp"
+            android:src="@drawable/delete" />
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:background="@color/dodgerblue"
+        android:layout_height="1dp"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@id/recyclerview"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="0dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:background="@color/gainsboro"
+        android:layout_height="1px"/>
+    <TextView
+        android:id="@+id/close"
+        android:text="关闭"
+        android:textSize="@dimen/sp_16sp"
+        android:textColor="@color/black"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_height="@dimen/dp_40dp" />
+
+
+
+</LinearLayout>

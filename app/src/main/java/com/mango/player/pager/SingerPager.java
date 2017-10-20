@@ -1,6 +1,6 @@
 package com.mango.player.pager;
 
-import android.content.Context;
+import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -21,7 +21,7 @@ public class SingerPager extends BasePager {
     private RecyclerView listRecyclerview;
     private View view;
 
-    public SingerPager(Context context) {
+    public SingerPager(Activity context) {
         super(context);
     }
 

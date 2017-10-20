@@ -40,6 +40,7 @@ public class MusicNativeHomeFragment extends BaseFragment {
     @BindView(R.id.scrollView)
     ScrollView scrollView;
     private MusicNativeFragment controller;
+    private BaseFragment fragment;
 
     @Override
     public int getLayoutId() {
@@ -58,7 +59,7 @@ public class MusicNativeHomeFragment extends BaseFragment {
 
     @OnClick(R.id.library)
     void library() {
-        MusciNativeLibraryFragment fragment = new MusciNativeLibraryFragment();
+        fragment = new MusciNativeLibraryFragment();
         if (controller != null) {
             controller.switchFragment(fragment);
         }

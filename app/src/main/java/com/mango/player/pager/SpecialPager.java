@@ -1,6 +1,6 @@
 package com.mango.player.pager;
 
-import android.content.Context;
+import android.app.Activity;
 import android.view.View;
 
 import com.mango.player.R;
@@ -12,7 +12,7 @@ import com.mango.player.base.BasePager;
 
 public class SpecialPager extends BasePager {
     private View view;
-    public SpecialPager(Context context) {
+    public SpecialPager(Activity context) {
         super(context);
     }
 

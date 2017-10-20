@@ -52,10 +52,10 @@ public class MusciNativeLibraryFragment extends BaseFragment {
     public void initData() {
         super.initData();
         pagers = new ArrayList<>();
-        pagers.add(new SongPager(getContext()));
-        pagers.add(new SingerPager(getContext()));
-        pagers.add(new SpecialPager(getContext()));
-        pagers.add(new GenrePager(getContext()));
+        pagers.add(new SongPager(getActivity()));
+        pagers.add(new SingerPager(getActivity()));
+        pagers.add(new SpecialPager(getActivity()));
+        pagers.add(new GenrePager(getActivity()));
     }
 
     private class MyOnTabSelectedListener implements TabLayout.OnTabSelectedListener {

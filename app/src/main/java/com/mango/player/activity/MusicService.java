@@ -79,7 +79,10 @@ public class MusicService extends Service {
 
     public void stopMusic(){
         mMediaPlayer.stop();
+    }
 
+    public void setOnPreparedListener (MediaPlayer.OnPreparedListener listener){
+        mMediaPlayer.setOnPreparedListener(listener);
     }
 
     public void seekTo(int msec){

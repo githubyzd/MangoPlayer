@@ -31,6 +31,7 @@ public class ApplicationConstant {
     public static final String VIDEO_POSITION_KEY = "video_position_key";
     public static final String VIDEO_DATA_KEY = "video_data_key";
     public static final String URL = "url";
+    public static final String MUSIC_INDEX = "music_index";
 
 
     public final static int ACTIVITY_REQUEST_TK_CODE = 1024;

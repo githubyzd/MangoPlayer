@@ -114,8 +114,8 @@ public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.
 
     private void toPlay() {
         mCustomMediaController.setVideoName(video.getName());
-//        uri = Uri.parse(video.getPath());
-        uri = Uri.parse(path);
+        uri = Uri.parse(video.getPath());
+//        uri = Uri.parse(path);
         //设置视频播放地址
         mVideoView.setVideoURI(uri);
         mCustomMediaController.show(5000);

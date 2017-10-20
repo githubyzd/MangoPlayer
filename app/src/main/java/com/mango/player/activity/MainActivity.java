@@ -48,7 +48,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @BindView(R.id.main_container)
     FrameLayout mainContainer;
     private Button bt_login;
-
     private final int DEFAULT_FRATGMENT  = 3;
 
     private final int FRAGMENT_VIDEO_ONLINE = 100;
@@ -59,7 +58,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private final int FRAGMENT_VIDEO_ONLINE_DEBUG = FRAGMENT_WELFARE + 1;
     private int fragmentType = 0;
     private Unbinder unbinder;
-
+    private BaseFragment fragment;
+    private MusicNativeFragment musicNativeFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -167,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void switchFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        BaseFragment fragment = null;
+        fragment = null;
         switch (fragmentType) {
             case FRAGMENT_VIDEO_ONLINE:
                 fragment = new VideoOnlineFragment();
@@ -182,7 +182,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 fragment = new MusicOnlineFragment();
                 break;
             case FRAGMENT_MUSIC_NATIVE:
-                fragment = new MusicNativeFragment();
+                if (musicNativeFragment == null) {
+                    musicNativeFragment = new MusicNativeFragment();
+                }
+                fragment = musicNativeFragment;
                 break;
         }
         transaction.replace(R.id.main_container, fragment);
@@ -194,8 +197,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
+        }
+        if (fragmentType == FRAGMENT_MUSIC_NATIVE){
+            MusicNativeFragment nativeFragment = (MusicNativeFragment) fragment;
+            if (!nativeFragment.onBackPressed()){
+                super.onBackPressed();
+            }
         }
     }
 

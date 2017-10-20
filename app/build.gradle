@@ -27,6 +27,7 @@ dependencies {
     })
     compile project(':vitamio')
     compile files('libs/pinyin4j-2.5.0.jar')
+    compile files('libs/tbs_sdk_thirdapp_v3.5.0.1004_43500_sharewithdownload_withoutGame_obfs_20170801_113025.jar')
     compile 'com.android.support:appcompat-v7:23.2.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:design:23.2.0'
@@ -35,9 +36,10 @@ dependencies {
     compile 'com.android.support:support-vector-drawable:25.3.1'
     compile 'cn.yipianfengye.android:zxing-library:2.1'
     compile 'com.orhanobut:logger:1.15'
-    testCompile 'junit:junit:4.12'
-    apt 'com.jakewharton:butterknife-compiler:8.4.0'
-    compile files('libs/tbs_sdk_thirdapp_v3.5.0.1004_43500_sharewithdownload_withoutGame_obfs_20170801_113025.jar')
     compile 'com.google.code.gson:gson:2.4'
     compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile 'io.reactivex.rxjava2:rxjava:2.0.1'
+    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    testCompile 'junit:junit:4.12'
+    apt 'com.jakewharton:butterknife-compiler:8.4.0'
 }
