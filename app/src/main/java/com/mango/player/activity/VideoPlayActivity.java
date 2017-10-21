@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.mango.player.R;
 import com.mango.player.adapter.VideoNativePopuAdapter;
 import com.mango.player.bean.Video;
+import com.mango.player.bean.VideoBean;
 import com.mango.player.util.AppUtil;
 import com.mango.player.util.ApplicationConstant;
 import com.mango.player.util.CustomMediaController;
@@ -58,10 +59,12 @@ public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.
     private MediaPlayer mMediaPlayer;
     private int currentPosition;
     private Video video;
+    private VideoBean videoOnline;
     private List<Video> videos;
     private float playSpeed = 1.0f;
     private VideoNativePopuAdapter mPopuAdapter;
     private AlertDialog alertDialog;
+    private int video_type = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,20 +104,34 @@ public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.
         if (intent == null) {
             ExceptionUtil.illegaArgument("intent is null");
         }
-        Bundle bundle = intent.getBundleExtra(ApplicationConstant.VIDEO_DATA_KEY);
-        if (bundle == null) {
-            ExceptionUtil.illegaArgument("bundle is null");
+        int type = intent.getIntExtra(ApplicationConstant.VIDEO_TYPE, 0);
+        if (type == 0) {
+            ExceptionUtil.illegaArgument("video type is error");
         }
-        videos = bundle.getParcelableArrayList(ApplicationConstant.VIDEO_LIST_KEY);
-        currentPosition = bundle.getInt(ApplicationConstant.VIDEO_POSITION_KEY);
-        video = videos.get(currentPosition);
+        video_type = type;
+        if (video_type == ApplicationConstant.VIDEO_NATIVE_TYPE) {
+            Bundle bundle = intent.getBundleExtra(ApplicationConstant.VIDEO_DATA_KEY);
+            if (bundle == null) {
+                ExceptionUtil.illegaArgument("bundle is null");
+            }
+            videos = bundle.getParcelableArrayList(ApplicationConstant.VIDEO_LIST_KEY);
+            currentPosition = bundle.getInt(ApplicationConstant.VIDEO_POSITION_KEY);
+            video = videos.get(currentPosition);
+        } else if (video_type == ApplicationConstant.VIDEO_ONLINE_TYPE){
+            videoOnline = intent.getParcelableExtra(ApplicationConstant.VIDEO);
+        }
 
         toPlay();
     }
 
     private void toPlay() {
-        mCustomMediaController.setVideoName(video.getName());
-        uri = Uri.parse(video.getPath());
+        if (video_type == ApplicationConstant.VIDEO_NATIVE_TYPE){
+            uri = Uri.parse(video.getPath());
+            mCustomMediaController.setVideoName(video.getName());
+        }else {
+            uri = Uri.parse(videoOnline.getVideoUrl());
+            mCustomMediaController.setVideoName(videoOnline.getName());
+        }
 //        uri = Uri.parse(path);
         //设置视频播放地址
         mVideoView.setVideoURI(uri);
@@ -130,8 +147,10 @@ public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.
             public void onPrepared(MediaPlayer mediaPlayer) {
                 mMediaPlayer = mediaPlayer;
                 mediaPlayer.setPlaybackSpeed(playSpeed);
-                enablePre(true);
-                enableBeh(true);
+                if (video_type == ApplicationConstant.VIDEO_NATIVE_TYPE) {
+                    enablePre(true);
+                    enableBeh(true);
+                }
             }
         });
     }
@@ -313,7 +332,7 @@ public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.
     }
 
     private void showMore() {
-        View contentView = View.inflate(this,R.layout.video_native_more,null);
+        View contentView = View.inflate(this, R.layout.video_native_more, null);
         TextView setting = (TextView) contentView.findViewById(R.id.tv_setting);
         TextView helper = (TextView) contentView.findViewById(R.id.tv_helper);
         TextView quit = (TextView) contentView.findViewById(R.id.tv_quit);
@@ -323,7 +342,7 @@ public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.
         quit.setOnClickListener(this);
 
 
-        AlertDialog dialog = new AlertDialog.Builder(this,R.style.dialog2).create();
+        AlertDialog dialog = new AlertDialog.Builder(this, R.style.dialog2).create();
         dialog.setView(contentView);
         dialog.show();
         WindowManager m = getWindowManager();

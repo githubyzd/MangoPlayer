@@ -21,10 +21,9 @@ public abstract class BasePager {
     }
 
     public View getLayout() {
-        View view = View.inflate(mContext, R.layout.basepager, null);
-        fl_basepager_container = (FrameLayout) view.findViewById(R.id.fl_basepager_container);
+        fl_basepager_container = (FrameLayout) View.inflate(mContext, R.layout.basepager, null);
 
-        return view;
+        return fl_basepager_container;
     }
 
     /**

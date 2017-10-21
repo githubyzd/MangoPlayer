@@ -1,6 +1,7 @@
 package com.mango.player.activity;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.mango.player.bean.Music;
 import com.mango.player.bean.Video;
@@ -20,10 +21,12 @@ public class App extends Application {
     private static List<Video> videoList;
     public static ExecutorService executorService;
     public static Timer timer = new Timer();
+    public static Context mContext;
     @Override
     public void onCreate() {
         super.onCreate();
         executorService = Executors.newCachedThreadPool();
+        mContext = getApplicationContext();
         initData();
     }
 

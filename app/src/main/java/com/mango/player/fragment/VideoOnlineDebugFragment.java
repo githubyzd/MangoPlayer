@@ -1,15 +1,15 @@
 package com.mango.player.fragment;
 
-import android.graphics.Color;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.mango.player.R;
 import com.mango.player.base.BaseFragment;
+import com.mango.player.pager.VideoOnlinePager;
+import com.mango.player.util.ApplicationConstant;
 
 import butterknife.BindView;
 
@@ -23,7 +23,7 @@ public class VideoOnlineDebugFragment extends BaseFragment {
     TabLayout tablayout;
     @BindView(R.id.viewpager)
     ViewPager viewpager;
-    private String[] tabs = {"最新", "乱伦", "自拍", "偷拍", "SM", "自慰", "日韩", "欧美", "高清", "群交", "中文字幕", "口交肛交", "有码", "无码", "同性",};
+
 
     @Override
     public int getLayoutId() {
@@ -32,7 +32,7 @@ public class VideoOnlineDebugFragment extends BaseFragment {
 
     @Override
     public void initView() {
-        for (String tab : tabs) {
+        for (String tab : ApplicationConstant.tabs) {
             tablayout.addTab(tablayout.newTab().setText(tab));
         }
         PagerAdapter adapter = new MyPagerAdapter();
@@ -71,7 +71,7 @@ public class VideoOnlineDebugFragment extends BaseFragment {
 
         @Override
         public int getCount() {
-            return tabs.length;
+            return ApplicationConstant.tabs.length;
         }
 
         @Override
@@ -81,11 +81,12 @@ public class VideoOnlineDebugFragment extends BaseFragment {
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            TextView textView = new TextView(getContext());
-            textView.setText(getPageTitle(position));
-            textView.setTextColor(Color.rgb(0,0,0));
-            container.addView(textView);
-            return textView;
+            String tab = ApplicationConstant.tabs[position];
+            VideoOnlinePager  videoOnlinePager = new VideoOnlinePager(getActivity(),tab);
+            View view = videoOnlinePager.rootView;
+            videoOnlinePager.initView();
+            container.addView(view);
+            return view;
         }
 
         @Override
@@ -95,7 +96,7 @@ public class VideoOnlineDebugFragment extends BaseFragment {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return tabs[position];
+            return ApplicationConstant.tabs[position];
         }
     }
 }

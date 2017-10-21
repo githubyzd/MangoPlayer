@@ -48,7 +48,6 @@ public class ApplicationConstant {
     public static final int ACTIVITY_REQUEST_GET_PHOTO = ACTIVITY_REQUEST_BIND_CARD + 1;
 
 
-
     //音乐播放相关常量
     public static final int WHAT_REGIST_MSGER_MAINACTIVITY = 11;
     public static final int WHAT_REGIST_MSGER_LIST_ACTIVITY = 12;
@@ -65,5 +64,14 @@ public class ApplicationConstant {
     public static final String CURRENT_MUSIC = "current_music";
     public static final String CURRENT_MUSIC_LIST = "current_music_list";
 
+    //视频类型常量
+    public static final int VIDEO_NATIVE_TYPE = 1;
+    public static final int VIDEO_ONLINE_TYPE = 2;
+    public static final String VIDEO_TYPE = "video_type";
+    public static final String VIDEO_ONLINE = "video_online";
+    public static final String VIDEO = "video";
+
+
+    public static String[] tabs = {"最新", "乱伦", "自拍偷拍","SM", "自慰", "日韩", "欧美", "高清", "群交", "中文字幕", "口交肛交", "有码", "无码", "同性"};
 
 }

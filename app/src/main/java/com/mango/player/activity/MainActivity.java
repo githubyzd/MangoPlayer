@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @BindView(R.id.main_container)
     FrameLayout mainContainer;
     private Button bt_login;
+
     private final int DEFAULT_FRATGMENT  = 3;
 
     private final int FRAGMENT_VIDEO_ONLINE = 100;
@@ -203,6 +204,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if (!nativeFragment.onBackPressed()){
                 super.onBackPressed();
             }
+        }else {
+            super.onBackPressed();
         }
     }
 

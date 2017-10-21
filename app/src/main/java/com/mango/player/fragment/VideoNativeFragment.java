@@ -131,6 +131,7 @@ public class VideoNativeFragment extends BaseFragment implements VideoNativeAdap
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList(ApplicationConstant.VIDEO_LIST_KEY, videos);
         bundle.putInt(ApplicationConstant.VIDEO_POSITION_KEY, position);
+        intent.putExtra(ApplicationConstant.VIDEO_TYPE,ApplicationConstant.VIDEO_NATIVE_TYPE);
         intent.putExtra(ApplicationConstant.VIDEO_DATA_KEY, bundle);
         getContext().startActivity(intent);
     }

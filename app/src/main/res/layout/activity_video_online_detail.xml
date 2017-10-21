@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#3C7B96"
+    tools:context="com.mango.player.activity.VideoOnlineDetailActivity">
+
+    <ImageView
+        android:id="@+id/thumbnail"
+        android:layout_width="match_parent"
+        android:scaleType="centerCrop"
+        android:layout_height="@dimen/dp_200dp" />
+
+    <Button
+        android:id="@+id/play"
+        android:layout_width="match_parent"
+        android:text="立即播放"
+        android:layout_margin="@dimen/margin_8dp"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_8dp"
+        android:text="name"
+        android:textSize="@dimen/sp_20sp" />
+
+    <TextView
+        android:id="@+id/time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_8dp"
+        android:text="time"
+        android:textSize="@dimen/sp_18sp" />
+
+
+</LinearLayout>
