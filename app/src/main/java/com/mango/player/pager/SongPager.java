@@ -17,7 +17,6 @@ import com.mango.player.util.LogUtil;
 import com.mango.player.util.MusicController;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -32,7 +31,7 @@ public class SongPager extends BasePager implements View.OnClickListener, MusicS
     private ImageView edit;
     private ImageView rank;
     private RecyclerView listRecyclerview;
-    private List<Music> musics = new ArrayList<>();
+    private ArrayList<Music> musics = new ArrayList<>();
     private MusicSongListAdapter adapter;
     private int clickPosition;
 
@@ -88,7 +87,6 @@ public class SongPager extends BasePager implements View.OnClickListener, MusicS
     @Override
     public void initData() {
         super.initData();
-        musics = new ArrayList<>();
         if (App.musicList != null) {
             musics = App.musicList;
         }else {

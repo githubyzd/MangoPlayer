@@ -54,7 +54,7 @@ public class FileManager {
      *
      * @return
      */
-    public static List<Music> getMusics(Context context) {
+    public static ArrayList<Music> getMusics(Context context) {
         ArrayList<Music> musics = new ArrayList<>();
         Cursor c = null;
         try {

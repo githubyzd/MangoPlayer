@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import com.mango.player.R;
 import com.mango.player.base.BaseFragment;
 import com.mango.player.base.BasePager;
-import com.mango.player.pager.GenrePager;
 import com.mango.player.pager.SingerPager;
 import com.mango.player.pager.SongPager;
 import com.mango.player.pager.SpecialPager;
@@ -28,7 +27,7 @@ public class MusciNativeLibraryFragment extends BaseFragment {
     TabLayout tablayout;
     @BindView(R.id.viewpager)
     ViewPager viewpager;
-    private String[] tabs = {"歌曲", "歌手", "专辑", "流派"};
+    private String[] tabs = {"歌曲", "歌手", "专辑"};
     private List<BasePager> pagers;
     @Override
     public int getLayoutId() {
@@ -55,7 +54,6 @@ public class MusciNativeLibraryFragment extends BaseFragment {
         pagers.add(new SongPager(getActivity()));
         pagers.add(new SingerPager(getActivity()));
         pagers.add(new SpecialPager(getActivity()));
-        pagers.add(new GenrePager(getActivity()));
     }
 
     private class MyOnTabSelectedListener implements TabLayout.OnTabSelectedListener {

@@ -31,14 +31,14 @@
             android:id="@+id/edit"
             android:layout_width="@dimen/dp_50dp"
             android:layout_height="match_parent"
-            android:padding="@dimen/margin_12dp"
+            android:padding="@dimen/margin_14dp"
             android:src="@drawable/edit" />
 
         <ImageView
             android:id="@+id/rank"
             android:layout_width="@dimen/dp_50dp"
             android:layout_height="match_parent"
-            android:padding="@dimen/margin_6dp"
+            android:padding="@dimen/margin_8dp"
             android:src="@drawable/rank" />
     </LinearLayout>
     <View

@@ -70,6 +70,7 @@
             android:id="@+id/music_next"
             android:layout_width="@dimen/dp_50dp"
             android:layout_height="match_parent"
+            android:background="?android:attr/selectableItemBackground"
             android:paddingBottom="@dimen/margin_16dp"
             android:paddingLeft="-16dp"
             android:paddingTop="@dimen/margin_16dp"

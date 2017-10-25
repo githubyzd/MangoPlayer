@@ -2,10 +2,12 @@ package com.mango.player.bean;
 
 
 import android.graphics.Bitmap;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.mango.player.util.PinyinUtils;
 
-public class Music implements Comparable<Music> {
+public class Music implements Comparable<Music>,Parcelable {
     /**
      * 歌曲名
      */
@@ -131,4 +133,44 @@ public class Music implements Comparable<Music> {
                 ", pinyin='" + pinyin + '\'' +
                 '}';
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.name);
+        dest.writeString(this.path);
+        dest.writeString(this.album);
+        dest.writeString(this.artist);
+        dest.writeLong(this.size);
+        dest.writeInt(this.duration);
+        dest.writeParcelable(this.thumbnail, flags);
+        dest.writeString(this.pinyin);
+    }
+
+    protected Music(Parcel in) {
+        this.name = in.readString();
+        this.path = in.readString();
+        this.album = in.readString();
+        this.artist = in.readString();
+        this.size = in.readLong();
+        this.duration = in.readInt();
+        this.thumbnail = in.readParcelable(Bitmap.class.getClassLoader());
+        this.pinyin = in.readString();
+    }
+
+    public static final Parcelable.Creator<Music> CREATOR = new Parcelable.Creator<Music>() {
+        @Override
+        public Music createFromParcel(Parcel source) {
+            return new Music(source);
+        }
+
+        @Override
+        public Music[] newArray(int size) {
+            return new Music[size];
+        }
+    };
 }

@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import com.mango.player.R;
 import com.mango.player.bean.Music;
 import com.mango.player.holder.MusicNativeListHolder;
-import com.mango.player.util.LogUtil;
 
 import java.util.List;
 
@@ -49,7 +48,6 @@ public class MusicSongListAdapter extends RecyclerView.Adapter<MusicNativeListHo
 
     @Override
     public int getItemCount() {
-        LogUtil.logByD("test");
         return mMusic.size();
     }
 

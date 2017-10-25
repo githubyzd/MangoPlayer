@@ -7,6 +7,7 @@ import com.mango.player.bean.Music;
 import com.mango.player.bean.Video;
 import com.mango.player.util.FileManager;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.concurrent.ExecutorService;
@@ -17,11 +18,12 @@ import java.util.concurrent.Executors;
  */
 
 public class App extends Application {
-    public static List<Music> musicList;
+    public static ArrayList<Music> musicList;
     private static List<Video> videoList;
     public static ExecutorService executorService;
     public static Timer timer = new Timer();
     public static Context mContext;
+
     @Override
     public void onCreate() {
         super.onCreate();

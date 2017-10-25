@@ -25,7 +25,7 @@ import com.mango.player.activity.MusicService;
 import com.mango.player.adapter.MusicListPopuAdapter;
 import com.mango.player.bean.Music;
 
-import java.util.List;
+import java.util.ArrayList;
 import java.util.TimerTask;
 
 import static com.mango.player.R.id.recyclerview;
@@ -38,7 +38,7 @@ public class MusicController implements MusicService.OnCompletionListenner, View
     private static MusicController instance;
     private static View mRooView;
     private static ProgressBar progress;
-    private static List<Music> mMusics;
+    private static ArrayList<Music> mMusics;
     private ImageView music_img, music_play, music_next, music_list;
     private TextView music_name, music_author;
     private int currentIndex;
@@ -99,7 +99,7 @@ public class MusicController implements MusicService.OnCompletionListenner, View
         music_list.setOnClickListener(this);
     }
 
-    public void initData(List<Music> musics) {
+    public void initData(ArrayList<Music> musics) {
         mMusics = musics;
     }
 
@@ -156,11 +156,20 @@ public class MusicController implements MusicService.OnCompletionListenner, View
         setProgress();
     }
 
-    private void playNext() {
+    public void playNext() {
         if (currentIndex == mMusics.size() - 1) {
             currentIndex = 0;
         } else {
             currentIndex++;
+        }
+        playMusic(currentIndex);
+    }
+
+    public void playPre() {
+        if (currentIndex == 0) {
+            currentIndex = mMusics.size() - 1;
+        } else {
+            currentIndex--;
         }
         playMusic(currentIndex);
     }
@@ -174,10 +183,10 @@ public class MusicController implements MusicService.OnCompletionListenner, View
                 playMusic(currentIndex);
                 break;
             case R.id.delete:
-                if (position == currentIndex){
+                if (position == currentIndex) {
                     mMusics.remove(position);
                     playMusic(currentIndex);
-                }else {
+                } else {
                     mMusics.remove(position);
                     currentIndex = mMusics.indexOf(music);
                 }
@@ -192,8 +201,10 @@ public class MusicController implements MusicService.OnCompletionListenner, View
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.music_play_controller:
-                // TODO: 2017/10/20 0020  
-                mContext.startActivity(new Intent(mContext, MusicPlayActivity.class));
+                // TODO: 2017/10/20 0020
+                Intent intent = new Intent(mContext, MusicPlayActivity.class);
+                intent.putExtra(ApplicationConstant.MUSIC_INDEX, currentIndex);
+                mContext.startActivity(intent);
                 break;
             case R.id.music_play:
                 if (isPlaying()) {
@@ -289,6 +300,14 @@ public class MusicController implements MusicService.OnCompletionListenner, View
         if (mMusicService != null)
             return mMusicService.isPlaying();
         return false;
+    }
+
+    public int getCurrentPosition(){
+        return mMusicService.getCurrentPosition();
+    }
+
+    public int getDuration(){
+        return mMusicService.getDuration();
     }
 
     private class MyConnection implements ServiceConnection {
