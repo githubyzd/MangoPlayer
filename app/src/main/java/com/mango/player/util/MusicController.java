@@ -46,6 +46,7 @@ public class MusicController implements MusicService.OnCompletionListenner, View
     private MusicService mMusicService;
     private Music music;
     public static Activity mContext;
+    private OnPreparedListener preparedListener;
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -153,6 +154,9 @@ public class MusicController implements MusicService.OnCompletionListenner, View
 
     @Override
     public void onPrepared(MediaPlayer mp) {
+        if (preparedListener != null) {
+            preparedListener.onPrepared();
+        }
         setProgress();
     }
 
@@ -334,4 +338,11 @@ public class MusicController implements MusicService.OnCompletionListenner, View
         music = mMusics.get(currentIndex);
     }
 
+    public void setOnPreparedListener(OnPreparedListener listener){
+        this.preparedListener = listener;
+    }
+
+    public interface OnPreparedListener{
+        void onPrepared();
+    }
 }

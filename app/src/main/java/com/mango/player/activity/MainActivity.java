@@ -35,6 +35,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+import static com.mango.player.activity.App.mainActicity;
+
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
     @BindView(R.id.toolbar)
@@ -83,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //使用此种方式代替在布局中使用headerlayout引起的bug
         View view = navView.inflateHeaderView(R.layout.nav_header_main);
         bt_login = (Button) view.findViewById(R.id.bt_login);
+        mainActicity = this;
     }
 
     private void initListener() {

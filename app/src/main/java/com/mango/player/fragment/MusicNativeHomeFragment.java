@@ -52,6 +52,7 @@ public class MusicNativeHomeFragment extends BaseFragment {
         scrollView.post(new Runnable() {
             @Override
             public void run() {
+                if (scrollView != null)
                 scrollView.fullScroll(ScrollView.FOCUS_UP);
             }
         });

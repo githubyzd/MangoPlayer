@@ -4,6 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.Drawable;
 import android.support.design.widget.Snackbar;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -125,6 +129,28 @@ public class AppUtil {
         return sb.toString();
     }
 
+    /**
+     * 时长转换
+     */
+    public static String timeLenghtFormast(int time) {
+        StringBuffer sb = new StringBuffer();
+        time = time / 1000;
+        int h = time / (60 * 60);
+        int m = (time - h * 3600) / 60;
+        int s = (time - h * 3600) % 60;
+        if (h > 0) {
+            sb.append(h).append(":");
+        }
+        sb.append(m).append(":");
+        if (s < 10) {
+            sb.append("0").append(s);
+        }else {
+            sb.append(s);
+        }
+
+        return sb.toString();
+    }
+
     public static float changePlaySpeed(float playSpped, boolean isUp) {
         if (playSpped == 0.5f) {
             playSpped = isUp ? 0.6f : 0.5f;
@@ -221,6 +247,20 @@ public class AppUtil {
             e.printStackTrace();
         }
         return stringBuilder.toString();
+    }
+
+    public static Bitmap drawableToBitmap(Drawable drawable) {
+
+        Bitmap bitmap = Bitmap.createBitmap(
+                drawable.getIntrinsicWidth(),
+                drawable.getIntrinsicHeight(),
+                drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888
+                        : Bitmap.Config.RGB_565);
+        Canvas canvas = new Canvas(bitmap);
+        //canvas.setBitmap(bitmap);
+        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        drawable.draw(canvas);
+        return bitmap;
     }
 
 }

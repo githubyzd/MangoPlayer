@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background4"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_50dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/margin_6dp"
+            android:gravity="center_vertical"
+            android:text="正在播放"
+            android:textColor="@color/snow"
+            android:textSize="@dimen/sp_20sp" />
+
+        <TextView
+            android:id="@+id/index"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text=" (22/171)"
+            android:textColor="@color/gray_88"
+            android:textSize="@dimen/sp_18sp" />
+
+        <ImageView
+            android:id="@+id/delete"
+            android:layout_width="@dimen/dp_50dp"
+            android:layout_height="match_parent"
+            android:padding="@dimen/margin_14dp"
+            android:src="@drawable/delete3" />
+
+        <ImageView
+            android:id="@+id/save"
+            android:layout_width="@dimen/dp_50dp"
+            android:layout_height="match_parent"
+            android:padding="@dimen/margin_14dp"
+            android:src="@drawable/save" />
+
+        <ImageView
+            android:id="@+id/close"
+            android:layout_width="@dimen/dp_50dp"
+            android:layout_height="match_parent"
+            android:padding="@dimen/margin_14dp"
+            android:src="@drawable/arrow_up" />
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:background="#89BFDA"
+        android:layout_height="1px"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+</LinearLayout>

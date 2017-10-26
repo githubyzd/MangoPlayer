@@ -82,6 +82,7 @@ public class PopupHelper {
 
     /**
      * 指定位置弹窗
+     *
      * @return
      */
     public PopupHelper showAtLocation() {
@@ -121,6 +122,13 @@ public class PopupHelper {
                 }
             }
         });
+    }
+
+    public boolean isShowing() {
+        if (popupWindow == null) {
+            return false;
+        }
+        return popupWindow.isShowing();
     }
 
     private void setShadow(float shadow) {

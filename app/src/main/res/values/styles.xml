@@ -17,6 +17,10 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="anim_top">
+        <item name="android:windowEnterAnimation">@anim/menu_up_in</item>
+        <item name="android:windowExitAnimation">@anim/menu_up_out</item>
+    </style>
     <style name="anim_bottom">
         <item name="android:windowEnterAnimation">@anim/menu_bottom_in</item>
         <item name="android:windowExitAnimation">@anim/menu_bottom_out</item>

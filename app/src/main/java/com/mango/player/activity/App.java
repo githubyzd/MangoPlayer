@@ -1,5 +1,6 @@
 package com.mango.player.activity;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 
@@ -23,7 +24,7 @@ public class App extends Application {
     public static ExecutorService executorService;
     public static Timer timer = new Timer();
     public static Context mContext;
-
+    public static Activity mainActicity;
     @Override
     public void onCreate() {
         super.onCreate();
