@@ -39,7 +39,7 @@ import static com.mango.player.R.id.recyclerview;
 import static com.mango.player.activity.App.mainActicity;
 import static com.mango.player.util.MusicController.mContext;
 
-public class MusicPlayActivity extends AppCompatActivity implements View.OnClickListener, MusicDetailListPopuAdapter.OnItemClickListener, MusicController.OnPreparedListener, SeekBar.OnSeekBarChangeListener, ViewPager.OnPageChangeListener {
+public class MusicPlayActivity extends AppCompatActivity implements View.OnClickListener, MusicDetailListPopuAdapter.OnItemClickListener, MusicController.OnPreparedListener, SeekBar.OnSeekBarChangeListener, ViewPager.OnPageChangeListener, MusicService.OnCompletionListenner {
 
     @BindView(R.id.name)
     TextView name;
@@ -124,6 +124,7 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
         } else {
             musicController.setOnPreparedListener(this);
         }
+        musicController.addOnCompletionListenner(this);
     }
 
     private void initData() {
@@ -334,5 +335,10 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
     @Override
     public void onPageScrollStateChanged(int state) {
 
+    }
+
+    @Override
+    public void onCompletion() {
+        playNext();
     }
 }

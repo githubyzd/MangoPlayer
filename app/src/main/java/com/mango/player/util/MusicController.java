@@ -112,7 +112,7 @@ public class MusicController implements MusicService.OnCompletionListenner, View
             conn = new MyConnection();
             mContext.bindService(intent, conn, Service.BIND_AUTO_CREATE);
         } else {
-            mMusicService.setOnCompletionListenner(this);
+            addOnCompletionListenner(this);
             mMusicService.playMusic(music.getPath());
             mMusicService.setOnPreparedListener(this);
         }
@@ -306,11 +306,11 @@ public class MusicController implements MusicService.OnCompletionListenner, View
         return false;
     }
 
-    public int getCurrentPosition(){
+    public int getCurrentPosition() {
         return mMusicService.getCurrentPosition();
     }
 
-    public int getDuration(){
+    public int getDuration() {
         return mMusicService.getDuration();
     }
 
@@ -321,7 +321,7 @@ public class MusicController implements MusicService.OnCompletionListenner, View
             LogUtil.logByD("music service 绑定成功");
             MusicService.MusiceBinder binder = (MusicService.MusiceBinder) service;
             mMusicService = binder.getService();
-            mMusicService.setOnCompletionListenner(MusicController.this);
+            addOnCompletionListenner(MusicController.this);
             mMusicService.setOnPreparedListener(MusicController.this);
             mMusicService.playMusic(music.getPath());
             updateView();
@@ -338,11 +338,15 @@ public class MusicController implements MusicService.OnCompletionListenner, View
         music = mMusics.get(currentIndex);
     }
 
-    public void setOnPreparedListener(OnPreparedListener listener){
+    public void setOnPreparedListener(OnPreparedListener listener) {
         this.preparedListener = listener;
     }
 
-    public interface OnPreparedListener{
+    public interface OnPreparedListener {
         void onPrepared();
+    }
+
+    public void addOnCompletionListenner(MusicService.OnCompletionListenner listenner) {
+        mMusicService.addOnCompletionListenner(listenner);
     }
 }
