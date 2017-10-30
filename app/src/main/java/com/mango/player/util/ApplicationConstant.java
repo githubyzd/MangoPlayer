@@ -51,20 +51,12 @@ public class ApplicationConstant {
 
 
     //音乐播放相关常量
-    public static final int WHAT_REGIST_MSGER_MAINACTIVITY = 11;
-    public static final int WHAT_REGIST_MSGER_LIST_ACTIVITY = 12;
-    public static final int WHAT_UN_REGIST_MSGER_LIST_ACTIVITY = 13;
-    public static final int WHAT_PLAY_PLAY_BTN = 20;
-    public static final int WHAT_PLAY_NEXT_BTN = 21;
-    public static final int WHAT_PLAY_PRE_BTN = 22;
-    public static final int WHAT_PLAY_DURATION = 23;
-    public static final int WHAT_CHANGE_PROGRESS = 24;
-    public static final int WHAT_MUSIC_SELECTED = 25;
-    public static final int WHAT_PLAYED = 26;
-    public static final String TAG_SERVICE = "service";
-    public static final String IS_PLAYING = "isPlaying";
-    public static final String CURRENT_MUSIC = "current_music";
-    public static final String CURRENT_MUSIC_LIST = "current_music_list";
+    public static final int PLAY_MUSIC = 101;
+    public static final int PLAY_NEXT = PLAY_MUSIC + 1;
+    public static final int PLAY_PRE = PLAY_NEXT + 1;
+    public static final int PLAY_STOP = PLAY_PRE + 1;
+    public static final int PLAY_INDEX = PLAY_STOP + 1;
+    public static final int PALY_SEEK = PLAY_INDEX + 1;
 
     //视频类型常量
     public static final int VIDEO_NATIVE_TYPE = 1;
@@ -73,7 +65,5 @@ public class ApplicationConstant {
     public static final String VIDEO_ONLINE = "video_online";
     public static final String VIDEO = "video";
 
-
-    public static String[] tabs = {"最新", "乱伦", "自拍偷拍","SM", "自慰", "日韩", "欧美", "高清", "群交", "中文字幕", "口交肛交", "有码", "无码", "同性"};
-
+    public static String [] tabs = {"tab1","tab2"};
 }

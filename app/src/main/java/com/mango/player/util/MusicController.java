@@ -24,11 +24,15 @@ import com.mango.player.activity.MusicPlayActivity;
 import com.mango.player.activity.MusicService;
 import com.mango.player.adapter.MusicListPopuAdapter;
 import com.mango.player.bean.Music;
+import com.mango.player.bean.MusicServiceBean;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.TimerTask;
 
 import static com.mango.player.R.id.recyclerview;
+import static com.mango.player.util.ApplicationConstant.PLAY_MUSIC;
 
 /**
  * Created by yzd on 2017/10/19 0019.
@@ -47,6 +51,7 @@ public class MusicController implements MusicService.OnCompletionListenner, View
     private Music music;
     public static Activity mContext;
     private OnPreparedListener preparedListener;
+    private MusicServiceBean serviceBean = new MusicServiceBean();
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -113,7 +118,7 @@ public class MusicController implements MusicService.OnCompletionListenner, View
             mContext.bindService(intent, conn, Service.BIND_AUTO_CREATE);
         } else {
             addOnCompletionListenner(this);
-            mMusicService.playMusic(music.getPath());
+            EventBus.getDefault().post(music.getPath());
             mMusicService.setOnPreparedListener(this);
         }
         updateView();
@@ -169,15 +174,6 @@ public class MusicController implements MusicService.OnCompletionListenner, View
         playMusic(currentIndex);
     }
 
-    public void playPre() {
-        if (currentIndex == 0) {
-            currentIndex = mMusics.size() - 1;
-        } else {
-            currentIndex--;
-        }
-        playMusic(currentIndex);
-    }
-
     @Override
     public void onItemClick(View view, int position) {
         switch (view.getId()) {
@@ -211,14 +207,12 @@ public class MusicController implements MusicService.OnCompletionListenner, View
                 mContext.startActivity(intent);
                 break;
             case R.id.music_play:
-                if (isPlaying()) {
-                    pause();
-                } else {
-                    play();
-                }
+                serviceBean.setPlayMode(PLAY_MUSIC);
+                EventBus.getDefault().post(serviceBean);
                 break;
             case R.id.music_next:
-                playNext();
+                serviceBean.setPlayMode(PLAY_MUSIC);
+                EventBus.getDefault().post(serviceBean);
                 break;
             case R.id.music_list:
                 showList();

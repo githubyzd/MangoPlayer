@@ -12,10 +12,25 @@ import android.os.Build;
 import android.os.IBinder;
 
 import com.mango.player.R;
+import com.mango.player.bean.Music;
+import com.mango.player.bean.MusicServiceBean;
+import com.mango.player.util.ExceptionUtil;
+import com.mango.player.util.LogUtil;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.mango.player.util.ApplicationConstant.PALY_SEEK;
+import static com.mango.player.util.ApplicationConstant.PLAY_INDEX;
+import static com.mango.player.util.ApplicationConstant.PLAY_MUSIC;
+import static com.mango.player.util.ApplicationConstant.PLAY_NEXT;
+import static com.mango.player.util.ApplicationConstant.PLAY_PRE;
+import static com.mango.player.util.ApplicationConstant.PLAY_STOP;
 
 public class MusicService extends Service {
     private MusiceBinder binder = new MusiceBinder();
@@ -33,7 +48,6 @@ public class MusicService extends Service {
     //播放状态变量
     private int play_state = STATE_STOP;
 
-
     //循环模式变量
     private int play_mode = MODE_LOOP_ALL;
     /**
@@ -43,11 +57,16 @@ public class MusicService extends Service {
     public static final int MODE_LOOP_ONE = 1;
     public static final int MODE_RADOM = 2;
     private boolean isFirstPlay = true;
+
+    private List<Music> musics = new ArrayList<>();
+    private Music music = null;
+    private int currentIndex = -1;
+
     @Override
     public void onCreate() {
         super.onCreate();
-        mMediaPlayer = new MediaPlayer();
-        mMediaPlayer.setOnCompletionListener(new MyCompletionListener());
+        EventBus.getDefault().register(this);
+        initMediaPlayer();
         simpleNotification();
     }
 
@@ -60,6 +79,14 @@ public class MusicService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         return START_STICKY;
+    }
+
+    /**
+     * 初始化播放器
+     */
+    private void initMediaPlayer() {
+        mMediaPlayer = new MediaPlayer();
+        mMediaPlayer.setOnCompletionListener(new MyCompletionListener());
     }
 
     /**
@@ -110,6 +137,7 @@ public class MusicService extends Service {
     public void onDestroy() {
         super.onDestroy();
         mMediaPlayer.release();
+        EventBus.getDefault().unregister(this);
     }
 
 
@@ -132,7 +160,9 @@ public class MusicService extends Service {
         mListenner.add(listenner);
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true, priority = 100)
     public void playMusic(String path) {
+        LogUtil.logByD("playMusic" + path);
         mMediaPlayer.reset();
         try {
             mMediaPlayer.setDataSource(path);
@@ -141,6 +171,79 @@ public class MusicService extends Service {
             e.printStackTrace();
         }
         mMediaPlayer.start();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true, priority = 100)
+    public void playWithMode(MusicServiceBean bean) {
+        LogUtil.logByD("playWithMode" + bean.toString());
+        int playMode = bean.getPlayMode();
+        switch (playMode) {
+            case PLAY_MUSIC:
+                playMusic();
+                break;
+            case PLAY_NEXT:
+                playNext();
+                break;
+            case PLAY_PRE:
+                playPreview();
+                break;
+            case PLAY_STOP:
+                mMediaPlayer.stop();
+                break;
+            case PLAY_INDEX:
+                playWithIndex(bean.getIndex());
+                break;
+            case PALY_SEEK:
+                seekTo(bean.getMsec());
+                break;
+        }
+    }
+
+    private void playWithIndex(int index) {
+        if (index >= musics.size()) {
+            ExceptionUtil.illegaArgument("index is outsize if list");
+        }
+        currentIndex = index;
+        music = musics.get(currentIndex);
+        playMusic(music.getPath());
+    }
+
+    private void playMusic() {
+        if (mMediaPlayer.isPlaying()) {
+            mMediaPlayer.start();
+        } else {
+            mMediaPlayer.pause();
+        }
+    }
+
+    private void playNext() {
+        if (currentIndex == musics.size() - 1) {
+            currentIndex = 0;
+        } else {
+            currentIndex++;
+        }
+        music = musics.get(currentIndex);
+        playMusic(music.getPath());
+    }
+
+    private void playPreview() {
+        if (currentIndex == 0) {
+            currentIndex = musics.size() - 1;
+        } else {
+            currentIndex--;
+        }
+        music = musics.get(currentIndex);
+        playMusic(music.getPath());
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true, priority = 100)
+    public void setMusic(List<Music> musics) {
+        this.musics = musics;
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true, priority = 100)
+    public void setIndex(int index){
+
     }
 
     public void conPlay() {

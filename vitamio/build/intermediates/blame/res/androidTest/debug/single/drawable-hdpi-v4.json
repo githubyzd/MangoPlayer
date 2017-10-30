@@ -1,9 +1,5 @@
 [
     {
-        "merged": "C:\\Users\\admin\\Desktop\\MangoPlayer\\vitamio\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-hdpi-v4\\ic_launcher.png",
-        "source": "C:\\Users\\admin\\Desktop\\MangoPlayer\\vitamio\\build\\intermediates\\bundles\\debug\\res\\drawable-hdpi-v4\\ic_launcher.png"
-    },
-    {
         "merged": "D:\\Demo\\MangoPlayer\\vitamio\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-hdpi-v4\\ic_launcher.png",
         "source": "D:\\Demo\\MangoPlayer\\vitamio\\build\\intermediates\\bundles\\debug\\res\\drawable-hdpi-v4\\ic_launcher.png"
     }

@@ -1,5 +1,6 @@
 package com.mango.player.fragment;
 
+import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.widget.FrameLayout;
@@ -9,12 +10,15 @@ import android.widget.TextView;
 
 import com.mango.player.R;
 import com.mango.player.activity.App;
+import com.mango.player.activity.MusicService;
 import com.mango.player.base.BaseFragment;
 import com.mango.player.util.ACache;
 import com.mango.player.util.ApplicationConstant;
 import com.mango.player.util.ExceptionUtil;
 import com.mango.player.util.LogUtil;
 import com.mango.player.util.MusicController;
+
+import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 import io.reactivex.Observable;
@@ -49,6 +53,8 @@ public class MusicNativeFragment extends BaseFragment {
     LinearLayout llHome;
 
     private BaseFragment baseFragment;
+    private String index;
+
     @Override
     public int getLayoutId() {
         return R.layout.fragment_music_native;
@@ -62,6 +68,16 @@ public class MusicNativeFragment extends BaseFragment {
         switchFragment(fragment);
     }
 
+    @Override
+    public void initData() {
+        super.initData();
+        Intent intent = new Intent(getActivity(), MusicService.class);
+        getActivity().startService(intent);
+        index = ACache.getInstance(getContext()).getAsString(ApplicationConstant.MUSIC_INDEX);
+
+        EventBus.getDefault().postSticky(index);
+    }
+
     private void initController() {
         final MusicController controller = MusicController.getInstance(getActivity());
         controller.initView(musicPlayController);
@@ -69,10 +85,9 @@ public class MusicNativeFragment extends BaseFragment {
         Observable<Observer> observable = Observable.create(new ObservableOnSubscribe<Observer>() {
             @Override
             public void subscribe(ObservableEmitter<Observer> emitter) throws Exception {
-                while (true){
+                while (true) {
                     if (App.musicList != null) {
                         controller.initData(App.musicList);
-                        String index = ACache.getInstance(getContext()).getAsString(ApplicationConstant.MUSIC_INDEX);
                         controller.setCurrentIndex(Integer.parseInt(index));
                         emitter.onComplete();
                         break;
@@ -116,10 +131,10 @@ public class MusicNativeFragment extends BaseFragment {
         transaction.commit();
     }
 
-    public boolean onBackPressed(){
-        if (baseFragment instanceof MusicNativeHomeFragment){
+    public boolean onBackPressed() {
+        if (baseFragment instanceof MusicNativeHomeFragment) {
             return false;
-        }else{
+        } else {
             initView();
             return true;
         }

@@ -30,6 +30,7 @@ public class VideoOnlineDebugFragment extends BaseFragment {
         return R.layout.fragment_video_online_debug;
     }
 
+    private String [] tabs = {};
     @Override
     public void initView() {
         for (String tab : ApplicationConstant.tabs) {
