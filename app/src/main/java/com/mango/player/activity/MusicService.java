@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.Build;
@@ -90,6 +89,7 @@ public class MusicService extends Service {
         return START_STICKY;
     }
 
+
     /**
      * 初始化播放器
      */
@@ -162,6 +162,7 @@ public class MusicService extends Service {
         super.onDestroy();
         mMediaPlayer.release();
         EventBus.getDefault().unregister(this);
+        unregisterReceiver(headsetPlugReceiver);
     }
 
 
@@ -315,18 +316,22 @@ public class MusicService extends Service {
      * 注册监听耳机的插拔
      */
     private void registerHeadsetPlugReceiver() {
-        IntentFilter intentFilter = new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
+        IntentFilter intentFilter = new IntentFilter("android.intent.action.HEADSET_PLUG");
         registerReceiver(headsetPlugReceiver, intentFilter);
     }
     private BroadcastReceiver headsetPlugReceiver = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(action)) {
-                mMediaPlayer.pause();
-                updateView();
+            if(intent.hasExtra("state")){
+                if(intent.getIntExtra("state", 0)==0){
+                    mMediaPlayer.pause();
+                }
+                else if(intent.getIntExtra("state", 0)==1){
+                    mMediaPlayer.start();
+                }
             }
+            updateView();
         }
 
     };
