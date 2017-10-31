@@ -1,11 +1,16 @@
 package com.mango.player.activity;
 
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.Build;
@@ -17,6 +22,7 @@ import com.mango.player.bean.MusicServiceBean;
 import com.mango.player.bean.PlayMode;
 import com.mango.player.bean.UpdateViewBean;
 import com.mango.player.util.ACache;
+import com.mango.player.util.AppUtil;
 import com.mango.player.util.ApplicationConstant;
 import com.mango.player.util.ExceptionUtil;
 import com.mango.player.util.LogUtil;
@@ -70,6 +76,7 @@ public class MusicService extends Service {
         EventBus.getDefault().register(this);
         initMediaPlayer();
         simpleNotification();
+        registerHeadsetPlugReceiver();
     }
 
     public class MusiceBinder extends Binder {
@@ -97,14 +104,14 @@ public class MusicService extends Service {
     private void simpleNotification() {
         mBuilder = new Notification.Builder(this);
         //状态栏提示
-        mBuilder.setTicker("RaymondCQK 正在运行");
+        mBuilder.setTicker("MangoPlayer 正在运行");
         //下拉通知栏标题
         mBuilder.setContentTitle("暂无歌曲");
         //下拉通知正文
-        mBuilder.setContentText("...");
+        mBuilder.setContentText("");
         //内容摘要（低版本不一定显示）
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            mBuilder.setSubText("...");
+            mBuilder.setSubText("");
         }
         //状态栏小图标
         mBuilder.setSmallIcon(R.mipmap.blueball_72px);
@@ -123,6 +130,21 @@ public class MusicService extends Service {
         //        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         //        manager.notify(1,notification);//参数1：样式
         startForeground(1, mNotification);
+    }
+
+    private void updateNotification() {
+        mBuilder.setContentTitle(music.getName());
+        mBuilder.setContentText(music.getArtist());
+        Bitmap bitmap = music.getThumbnail();
+        mBuilder.setLargeIcon(bitmap);
+        String position = AppUtil.timeLenghtFormast(mMediaPlayer.getCurrentPosition());
+        String duration = AppUtil.timeLenghtFormast(mMediaPlayer.getDuration());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            mBuilder.setSubText(position + "/" + duration);
+            mNotification = mBuilder.build();
+        }
+        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        manager.notify(1, mNotification);//参数1：样式
     }
 
     @Override
@@ -205,6 +227,7 @@ public class MusicService extends Service {
     }
 
     private void postUpdateView() {
+        updateNotification();
         viewBean.setIndex(currentIndex);
         viewBean.setMusic(music);
         viewBean.setDuration(mMediaPlayer.getDuration());
@@ -279,21 +302,6 @@ public class MusicService extends Service {
         this.currentIndex = index;
     }
 
-    public void conPlay() {
-        mMediaPlayer.start();
-    }
-
-    public void pauseMusic() {
-        mMediaPlayer.pause();
-    }
-
-    public void stopMusic() {
-        mMediaPlayer.stop();
-    }
-
-    public void setOnPreparedListener(MediaPlayer.OnPreparedListener listener) {
-        mMediaPlayer.setOnPreparedListener(listener);
-    }
 
     public void seekTo(int msec) {
         mMediaPlayer.seekTo(msec);
@@ -303,37 +311,24 @@ public class MusicService extends Service {
         return mMediaPlayer.getDuration();
     }
 
-    public int getCurrentPosition() {
-        return mMediaPlayer.getCurrentPosition();
-    }
-
     /**
-     * 获取当前循环模式
-     *
-     * @return
+     * 注册监听耳机的插拔
      */
-    public int getPlay_mode() {
-        return play_mode;
+    private void registerHeadsetPlugReceiver() {
+        IntentFilter intentFilter = new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
+        registerReceiver(headsetPlugReceiver, intentFilter);
     }
+    private BroadcastReceiver headsetPlugReceiver = new BroadcastReceiver() {
 
-    /**
-     * 获取当前播放器状态：暂停、播放
-     *
-     * @return
-     */
-    public int getPlay_state() {
-        return play_state;
-    }
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(action)) {
+                mMediaPlayer.pause();
+                updateView();
+            }
+        }
 
-    public void setLooping(boolean isLooping) {
-        mMediaPlayer.setLooping(isLooping);
-    }
+    };
 
-    public void setVolume(float left, float right) {
-        mMediaPlayer.setVolume(left, right);
-    }
-
-    public boolean isPlaying() {
-        return mMediaPlayer.isPlaying();
-    }
 }
