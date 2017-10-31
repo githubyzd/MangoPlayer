@@ -12,11 +12,15 @@ import com.mango.player.activity.App;
 import com.mango.player.adapter.MusicSongListAdapter;
 import com.mango.player.base.BasePager;
 import com.mango.player.bean.Music;
+import com.mango.player.bean.MusicServiceBean;
 import com.mango.player.util.FileManager;
 import com.mango.player.util.LogUtil;
-import com.mango.player.util.MusicController;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
+
+import static com.mango.player.bean.PlayMode.PLAY_INDEX;
 
 
 /**
@@ -117,8 +121,9 @@ public class SongPager extends BasePager implements View.OnClickListener, MusicS
     }
 
     private void playMusic() {
-        MusicController instance = MusicController.getInstance(mContext);
-        instance.initData(musics);
-        instance.playMusic(clickPosition);
+        MusicServiceBean bean = new MusicServiceBean();
+        bean.setIndex(clickPosition);
+        bean.setPlayMode(PLAY_INDEX);
+        EventBus.getDefault().post(bean);
     }
 }

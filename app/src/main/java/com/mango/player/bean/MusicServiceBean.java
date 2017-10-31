@@ -5,7 +5,7 @@ package com.mango.player.bean;
  */
 
 public class MusicServiceBean {
-    private int playMode;
+    private PlayMode playMode;
     private int index;
     private int msec;
 
@@ -18,11 +18,11 @@ public class MusicServiceBean {
                 '}';
     }
 
-    public int getPlayMode() {
+    public PlayMode getPlayMode() {
         return playMode;
     }
 
-    public void setPlayMode(int playMode) {
+    public void setPlayMode(PlayMode playMode) {
         this.playMode = playMode;
     }
 

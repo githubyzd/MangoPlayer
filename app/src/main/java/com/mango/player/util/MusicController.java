@@ -1,14 +1,7 @@
 package com.mango.player.util;
 
 import android.app.Activity;
-import android.app.Service;
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.media.MediaPlayer;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
@@ -25,20 +18,25 @@ import com.mango.player.activity.MusicService;
 import com.mango.player.adapter.MusicListPopuAdapter;
 import com.mango.player.bean.Music;
 import com.mango.player.bean.MusicServiceBean;
+import com.mango.player.bean.UpdateViewBean;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
-import java.util.TimerTask;
 
 import static com.mango.player.R.id.recyclerview;
-import static com.mango.player.util.ApplicationConstant.PLAY_MUSIC;
+import static com.mango.player.bean.PlayMode.PLAY_INDEX;
+import static com.mango.player.bean.PlayMode.PLAY_MUSIC;
+import static com.mango.player.bean.PlayMode.PLAY_NEXT;
+import static com.mango.player.bean.PlayMode.SET_INDEX;
 
 /**
  * Created by yzd on 2017/10/19 0019.
  */
 
-public class MusicController implements MusicService.OnCompletionListenner, View.OnClickListener, MediaPlayer.OnPreparedListener, MusicListPopuAdapter.OnItemClickListener {
+public class MusicController implements View.OnClickListener,  MusicListPopuAdapter.OnItemClickListener {
     private static MusicController instance;
     private static View mRooView;
     private static ProgressBar progress;
@@ -46,22 +44,9 @@ public class MusicController implements MusicService.OnCompletionListenner, View
     private ImageView music_img, music_play, music_next, music_list;
     private TextView music_name, music_author;
     private int currentIndex;
-    private ServiceConnection conn;
-    private MusicService mMusicService;
     private Music music;
     public static Activity mContext;
-    private OnPreparedListener preparedListener;
     private MusicServiceBean serviceBean = new MusicServiceBean();
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            if (msg.what == 101) {
-                progress.setProgress(mMusicService.getCurrentPosition());
-            }
-        }
-    };
-    private TimerTask mTimerTask;
     private PopupHelper popupHelper;
     private View contentView;
     private RecyclerView recyclerView;
@@ -72,9 +57,13 @@ public class MusicController implements MusicService.OnCompletionListenner, View
     private MusicListPopuAdapter mAdapter;
 
     private MusicController() {
+        EventBus.getDefault().register(this);
+        Intent intent = new Intent(mContext,MusicService.class);
+        mContext.startService(intent);
     }
 
     public static MusicController getInstance(Activity activity) {
+        mContext = activity;
         if (instance == null) {
             synchronized (MusicController.class) {
                 if (instance == null) {
@@ -82,7 +71,6 @@ public class MusicController implements MusicService.OnCompletionListenner, View
                 }
             }
         }
-        mContext = activity;
         return instance;
     }
 
@@ -107,91 +95,64 @@ public class MusicController implements MusicService.OnCompletionListenner, View
 
     public void initData(ArrayList<Music> musics) {
         mMusics = musics;
+        EventBus.getDefault().postSticky(mMusics);
     }
 
-    public void playMusic(int index) {
-        currentIndex = index;
-        music = mMusics.get(index);
-        if (mMusicService == null) {
-            Intent intent = new Intent(mContext, MusicService.class);
-            conn = new MyConnection();
-            mContext.bindService(intent, conn, Service.BIND_AUTO_CREATE);
-        } else {
-            addOnCompletionListenner(this);
-            EventBus.getDefault().post(music.getPath());
-            mMusicService.setOnPreparedListener(this);
-        }
-        updateView();
-    }
 
-    public void updateView() {
-        ACache.getInstance(mContext).put(ApplicationConstant.MUSIC_INDEX, currentIndex + "");
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true, priority = 100)
+    public void updateView(UpdateViewBean viewBean){
+//        LogUtil.logByD("updateView: " + viewBean.toString());
+        music = viewBean.getMusic();
+        currentIndex = viewBean.getIndex();
         if (music.getThumbnail() != null) {
             music_img.setImageBitmap(music.getThumbnail());
         } else {
             music_img.setImageResource(R.drawable.music);
         }
-        if (isPlaying()) {
+        if (viewBean.getPlaying()) {
             music_play.setImageResource(R.drawable.pause_music);
         } else {
             music_play.setImageResource(R.drawable.play_music);
         }
         music_name.setText(music.getName());
         music_author.setText(music.getArtist());
+        progress.setMax(viewBean.getDuration());
+        progress.setProgress(viewBean.getCurrentDuration());
     }
 
-    private void setProgress() {
-        progress.setMax(mMusicService.getDuration());
-        progress.setProgress(mMusicService.getCurrentPosition());
-        mTimerTask = new TimerTask() {
-            @Override
-            public void run() {
-                handler.sendEmptyMessage(101);
-            }
-        };
-        App.timer.schedule(mTimerTask, 0, 1000);
-    }
-
-    @Override
-    public void onCompletion() {
-        playNext();
-    }
-
-    @Override
-    public void onPrepared(MediaPlayer mp) {
-        if (preparedListener != null) {
-            preparedListener.onPrepared();
-        }
-        setProgress();
-    }
-
-    public void playNext() {
-        if (currentIndex == mMusics.size() - 1) {
-            currentIndex = 0;
+    public void initController(){
+        if (music.getThumbnail() != null) {
+            music_img.setImageBitmap(music.getThumbnail());
         } else {
-            currentIndex++;
+            music_img.setImageResource(R.drawable.music);
         }
-        playMusic(currentIndex);
+
+        music_name.setText(music.getName());
+        music_author.setText(music.getArtist());
     }
 
     @Override
     public void onItemClick(View view, int position) {
         switch (view.getId()) {
             case R.id.item_music_list_popu:
-                currentIndex = position;
-                music = mMusics.get(currentIndex);
-                playMusic(currentIndex);
+                serviceBean.setPlayMode(PLAY_INDEX);
+                serviceBean.setIndex(position);
+                postPlay();
                 break;
             case R.id.delete:
                 if (position == currentIndex) {
                     mMusics.remove(position);
-                    playMusic(currentIndex);
                 } else {
                     mMusics.remove(position);
                     currentIndex = mMusics.indexOf(music);
                 }
+                EventBus.getDefault().post(mMusics);
+                serviceBean.setPlayMode(PLAY_INDEX);
+                serviceBean.setIndex(currentIndex);
+                postPlay();
                 mAdapter.setData(mMusics);
                 mAdapter.setIndex(currentIndex);
+                App.musicList = mMusics;
                 break;
         }
     }
@@ -208,11 +169,11 @@ public class MusicController implements MusicService.OnCompletionListenner, View
                 break;
             case R.id.music_play:
                 serviceBean.setPlayMode(PLAY_MUSIC);
-                EventBus.getDefault().post(serviceBean);
+                postPlay();
                 break;
             case R.id.music_next:
-                serviceBean.setPlayMode(PLAY_MUSIC);
-                EventBus.getDefault().post(serviceBean);
+                serviceBean.setPlayMode(PLAY_NEXT);
+                postPlay();
                 break;
             case R.id.music_list:
                 showList();
@@ -221,6 +182,10 @@ public class MusicController implements MusicService.OnCompletionListenner, View
                 popupHelper.dismiss();
                 break;
         }
+    }
+
+    private void postPlay() {
+        EventBus.getDefault().post(serviceBean);
     }
 
     private void showList() {
@@ -260,87 +225,12 @@ public class MusicController implements MusicService.OnCompletionListenner, View
         mAdapter.setOnItemClickListener(this);
     }
 
-    public void play() {
-        if (mMusicService != null) {
-            if (isPlaying()) {
-                mMusicService.conPlay();
-            } else {
-                mMusicService.conPlay();
-            }
-        } else {
-            playMusic(currentIndex);
-        }
-        updateView();
-    }
-
-    public void rePlay() {
-        if (mMusicService != null)
-            mMusicService.playMusic(music.getPath());
-    }
-
-    public void pause() {
-        if (mMusicService != null)
-            mMusicService.pauseMusic();
-        updateView();
-    }
-
-    public void stop() {
-        if (mMusicService != null)
-            mMusicService.stopMusic();
-    }
-
-    public void seekTo(int msecm) {
-        if (mMusicService != null)
-            mMusicService.seekTo(msecm);
-    }
-
-    public boolean isPlaying() {
-        if (mMusicService != null)
-            return mMusicService.isPlaying();
-        return false;
-    }
-
-    public int getCurrentPosition() {
-        return mMusicService.getCurrentPosition();
-    }
-
-    public int getDuration() {
-        return mMusicService.getDuration();
-    }
-
-    private class MyConnection implements ServiceConnection {
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            LogUtil.logByD("music service 绑定成功");
-            MusicService.MusiceBinder binder = (MusicService.MusiceBinder) service;
-            mMusicService = binder.getService();
-            addOnCompletionListenner(MusicController.this);
-            mMusicService.setOnPreparedListener(MusicController.this);
-            mMusicService.playMusic(music.getPath());
-            updateView();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mMusicService = null;
-        }
-    }
-
     public void setCurrentIndex(int index) {
         this.currentIndex = index;
         music = mMusics.get(currentIndex);
+        serviceBean.setPlayMode(SET_INDEX);
+        serviceBean.setIndex(currentIndex);
+        EventBus.getDefault().postSticky(serviceBean);
     }
 
-    public void setOnPreparedListener(OnPreparedListener listener) {
-        this.preparedListener = listener;
-    }
-
-    public interface OnPreparedListener {
-        void onPrepared();
-    }
-
-    public void addOnCompletionListenner(MusicService.OnCompletionListenner listenner) {
-        mMusicService.addOnCompletionListenner(listenner);
-    }
 }

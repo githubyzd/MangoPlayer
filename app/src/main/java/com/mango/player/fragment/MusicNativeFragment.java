@@ -1,6 +1,5 @@
 package com.mango.player.fragment;
 
-import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.widget.FrameLayout;
@@ -10,15 +9,11 @@ import android.widget.TextView;
 
 import com.mango.player.R;
 import com.mango.player.activity.App;
-import com.mango.player.activity.MusicService;
 import com.mango.player.base.BaseFragment;
 import com.mango.player.util.ACache;
-import com.mango.player.util.ApplicationConstant;
 import com.mango.player.util.ExceptionUtil;
 import com.mango.player.util.LogUtil;
 import com.mango.player.util.MusicController;
-
-import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 import io.reactivex.Observable;
@@ -26,6 +21,8 @@ import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
+
+import static com.mango.player.util.ApplicationConstant.MUSIC_INDEX;
 
 /**
  * Created by yzd on 2017/9/25 0025.
@@ -53,8 +50,7 @@ public class MusicNativeFragment extends BaseFragment {
     LinearLayout llHome;
 
     private BaseFragment baseFragment;
-    private String index;
-
+    private int index;
     @Override
     public int getLayoutId() {
         return R.layout.fragment_music_native;
@@ -68,27 +64,24 @@ public class MusicNativeFragment extends BaseFragment {
         switchFragment(fragment);
     }
 
-    @Override
-    public void initData() {
-        super.initData();
-        Intent intent = new Intent(getActivity(), MusicService.class);
-        getActivity().startService(intent);
-        index = ACache.getInstance(getContext()).getAsString(ApplicationConstant.MUSIC_INDEX);
-
-        EventBus.getDefault().postSticky(index);
-    }
-
     private void initController() {
         final MusicController controller = MusicController.getInstance(getActivity());
         controller.initView(musicPlayController);
         //创建一个上游 Observable：
         Observable<Observer> observable = Observable.create(new ObservableOnSubscribe<Observer>() {
+
             @Override
             public void subscribe(ObservableEmitter<Observer> emitter) throws Exception {
                 while (true) {
                     if (App.musicList != null) {
                         controller.initData(App.musicList);
-                        controller.setCurrentIndex(Integer.parseInt(index));
+                        String indexStr = ACache.getInstance(getContext()).getAsString(MUSIC_INDEX);
+                        if (indexStr == null) {
+                            indexStr = "0";
+                        }
+                        LogUtil.logByD("index" + indexStr);
+                        index = Integer.parseInt(indexStr);
+                        controller.setCurrentIndex(index);
                         emitter.onComplete();
                         break;
                     }
@@ -111,8 +104,7 @@ public class MusicNativeFragment extends BaseFragment {
 
             @Override
             public void onComplete() {
-                LogUtil.logByD("接受数据");
-                controller.updateView();
+                controller.initController();
             }
         };
         //建立连接

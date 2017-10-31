@@ -39,7 +39,6 @@ public class VideoOnlineAdapter extends RecyclerView.Adapter<VideoOnlineHolder> 
         Glide.with(App.mContext)
                 .load(videoBean.getThumbnail())
                 .placeholder(R.mipmap.ic_launcher)
-                .crossFade()
                 .error(R.mipmap.ic_launcher)
                 .into(holder.thumbnail);
         holder.name.setText(videoBean.getName());

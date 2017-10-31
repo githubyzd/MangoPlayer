@@ -4,9 +4,6 @@ import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,26 +17,34 @@ import android.widget.TextView;
 
 import com.mango.player.R;
 import com.mango.player.adapter.MusicDetailListPopuAdapter;
-import com.mango.player.adapter.MusicDetailLyricAdapter;
 import com.mango.player.bean.Music;
+import com.mango.player.bean.MusicServiceBean;
+import com.mango.player.bean.UpdateViewBean;
 import com.mango.player.util.AppUtil;
 import com.mango.player.util.ApplicationConstant;
 import com.mango.player.util.LogUtil;
-import com.mango.player.util.MusicController;
 import com.mango.player.util.PopupHelper;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
-import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.mango.player.R.id.music_play;
 import static com.mango.player.R.id.recyclerview;
-import static com.mango.player.activity.App.mainActicity;
+import static com.mango.player.bean.PlayMode.PALY_SEEK;
+import static com.mango.player.bean.PlayMode.PLAY_INDEX;
+import static com.mango.player.bean.PlayMode.PLAY_MUSIC;
+import static com.mango.player.bean.PlayMode.PLAY_NEXT;
+import static com.mango.player.bean.PlayMode.PLAY_PRE;
 import static com.mango.player.util.MusicController.mContext;
 
-public class MusicPlayActivity extends AppCompatActivity implements View.OnClickListener, MusicDetailListPopuAdapter.OnItemClickListener, MusicController.OnPreparedListener, SeekBar.OnSeekBarChangeListener, ViewPager.OnPageChangeListener, MusicService.OnCompletionListenner {
+public class MusicPlayActivity extends AppCompatActivity implements View.OnClickListener, MusicDetailListPopuAdapter.OnItemClickListener, SeekBar.OnSeekBarChangeListener {
 
     @BindView(R.id.name)
     TextView name;
@@ -47,8 +52,6 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
     ImageView list;
     @BindView(R.id.singer)
     TextView singer;
-    @BindView(R.id.lyric)
-    ViewPager lyric;
     @BindView(R.id.share)
     ImageView share;
     @BindView(R.id.like)
@@ -71,61 +74,45 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
     TextView currentDuration;
     @BindView(R.id.duration)
     TextView duration;
+    @BindView(R.id.thumbnail)
+    ImageView thumbnail;
     @BindView(R.id.music_play)
     ImageView musicPlay;
     private ArrayList<Music> musics;
     private Music music;
-    private MusicController musicController;
     private int currentIndex = -1;
-    private TimerTask mTimerTask;
     private View contentView;
     private RecyclerView recyclerView;
-    private boolean isInit = true;
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            if (msg.what == 101) {
-                progress.setProgress(musicController.getCurrentPosition());
-                currentDuration.setText(AppUtil.timeLenghtFormast(musicController.getCurrentPosition()));
-            }
-        }
-    };
+    private MusicServiceBean serviceBean = new MusicServiceBean();
     private PopupHelper popupHelper;
     private TextView index;
     private ImageView delete;
     private ImageView save;
     private ImageView close;
-    private MusicDetailLyricAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music_play);
         ButterKnife.bind(this);
-        musicController = MusicController.getInstance(mainActicity);
+        EventBus.getDefault().register(this);
         initData();
-        initListener();
-        updateView();
-        initViewpager();
+        initView();
     }
 
-    private void initViewpager() {
-        adapter = new MusicDetailLyricAdapter(musics, this, currentIndex);
-        lyric.setAdapter(adapter);
-        lyric.addOnPageChangeListener(this);
-        lyric.setCurrentItem(currentIndex);
-    }
-
-    private void initListener() {
+    private void initView() {
         progress.setOnSeekBarChangeListener(this);
-        if (musicController.isPlaying()) {
-            setProgress();
-        } else {
-            musicController.setOnPreparedListener(this);
-        }
-        musicController.addOnCompletionListenner(this);
+        name.setText(music.getName());
+        singer.setText(music.getArtist());
+        duration.setText(AppUtil.timeLenghtFormast(music.getDuration()));
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
 
     private void initData() {
         Intent intent = getIntent();
@@ -134,43 +121,22 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
         music = musics.get(currentIndex);
     }
 
-    @OnClick(R.id.music_play)
+    @OnClick(music_play)
     void play() {
-        if (musicController.isPlaying()) {
-            musicController.pause();
-        } else {
-            musicController.play();
-        }
-        updateView();
-    }
-
-    private void playMusic(int index) {
-        musicController.setOnPreparedListener(this);
-        musicController.playMusic(index);
+        serviceBean.setPlayMode(PLAY_MUSIC);
+        postPlay();
     }
 
     @OnClick(R.id.music_pre)
     void playPre() {
-        if (currentIndex == 0) {
-            currentIndex = musics.size() - 1;
-        } else {
-            currentIndex--;
-        }
-        musicController.playNext();
-        updateView();
-        lyric.setCurrentItem(currentIndex);
+        serviceBean.setPlayMode(PLAY_PRE);
+        postPlay();
     }
 
     @OnClick(R.id.music_next)
     void playNext() {
-        if (currentIndex == musics.size() - 1) {
-            currentIndex = 0;
-        } else {
-            currentIndex++;
-        }
-        musicController.playNext();
-        updateView();
-        lyric.setCurrentItem(currentIndex);
+        serviceBean.setPlayMode(PLAY_NEXT);
+        postPlay();
     }
 
     @OnClick(R.id.list)
@@ -209,49 +175,35 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
                 .showAtLocation();
     }
 
-    private void initRecyclerview() {
-        LinearLayoutManager mLayoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(mLayoutManager);
-
-        MusicDetailListPopuAdapter mAdapter = new MusicDetailListPopuAdapter(musics);
-        recyclerView.setAdapter(mAdapter);
-        mAdapter.setOnItemClickListener(this);
-    }
-
-    private void updateView() {
-        music = musics.get(currentIndex);
-        name.setText(music.getName());
-        singer.setText(music.getArtist());
-        if (music.getThumbnail() != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                container.setBackground(new BitmapDrawable(music.getThumbnail()));
-            }
-        } else {
-            container.setBackgroundResource(R.drawable.background4);
-        }
-        if (index != null)
-            index.setText(" (" + currentIndex + "/" + musics.size() + ")");
-        if (musicController.isPlaying()) {
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true, priority = 100)
+    public void updateView(UpdateViewBean viewBean) {
+//        LogUtil.logByD("updateView: " + viewBean.toString());
+        music = viewBean.getMusic();
+        currentIndex = viewBean.getIndex();
+        if (viewBean.getPlaying()) {
             musicPlay.setImageResource(R.drawable.pause_music);
         } else {
             musicPlay.setImageResource(R.drawable.play_music);
         }
-
+        name.setText(music.getName());
+        singer.setText(music.getArtist());
+        progress.setMax(viewBean.getDuration());
+        progress.setProgress(viewBean.getCurrentDuration());
+        duration.setText(AppUtil.timeLenghtFormast(viewBean.getDuration()));
+        currentDuration.setText(AppUtil.timeLenghtFormast(viewBean.getCurrentDuration()));
+        if (music.getThumbnail() == null) {
+            thumbnail.setImageResource(R.drawable.holder);
+        }else {
+            thumbnail.setImageBitmap(music.getThumbnail());
+        }
     }
 
-    private void setProgress() {
-        currentDuration.setText(AppUtil.timeLenghtFormast(musicController.getCurrentPosition()));
-        duration.setText(AppUtil.timeLenghtFormast(musicController.getDuration()));
-        progress.setMax(musicController.getDuration());
-        progress.setProgress(musicController.getCurrentPosition());
-        mTimerTask = new TimerTask() {
-            @Override
-            public void run() {
-                handler.sendEmptyMessage(101);
-            }
-        };
-        updateView();
-        App.timer.schedule(mTimerTask, 0, 1000);
+    private void initRecyclerview() {
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(mLayoutManager);
+        MusicDetailListPopuAdapter mAdapter = new MusicDetailListPopuAdapter(musics);
+        recyclerView.setAdapter(mAdapter);
+        mAdapter.setOnItemClickListener(this);
     }
 
     @Override
@@ -285,9 +237,9 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
         switch (view.getId()) {
             case R.id.item_music_list_popu:
                 currentIndex = position;
-                music = musics.get(currentIndex);
-                playMusic(currentIndex);
-                updateView();
+                serviceBean.setPlayMode(PLAY_INDEX);
+                serviceBean.setIndex(currentIndex);
+                postPlay();
                 break;
             case R.id.more:
                 break;
@@ -295,15 +247,17 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
     }
 
     @Override
-    public void onPrepared() {
-        setProgress();
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        if (fromUser) {
+            LogUtil.logByD(progress + "");
+            serviceBean.setPlayMode(PALY_SEEK);
+            serviceBean.setMsec(progress);
+            postPlay();
+        }
     }
 
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        LogUtil.logByD(progress + "");
-        if (fromUser)
-            musicController.seekTo(progress);
+    private void postPlay() {
+        EventBus.getDefault().post(serviceBean);
     }
 
     @Override
@@ -314,31 +268,5 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
 
-    }
-
-
-    @Override
-    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-    }
-
-    @Override
-    public void onPageSelected(int position) {
-        currentIndex = position;
-        if (isInit) {
-            isInit = false;
-        } else {
-            playMusic(currentIndex);
-        }
-    }
-
-    @Override
-    public void onPageScrollStateChanged(int state) {
-
-    }
-
-    @Override
-    public void onCompletion() {
-        playNext();
     }
 }

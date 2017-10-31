@@ -32,6 +32,7 @@ public class ApplicationConstant {
     public static final String VIDEO_DATA_KEY = "video_data_key";
     public static final String URL = "url";
     public static final String MUSIC_INDEX = "music_index";
+    public static final String MUSIC_CURRENT_POSITION = "music_current_position";
     public static final String MUSIC_LIST_KEY = "music_list_key";
     public static final String MUSIC_DATA_KEY = "music_data_key";
 
@@ -50,14 +51,6 @@ public class ApplicationConstant {
     public static final int ACTIVITY_REQUEST_GET_PHOTO = ACTIVITY_REQUEST_BIND_CARD + 1;
 
 
-    //音乐播放相关常量
-    public static final int PLAY_MUSIC = 101;
-    public static final int PLAY_NEXT = PLAY_MUSIC + 1;
-    public static final int PLAY_PRE = PLAY_NEXT + 1;
-    public static final int PLAY_STOP = PLAY_PRE + 1;
-    public static final int PLAY_INDEX = PLAY_STOP + 1;
-    public static final int PALY_SEEK = PLAY_INDEX + 1;
-
     //视频类型常量
     public static final int VIDEO_NATIVE_TYPE = 1;
     public static final int VIDEO_ONLINE_TYPE = 2;
@@ -66,4 +59,5 @@ public class ApplicationConstant {
     public static final String VIDEO = "video";
 
     public static String [] tabs = {"tab1","tab2"};
+
 }

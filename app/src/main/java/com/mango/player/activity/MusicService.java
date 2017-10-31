@@ -14,6 +14,10 @@ import android.os.IBinder;
 import com.mango.player.R;
 import com.mango.player.bean.Music;
 import com.mango.player.bean.MusicServiceBean;
+import com.mango.player.bean.PlayMode;
+import com.mango.player.bean.UpdateViewBean;
+import com.mango.player.util.ACache;
+import com.mango.player.util.ApplicationConstant;
 import com.mango.player.util.ExceptionUtil;
 import com.mango.player.util.LogUtil;
 
@@ -24,18 +28,12 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.mango.player.util.ApplicationConstant.PALY_SEEK;
-import static com.mango.player.util.ApplicationConstant.PLAY_INDEX;
-import static com.mango.player.util.ApplicationConstant.PLAY_MUSIC;
-import static com.mango.player.util.ApplicationConstant.PLAY_NEXT;
-import static com.mango.player.util.ApplicationConstant.PLAY_PRE;
-import static com.mango.player.util.ApplicationConstant.PLAY_STOP;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MusicService extends Service {
     private MusiceBinder binder = new MusiceBinder();
     private MediaPlayer mMediaPlayer;
-    private List<OnCompletionListenner> mListenner = new ArrayList<>();
     private Notification.Builder mBuilder;
     private Notification mNotification;
 
@@ -61,10 +59,14 @@ public class MusicService extends Service {
     private List<Music> musics = new ArrayList<>();
     private Music music = null;
     private int currentIndex = -1;
+    private UpdateViewBean viewBean = new UpdateViewBean();
+    private TimerTask mTimerTask;
+    private Timer mTimer;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        LogUtil.logByD("onCreat");
         EventBus.getDefault().register(this);
         initMediaPlayer();
         simpleNotification();
@@ -145,38 +147,14 @@ public class MusicService extends Service {
 
         @Override
         public void onCompletion(MediaPlayer mp) {
-            if (mListenner != null) {
-                for (OnCompletionListenner listenner : mListenner)
-                    listenner.onCompletion();
-            }
+            playNext();
         }
-    }
-
-    public interface OnCompletionListenner {
-        void onCompletion();
-    }
-
-    public void addOnCompletionListenner(OnCompletionListenner listenner) {
-        mListenner.add(listenner);
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true, priority = 100)
-    public void playMusic(String path) {
-        LogUtil.logByD("playMusic" + path);
-        mMediaPlayer.reset();
-        try {
-            mMediaPlayer.setDataSource(path);
-            mMediaPlayer.prepare();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        mMediaPlayer.start();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true, priority = 100)
     public void playWithMode(MusicServiceBean bean) {
-        LogUtil.logByD("playWithMode" + bean.toString());
-        int playMode = bean.getPlayMode();
+        LogUtil.logByD("playWithMode: " + bean.toString());
+        PlayMode playMode = bean.getPlayMode();
         switch (playMode) {
             case PLAY_MUSIC:
                 playMusic();
@@ -196,34 +174,57 @@ public class MusicService extends Service {
             case PALY_SEEK:
                 seekTo(bean.getMsec());
                 break;
+            case SET_INDEX:
+                setIndex(bean.getIndex());
+                break;
         }
     }
 
-    private void playWithIndex(int index) {
-        if (index >= musics.size()) {
-            ExceptionUtil.illegaArgument("index is outsize if list");
+    private void updateView() {
+        if (mTimer == null) {
+            mTimer = new Timer();
         }
-        currentIndex = index;
-        music = musics.get(currentIndex);
-        playMusic(music.getPath());
+        if (mTimerTask == null) {
+            mTimerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    postUpdateView();
+                }
+            };
+            mTimer.schedule(mTimerTask, 0, 1000);
+        }
+        if (mMediaPlayer.isPlaying()) {
+
+        } else {
+            mTimer.cancel();
+            mTimer = null;
+            mTimerTask.cancel();
+            mTimerTask = null;
+            postUpdateView();
+        }
+    }
+
+    private void postUpdateView() {
+        viewBean.setIndex(currentIndex);
+        viewBean.setMusic(music);
+        viewBean.setDuration(mMediaPlayer.getDuration());
+        viewBean.setCurrentDuration(mMediaPlayer.getCurrentPosition());
+        viewBean.setPlaying(mMediaPlayer.isPlaying());
+        EventBus.getDefault().post(viewBean);
     }
 
     private void playMusic() {
-        if (mMediaPlayer.isPlaying()) {
-            mMediaPlayer.start();
+        if (isFirstPlay) {
+            play();
         } else {
-            mMediaPlayer.pause();
+            if (mMediaPlayer.isPlaying()) {
+                mMediaPlayer.pause();
+            } else {
+                mMediaPlayer.start();
+            }
         }
-    }
-
-    private void playNext() {
-        if (currentIndex == musics.size() - 1) {
-            currentIndex = 0;
-        } else {
-            currentIndex++;
-        }
-        music = musics.get(currentIndex);
-        playMusic(music.getPath());
+        updateView();
+        ACache.getInstance(this).put(ApplicationConstant.MUSIC_INDEX, currentIndex + "");
     }
 
     private void playPreview() {
@@ -232,18 +233,50 @@ public class MusicService extends Service {
         } else {
             currentIndex--;
         }
+        play();
+    }
+
+    private void playNext() {
+        if (currentIndex == musics.size() - 1) {
+            currentIndex = 0;
+        } else {
+            currentIndex++;
+        }
+        play();
+    }
+
+    private void playWithIndex(int index) {
+        if (index >= musics.size()) {
+            ExceptionUtil.illegaArgument("index is outsize if list");
+        }
+        currentIndex = index;
         music = musics.get(currentIndex);
-        playMusic(music.getPath());
+        play();
+    }
+
+    private void play() {
+        mMediaPlayer.reset();
+        music = musics.get(currentIndex);
+        try {
+            mMediaPlayer.setDataSource(music.getPath());
+            mMediaPlayer.prepare();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        mMediaPlayer.start();
+        isFirstPlay = false;
+        updateView();
+        ACache.getInstance(this).put(ApplicationConstant.MUSIC_INDEX, currentIndex + "");
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true, priority = 100)
     public void setMusic(List<Music> musics) {
+        LogUtil.logByD("setMusic: " + musics.size());
         this.musics = musics;
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true, priority = 100)
-    public void setIndex(int index){
-
+    private void setIndex(int index) {
+        this.currentIndex = index;
     }
 
     public void conPlay() {
