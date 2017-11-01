@@ -1,8 +1,7 @@
 package com.mango.player.activity;
 
 import android.content.Intent;
-import android.graphics.drawable.BitmapDrawable;
-import android.os.Build;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,7 +18,9 @@ import com.mango.player.R;
 import com.mango.player.adapter.MusicDetailListPopuAdapter;
 import com.mango.player.bean.Music;
 import com.mango.player.bean.MusicServiceBean;
+import com.mango.player.bean.PlayMode;
 import com.mango.player.bean.UpdateViewBean;
+import com.mango.player.util.ACache;
 import com.mango.player.util.AppUtil;
 import com.mango.player.util.ApplicationConstant;
 import com.mango.player.util.LogUtil;
@@ -29,6 +30,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -37,11 +39,16 @@ import butterknife.OnClick;
 
 import static com.mango.player.R.id.music_play;
 import static com.mango.player.R.id.recyclerview;
+import static com.mango.player.bean.PlayMode.MODE_ALL;
+import static com.mango.player.bean.PlayMode.MODE_LOOP_ALL;
+import static com.mango.player.bean.PlayMode.MODE_LOOP_ONE;
+import static com.mango.player.bean.PlayMode.MODE_RADOM;
 import static com.mango.player.bean.PlayMode.PALY_SEEK;
 import static com.mango.player.bean.PlayMode.PLAY_INDEX;
 import static com.mango.player.bean.PlayMode.PLAY_MUSIC;
 import static com.mango.player.bean.PlayMode.PLAY_NEXT;
 import static com.mango.player.bean.PlayMode.PLAY_PRE;
+import static com.mango.player.util.ApplicationConstant.MUSIC_FAVORITE_KEY;
 import static com.mango.player.util.MusicController.mContext;
 
 public class MusicPlayActivity extends AppCompatActivity implements View.OnClickListener, MusicDetailListPopuAdapter.OnItemClickListener, SeekBar.OnSeekBarChangeListener {
@@ -89,7 +96,9 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
     private ImageView delete;
     private ImageView save;
     private ImageView close;
-
+    private ArrayList<String> favoritePath;
+    private boolean isLike = false;
+    private PlayMode playMode = MODE_LOOP_ALL;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,10 +110,37 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void initView() {
+        favoritePath = (ArrayList<String>) ACache.getInstance(this).getAsObject(MUSIC_FAVORITE_KEY);
+        playMode = (PlayMode) ACache.getInstance(this).getAsObject(ApplicationConstant.MUSIC_PLAYMODE_KEY);
+        if (favoritePath != null) {
+            checkLike();
+        } else {
+            favoritePath = new ArrayList<>();
+        }
         progress.setOnSeekBarChangeListener(this);
         name.setText(music.getName());
         singer.setText(music.getArtist());
         duration.setText(AppUtil.timeLenghtFormast(music.getDuration()));
+        if (playMode == null) {
+            LogUtil.logByD("play mode null");
+            playMode = MODE_LOOP_ALL;
+        }
+        LogUtil.logByD(playMode.toString());
+        switch (playMode){
+            case MODE_ALL:
+                pattern.setImageResource(R.drawable.play_order);
+                break;
+            case MODE_LOOP_ALL:
+                pattern.setImageResource(R.drawable.play_circulation);
+                break;
+            case MODE_LOOP_ONE:
+                pattern.setImageResource(R.drawable.play_single);
+                break;
+            case MODE_RADOM:
+                pattern.setImageResource(R.drawable.random);
+                break;
+        }
+        EventBus.getDefault().post(playMode);
     }
 
     @Override
@@ -155,13 +191,6 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
             initRecyclerview();
         }
         index.setText(" (" + currentIndex + "/" + musics.size() + ")");
-        if (music.getThumbnail() != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                contentView.setBackground(new BitmapDrawable(music.getThumbnail()));
-            }
-        } else {
-            contentView.setBackgroundResource(R.drawable.background4);
-        }
         popupHelper = new PopupHelper.Builder(mContext)
                 .contentView(contentView)
                 .width(ViewGroup.LayoutParams.MATCH_PARENT)
@@ -173,6 +202,74 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
                 .animationStyle(R.style.anim_top)
                 .build()
                 .showAtLocation();
+    }
+
+    @OnClick(R.id.share)
+    void share() {
+        //由文件得到uri
+        Uri musicPath = Uri.fromFile(new File(music.getPath()));
+        LogUtil.logByD("share", "uri:" + musicPath);  //输出：file:///storage/emulated/0/test.jpg
+
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.putExtra(Intent.EXTRA_STREAM, musicPath);
+        shareIntent.setType("audio/*");
+        startActivity(Intent.createChooser(shareIntent, "分享到"));
+    }
+
+    @OnClick(R.id.like)
+    void like() {
+        if (isLike) {
+            like.setSelected(false);
+            isLike = false;
+            favoritePath.remove(music.getPath());
+        } else {
+            like.setSelected(true);
+            isLike = true;
+            favoritePath.add(music.getPath());
+        }
+        ACache.getInstance(this).put(MUSIC_FAVORITE_KEY, favoritePath);
+    }
+
+    @OnClick(R.id.pattern)
+    void pattern(){
+        switch (playMode){
+            case MODE_LOOP_ALL:
+                playMode = MODE_ALL;
+                pattern.setImageResource(R.drawable.play_order);
+                break;
+            case MODE_ALL:
+                playMode = MODE_RADOM;
+                pattern.setImageResource(R.drawable.random);
+                break;
+            case MODE_RADOM:
+                playMode = MODE_LOOP_ONE;
+                pattern.setImageResource(R.drawable.play_single);
+                break;
+            case MODE_LOOP_ONE:
+                playMode = MODE_LOOP_ALL;
+                pattern.setImageResource(R.drawable.play_circulation);
+                break;
+        }
+        EventBus.getDefault().post(playMode);
+    }
+
+    @OnClick(R.id.sound_effect)
+    void sound_effect(){
+        Intent intent = new Intent(this,SoundSettingActivity.class);
+        startActivity(intent);
+    }
+
+    private void checkLike() {
+        for (String path : favoritePath) {
+            if (music.getPath().equals(path)) {
+                isLike = true;
+                like.setSelected(true);
+                return;
+            }
+        }
+        isLike = false;
+        like.setSelected(false);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true, priority = 100)
@@ -193,9 +290,10 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
         currentDuration.setText(AppUtil.timeLenghtFormast(viewBean.getCurrentDuration()));
         if (music.getThumbnail() == null) {
             thumbnail.setImageResource(R.drawable.holder);
-        }else {
+        } else {
             thumbnail.setImageBitmap(music.getThumbnail());
         }
+        checkLike();
     }
 
     private void initRecyclerview() {

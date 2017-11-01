@@ -79,7 +79,7 @@
             android:layout_width="@dimen/dp_50dp"
             android:layout_height="match_parent"
             android:padding="@dimen/margin_10dp"
-            android:src="@drawable/like" />
+            android:src="@drawable/selector_favorite" />
 
         <ImageView
             android:id="@+id/search"
@@ -133,8 +133,8 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="?android:attr/selectableItemBackground"
-            android:padding="@dimen/margin_10dp"
-            android:src="@drawable/random" />
+            android:padding="@dimen/margin_14dp"
+            android:src="@drawable/play_circulation" />
 
         <ImageView
             android:id="@+id/music_pre"

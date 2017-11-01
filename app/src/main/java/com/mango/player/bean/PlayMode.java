@@ -11,5 +11,9 @@ public enum  PlayMode {
     PLAY_STOP,
     PLAY_INDEX,
     PALY_SEEK,
-    SET_INDEX
+    SET_INDEX,
+    MODE_RADOM,
+    MODE_LOOP_ONE,
+    MODE_ALL,
+    MODE_LOOP_ALL
 }

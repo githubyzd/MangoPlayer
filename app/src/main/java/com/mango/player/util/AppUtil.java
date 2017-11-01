@@ -22,6 +22,7 @@ import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Random;
 
 
 /**
@@ -261,6 +262,15 @@ public class AppUtil {
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         drawable.draw(canvas);
         return bitmap;
+    }
+
+    /**
+     * 产生随机数
+     */
+    public static int getRandomNum(int min,int max){
+        Random random = new Random();
+        int num = random.nextInt(max)%(max-min+1) + min;
+        return num;
     }
 
 }

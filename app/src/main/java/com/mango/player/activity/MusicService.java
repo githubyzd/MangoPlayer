@@ -42,17 +42,8 @@ public class MusicService extends Service {
     private Notification.Builder mBuilder;
     private Notification mNotification;
 
-    /**
-     * 播放状态标志
-     */
-    public static final int STATE_PLAYING = 0;
-    //    public static final int STATE_PAUSE = 1;
-    public static final int STATE_STOP = 2;
-    //播放状态变量
-    private int play_state = STATE_STOP;
-
     //循环模式变量
-    private int play_mode = MODE_LOOP_ALL;
+    private PlayMode play_mode = PlayMode.MODE_LOOP_ALL;
     /**
      * 循环模式标志
      */
@@ -136,6 +127,9 @@ public class MusicService extends Service {
         mBuilder.setContentTitle(music.getName());
         mBuilder.setContentText(music.getArtist());
         Bitmap bitmap = music.getThumbnail();
+        if (bitmap == null) {
+            bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.music);
+        }
         mBuilder.setLargeIcon(bitmap);
         String position = AppUtil.timeLenghtFormast(mMediaPlayer.getCurrentPosition());
         String duration = AppUtil.timeLenghtFormast(mMediaPlayer.getDuration());
@@ -170,7 +164,11 @@ public class MusicService extends Service {
 
         @Override
         public void onCompletion(MediaPlayer mp) {
-            playNext();
+            if (play_mode == PlayMode.MODE_LOOP_ONE) {
+                play();
+            } else {
+                playNext();
+            }
         }
     }
 
@@ -201,6 +199,13 @@ public class MusicService extends Service {
                 setIndex(bean.getIndex());
                 break;
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true, priority = 100)
+    public void setPlayPattern(PlayMode playMode) {
+        LogUtil.logByD("playMode: " + playMode.toString());
+        play_mode = playMode;
+        ACache.getInstance(this).put(ApplicationConstant.MUSIC_PLAYMODE_KEY, play_mode);
     }
 
     private void updateView() {
@@ -252,19 +257,49 @@ public class MusicService extends Service {
     }
 
     private void playPreview() {
-        if (currentIndex == 0) {
-            currentIndex = musics.size() - 1;
-        } else {
-            currentIndex--;
+        switch (play_mode) {
+            case MODE_LOOP_ALL:
+                if (currentIndex == 0) {
+                    currentIndex = musics.size() - 1;
+                } else {
+                    currentIndex--;
+                }
+                break;
+            case MODE_ALL:
+                if (currentIndex == musics.size() - 1) {
+                    mMediaPlayer.stop();
+                    return;
+                } else {
+                    currentIndex++;
+                }
+                break;
+            case MODE_RADOM:
+                currentIndex = AppUtil.getRandomNum(0, musics.size() - 1);
+                break;
         }
         play();
     }
 
     private void playNext() {
-        if (currentIndex == musics.size() - 1) {
-            currentIndex = 0;
-        } else {
-            currentIndex++;
+        switch (play_mode) {
+            case MODE_LOOP_ALL:
+                if (currentIndex == musics.size() - 1) {
+                    currentIndex = 0;
+                } else {
+                    currentIndex++;
+                }
+                break;
+            case MODE_ALL:
+                if (currentIndex == musics.size() - 1) {
+                    mMediaPlayer.stop();
+                    return;
+                } else {
+                    currentIndex++;
+                }
+                break;
+            case MODE_RADOM:
+                currentIndex = AppUtil.getRandomNum(0, musics.size() - 1);
+                break;
         }
         play();
     }
@@ -289,6 +324,7 @@ public class MusicService extends Service {
         }
         mMediaPlayer.start();
         isFirstPlay = false;
+        isFromHeadsetPlug = false;
         updateView();
         ACache.getInstance(this).put(ApplicationConstant.MUSIC_INDEX, currentIndex + "");
     }
@@ -319,19 +355,24 @@ public class MusicService extends Service {
         IntentFilter intentFilter = new IntentFilter("android.intent.action.HEADSET_PLUG");
         registerReceiver(headsetPlugReceiver, intentFilter);
     }
+    //首次接受标志
+    private boolean isFromHeadsetPlug = true;
     private BroadcastReceiver headsetPlugReceiver = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.hasExtra("state")){
-                if(intent.getIntExtra("state", 0)==0){
+            LogUtil.logByD("start");
+            if (intent.hasExtra("state")) {
+                if (intent.getIntExtra("state", 0) == 0) {
+                    LogUtil.logByD("pause");
                     mMediaPlayer.pause();
-                }
-                else if(intent.getIntExtra("state", 0)==1){
-                    mMediaPlayer.start();
+                } else if (intent.getIntExtra("state", 0) == 1) {
+                    LogUtil.logByD("start1");
+                    if (!isFromHeadsetPlug) {
+                        mMediaPlayer.start();
+                    }
                 }
             }
-            updateView();
         }
 
     };
