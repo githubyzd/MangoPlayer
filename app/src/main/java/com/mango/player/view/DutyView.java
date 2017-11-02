@@ -26,7 +26,7 @@ public class DutyView extends ViewGroup implements View.OnTouchListener {
     /**
      * duty最大值
      */
-    public static final int MAX_DUTY = 100;
+    public static final int MAX_DUTY = 1000;
 
     public int getMaxDuty() {
         return MAX_DUTY;

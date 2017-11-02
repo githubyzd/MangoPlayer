@@ -5,6 +5,7 @@ import android.media.MediaPlayer;
 import android.media.audiofx.BassBoost;
 import android.media.audiofx.Equalizer;
 import android.media.audiofx.PresetReverb;
+import android.media.audiofx.Virtualizer;
 import android.media.audiofx.Visualizer;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.mango.player.R;
+import com.mango.player.util.LogUtil;
 import com.mango.player.view.DutyView;
 import com.mango.player.view.DutyViewThumb;
 import com.mango.player.view.MyVisualizerView;
@@ -75,6 +77,7 @@ public class SoundSettingActivity extends AppCompatActivity {
     private List<Short> reverbNames = new ArrayList<Short>();
     private List<String> reverbVals = new ArrayList<String>();
     private Unbinder unBind;
+    private Virtualizer mVirtualizer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -101,6 +104,8 @@ public class SoundSettingActivity extends AppCompatActivity {
         setupEqualizer();
         // 初始化重低音控制器
         setupBassBoost();
+        //初始化环绕音控制器
+        setVirtualizer();
         // 初始化预设音场控制器
         setupPresetReverb();
     }
@@ -149,6 +154,41 @@ public class SoundSettingActivity extends AppCompatActivity {
                     }
                 }, Visualizer.getMaxCaptureRate() / 2, true, false);
         mVisualizer.setEnabled(true);
+    }
+
+    /**
+     * 初始化预设音场控制器
+     */
+    private void setupPresetReverb() {
+        // 以MediaPlayer的AudioSessionId创建PresetReverb
+        // 相当于设置PresetReverb负责控制该MediaPlayer
+        mPresetReverb = new PresetReverb(0,
+                mPlayer.getAudioSessionId());
+        // 设置启用预设音场控制
+        mPresetReverb.setEnabled(true);
+        // 获取系统支持的所有预设音场
+        for (short i = 0; i < mEqualizer.getNumberOfPresets(); i++) {
+            reverbNames.add(i);
+            reverbVals.add(mEqualizer.getPresetName(i));
+        }
+        // 使用Spinner做为音场选择工具
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, reverbVals);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mode.setAdapter(adapter);
+        // 为Spinner的列表项选中事件设置监听器
+        mode.setOnItemSelectedListener(new Spinner
+                .OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> arg0
+                    , View arg1, int arg2, long arg3) {
+                // 设定音场
+                mPresetReverb.setPreset(reverbNames.get(arg2));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+            }
+        });
     }
 
     /**
@@ -244,73 +284,42 @@ public class SoundSettingActivity extends AppCompatActivity {
         mBass = new BassBoost(0, mPlayer.getAudioSessionId());
         // 设置启用重低音效果
         mBass.setEnabled(true);
-        TextView bbTitle = new TextView(this);
-        bbTitle.setText("重低音：");
-        container.addView(bbTitle);
         // 使用SeekBar做为重低音的调整工具
-        SeekBar bar = new SeekBar(this);
         // 重低音的范围为0～1000
-        bar.setMax(1000);
-        bar.setProgress(0);
         // 为SeekBar的拖动事件设置事件监听器
-        bar.setOnSeekBarChangeListener(new SeekBar
-                .OnSeekBarChangeListener() {
+        bass.setOnDutyChangedListener(new DutyView.onDutyChangedListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar
-                    , int progress, boolean fromUser) {
+            public void onDutyChanged(int currentDuty) {
                 // 设置重低音的强度
-                mBass.setStrength((short) progress);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
+                short i = (short) currentDuty;
+                LogUtil.logByD(i + "---bass");
+                mBass.setStrength(i);
             }
         });
-        container.addView(bar);
     }
 
     /**
-     * 初始化预设音场控制器
+     * 初始化环绕音控制器
      */
-    private void setupPresetReverb() {
-        // 以MediaPlayer的AudioSessionId创建PresetReverb
-        // 相当于设置PresetReverb负责控制该MediaPlayer
-        mPresetReverb = new PresetReverb(0,
-                mPlayer.getAudioSessionId());
-        // 设置启用预设音场控制
-        mPresetReverb.setEnabled(true);
-//        TextView prTitle = new TextView(this);
-//        prTitle.setText("音场");
-//        container.addView(prTitle);
-        // 获取系统支持的所有预设音场
-        for (short i = 0; i < mEqualizer.getNumberOfPresets(); i++) {
-            reverbNames.add(i);
-            reverbVals.add(mEqualizer.getPresetName(i));
-        }
-        // 使用Spinner做为音场选择工具
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, reverbVals);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mode.setAdapter(adapter);
-        // 为Spinner的列表项选中事件设置监听器
-        mode.setOnItemSelectedListener(new Spinner
-                .OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> arg0
-                    , View arg1, int arg2, long arg3) {
-                // 设定音场
-                mPresetReverb.setPreset(reverbNames.get(arg2));
-            }
+    private void setVirtualizer() {
+        //优先级为0
+        mVirtualizer = new Virtualizer(0, mPlayer.getAudioSessionId());
+        mVirtualizer.setEnabled(true);
 
+
+        virtualize.setOnDutyChangedListener(new DutyView.onDutyChangedListener() {
             @Override
-            public void onNothingSelected(AdapterView<?> arg0) {
+            public void onDutyChanged(int currentDuty) {
+                // 设置环绕音的强度
+                if (mVirtualizer.getStrengthSupported()) {
+                    short strength = (short) currentDuty;
+                    LogUtil.logByD(strength + "---virtualize");
+                    mVirtualizer.setStrength(strength);
+                }
             }
         });
-//        container.addView(mode);
     }
+
 
     @Override
     protected void onPause() {
@@ -335,4 +344,5 @@ public class SoundSettingActivity extends AppCompatActivity {
         EventBus.getDefault().unregister(this);
         unBind.unbind();
     }
+
 }

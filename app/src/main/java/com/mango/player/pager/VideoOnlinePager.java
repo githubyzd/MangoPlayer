@@ -36,6 +36,7 @@ public class VideoOnlinePager extends BasePager implements VideoOnlineAdapter.On
     private List<VideoBean> videoList;
     private VideoOnlineAdapter adapter;
     private String mTab = "";
+    private ScrollView scrollView;
 
     public VideoOnlinePager(Activity context, String tab) {
         super(context);
@@ -44,17 +45,22 @@ public class VideoOnlinePager extends BasePager implements VideoOnlineAdapter.On
 
     @Override
     public void initView() {
-        ScrollView view = (ScrollView) View.inflate(mContext, R.layout.video_online_pager, null);
-        rollPagerView = (RollPagerView) view.findViewById(R.id.rollView);
-        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
+        scrollView = (ScrollView) View.inflate(mContext, R.layout.video_online_pager, null);
+        rollPagerView = (RollPagerView) scrollView.findViewById(R.id.rollView);
+        recyclerView = (RecyclerView) scrollView.findViewById(R.id.recyclerview);
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setLayoutManager(new GridLayoutManager(mContext, 2));
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 20, true));
         recyclerView.setHasFixedSize(true);
         initBanner();
         initRecyclerView();
-        fl_basepager_container.addView(view);
-        view.fullScroll(ScrollView.FOCUS_UP);
+        fl_basepager_container.addView(scrollView);
+        scrollView.post(new Runnable() {
+            @Override
+            public void run() {
+                scrollView.fullScroll(ScrollView.FOCUS_UP);
+            }
+        });
         initData();
     }
 
