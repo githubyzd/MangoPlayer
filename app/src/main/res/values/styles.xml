@@ -50,6 +50,9 @@
         <item name="android:textColor">#F6FFFF</item>
     </style>
 
-
+    <style name="VerticalVolumeBar" parent="@android:style/Widget.Holo.SeekBar">
+        <item name="android:progressDrawable">@drawable/layer_voice_bar</item>
+        <item name="android:thumb">@drawable/voice_btn</item>
+    </style>
 
 </resources>

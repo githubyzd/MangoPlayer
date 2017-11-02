@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:DutyView="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:baselineAligned="false"
+    android:background="@color/gray_88"
     android:orientation="vertical"
     tools:context="com.mango.player.activity.SoundSettingActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_40dp"
-        android:background="@color/gray_33"
+        android:background="@color/gray_22"
         android:orientation="horizontal">
 
         <ImageView
+            android:id="@+id/back"
             android:layout_width="@dimen/dp_40dp"
             android:layout_height="match_parent"
             android:padding="@dimen/margin_8dp"
@@ -36,6 +38,12 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/visualizerContainer"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_100dp"
+        android:background="@color/gray_11"
+        android:orientation="vertical"></LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -44,7 +52,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_30dp"
+            android:layout_height="@dimen/dp_36dp"
             android:orientation="horizontal"
             android:padding="@dimen/margin_2dp"
             android:weightSum="5">
@@ -53,25 +61,32 @@
                 android:id="@+id/mode"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_marginBottom="1px"
+                android:layout_marginTop="1px"
                 android:layout_weight="3"
-                android:background="@color/gray_44"></Spinner>
+                android:background="@drawable/selector_equalizer"
+                android:dropDownVerticalOffset="@dimen/dp_36dp"
+                android:popupBackground="@drawable/shape_equalizer_normal"
+                android:spinnerMode="dropdown" />
 
-            <TextView
+            <Button
+                android:id="@+id/edit"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="@dimen/margin_2dp"
                 android:layout_weight="1"
-                android:background="@color/gray_44"
+                android:background="@drawable/selector_equalizer"
                 android:gravity="center"
                 android:text="编辑"
                 android:textColor="@color/colorPrimary" />
 
-            <TextView
+            <Button
+                android:id="@+id/save"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="@dimen/margin_2dp"
                 android:layout_weight="1"
-                android:background="@color/gray_44"
+                android:background="@drawable/selector_equalizer"
                 android:gravity="center"
                 android:text="保存"
                 android:textColor="@color/colorPrimary" />
@@ -79,41 +94,84 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="340dp"
-        android:orientation="horizontal">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical" />
 
-        <LinearLayout
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_140dp"
+        android:orientation="vertical">
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <com.mango.player.view.DutyView
+                android:id="@+id/bass"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="@dimen/dp_40dp"
+                android:clickable="true"
+                DutyView:arcWidth="6dp"
+                DutyView:initDuty="0"
+                DutyView:progressBgColor="@color/blue"
+                DutyView:textSize="@dimen/sp_22sp">
+
+                <com.mango.player.view.DutyViewThumb
+                    android:id="@+id/bass_thumb"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp" />
+            </com.mango.player.view.DutyView>
+
+            <com.mango.player.view.DutyView
+                android:id="@+id/virtualize"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/dp_40dp"
+                android:clickable="true"
+                DutyView:arcWidth="6dp"
+                DutyView:initDuty="0"
+                DutyView:progressBgColor="@color/blue"
+                DutyView:textSize="@dimen/sp_22sp">
+
+                <com.mango.player.view.DutyViewThumb
+                    android:id="@+id/virtualize_thumb"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp" />
+            </com.mango.player.view.DutyView>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_6dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="60Hz" />
-
-            <com.mango.player.view.VerticalSeekBar
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="@dimen/dp_70dp"
+                android:gravity="center"
+                android:text="重低音"
+                android:textColor="@color/snow" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="0" />
-        </LinearLayout>
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/dp_70dp"
+                android:gravity="center"
+                android:text="环绕音"
+                android:textColor="@color/snow" />
+        </RelativeLayout>
+
     </LinearLayout>
-
-    <SeekBar
-        android:id="@+id/seekBar"
-        style="@style/Widget.AppCompat.SeekBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:max="10"
-        android:progress="3" />
 
 </LinearLayout>

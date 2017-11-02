@@ -2,11 +2,12 @@ package com.mango.player.view;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.View;
+
+import com.mango.player.R;
 
 /**
  * 根据Visualizer传来的数据动态绘制波形效果，分别为：
@@ -26,7 +27,8 @@ public class MyVisualizerView extends View {
         // 设置画笔的属性
         paint.setStrokeWidth(1f);
         paint.setAntiAlias(true);//抗锯齿
-        paint.setColor(Color.YELLOW);//画笔颜色
+        paint.setHinting(Paint.HINTING_ON);
+        paint.setColor(getResources().getColor(R.color.blue));//画笔颜色
         paint.setStyle(Paint.Style.FILL);
     }
 
@@ -56,7 +58,7 @@ public class MyVisualizerView extends View {
             return;
         }
         // 绘制白色背景
-        canvas.drawColor(Color.WHITE);
+        canvas.drawColor(getResources().getColor(R.color.gray_11));
         // 使用rect对象记录该组件的宽度和高度
         rect.set(0, 0, getWidth(), getHeight());
         switch (type) {

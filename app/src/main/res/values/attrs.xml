@@ -4,4 +4,27 @@
         <attr name="StrokeWidth" format="dimension"></attr>
         <attr name="StrokeColor" format="color"></attr>
     </declare-styleable>
+
+    <declare-styleable name="DutyView">
+
+        <attr name="viewType">
+
+            <enum name="progress" value="0" />
+
+            <enum name="thumb" value="1" />
+
+        </attr>
+        <attr name="initDuty" format="integer" />
+        <attr name="progressBgColor" format="color" />
+
+        <attr name="progressColor" format="color" />
+
+        <attr name="arcWidth" format="dimension" />
+
+        <attr name="textColor" format="color" />
+
+        <attr name="textSize" format="dimension" />
+
+    </declare-styleable>
+
 </resources>

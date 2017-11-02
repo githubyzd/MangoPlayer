@@ -1,5 +1,6 @@
 package com.mango.player.fragment;
 
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -7,6 +8,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.mango.player.R;
+import com.mango.player.activity.SoundSettingActivity;
 import com.mango.player.base.BaseFragment;
 
 import butterknife.BindView;
@@ -64,6 +66,12 @@ public class MusicNativeHomeFragment extends BaseFragment {
         if (controller != null) {
             controller.switchFragment(fragment);
         }
+    }
+
+    @OnClick(R.id.equalizer)
+    void equalizer(){
+        Intent intent = new Intent(getActivity(), SoundSettingActivity.class);
+        startActivity(intent);
     }
 
     public void setController(MusicNativeFragment controller) {

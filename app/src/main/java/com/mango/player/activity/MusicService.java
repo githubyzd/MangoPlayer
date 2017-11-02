@@ -335,17 +335,21 @@ public class MusicService extends Service {
         this.musics = musics;
     }
 
+
     private void setIndex(int index) {
         this.currentIndex = index;
     }
 
 
-    public void seekTo(int msec) {
+    private void seekTo(int msec) {
         mMediaPlayer.seekTo(msec);
     }
 
-    public int getDuration() {
-        return mMediaPlayer.getDuration();
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true, priority = 100)
+    public void getMediaPlayer(String config) {
+        if (config != null && config.equals("getMediaPlay")){
+            EventBus.getDefault().post(mMediaPlayer);
+        }
     }
 
     /**
@@ -355,6 +359,7 @@ public class MusicService extends Service {
         IntentFilter intentFilter = new IntentFilter("android.intent.action.HEADSET_PLUG");
         registerReceiver(headsetPlugReceiver, intentFilter);
     }
+
     //首次接受标志
     private boolean isFromHeadsetPlug = true;
     private BroadcastReceiver headsetPlugReceiver = new BroadcastReceiver() {
@@ -365,7 +370,8 @@ public class MusicService extends Service {
             if (intent.hasExtra("state")) {
                 if (intent.getIntExtra("state", 0) == 0) {
                     LogUtil.logByD("pause");
-                    mMediaPlayer.pause();
+                    if (!isFromHeadsetPlug)
+                        mMediaPlayer.pause();
                 } else if (intent.getIntExtra("state", 0) == 1) {
                     LogUtil.logByD("start1");
                     if (!isFromHeadsetPlug) {
@@ -376,5 +382,6 @@ public class MusicService extends Service {
         }
 
     };
+
 
 }

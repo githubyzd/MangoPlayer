@@ -6,7 +6,6 @@ import android.media.audiofx.BassBoost;
 import android.media.audiofx.Equalizer;
 import android.media.audiofx.PresetReverb;
 import android.media.audiofx.Visualizer;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
@@ -14,19 +13,55 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.mango.player.R;
+import com.mango.player.view.DutyView;
+import com.mango.player.view.DutyViewThumb;
 import com.mango.player.view.MyVisualizerView;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.Unbinder;
+
 public class SoundSettingActivity extends AppCompatActivity {
 
+    @BindView(R.id.back)
+    ImageView back;
+    @BindView(R.id.toggleButton)
+    ToggleButton toggleButton;
+    @BindView(R.id.container)
+    LinearLayout container;
+    @BindView(R.id.mode)
+    Spinner mode;
+    @BindView(R.id.edit)
+    Button edit;
+    @BindView(R.id.save)
+    Button save;
+    @BindView(R.id.visualizerContainer)
+    LinearLayout visualizerContainer;
+    @BindView(R.id.bass_thumb)
+    DutyViewThumb bassThumb;
+    @BindView(R.id.bass)
+    DutyView bass;
+    @BindView(R.id.virtualize_thumb)
+    DutyViewThumb virtualizeThumb;
+    @BindView(R.id.virtualize)
+    DutyView virtualize;
     // 定义播放声音的MediaPlayer
     private MediaPlayer mPlayer;
     // 定义系统的频谱
@@ -37,23 +72,29 @@ public class SoundSettingActivity extends AppCompatActivity {
     private BassBoost mBass;
     // 定义系统的预设音场控制器
     private PresetReverb mPresetReverb;
-    private LinearLayout layout;
     private List<Short> reverbNames = new ArrayList<Short>();
     private List<String> reverbVals = new ArrayList<String>();
+    private Unbinder unBind;
 
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //设置音频流 - STREAM_MUSIC：音乐回放即媒体音量
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
-        layout = new LinearLayout(this);//代码创建布局
-        layout.setOrientation(LinearLayout.VERTICAL);//设置为线性布局-上下排列
         setContentView(R.layout.activity_sound_setting);//将布局添加到 Activity
-        // 创建MediaPlayer对象,并添加音频
-        // 音频路径为  res/raw/beautiful.mp3
-        Uri uri = Uri.parse(App.musicList.get(1).getPath());
-        mPlayer = MediaPlayer.create(this,uri);
+        EventBus.getDefault().register(this);
+        unBind = ButterKnife.bind(this);
+
+        initMediaPlayer();
+    }
+
+    private void initMediaPlayer() {
+        EventBus.getDefault().post("getMediaPlay");
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true, priority = 100)
+    public void getMediaPlayer(MediaPlayer mediaPlayer) {
+        this.mPlayer = mediaPlayer;
         // 初始化示波器
         setupVisualizer();
         // 初始化均衡控制器
@@ -62,22 +103,20 @@ public class SoundSettingActivity extends AppCompatActivity {
         setupBassBoost();
         // 初始化预设音场控制器
         setupPresetReverb();
-        // 开发播放音乐
-        mPlayer.start();
     }
+
     /**
      * 初始化频谱
      */
-    private void setupVisualizer()
-    {
+    private void setupVisualizer() {
         // 创建MyVisualizerView组件，用于显示波形图
         final MyVisualizerView mVisualizerView =
                 new MyVisualizerView(this);
         mVisualizerView.setLayoutParams(new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
-                (int) (120f * getResources().getDisplayMetrics().density)));
+                ViewGroup.LayoutParams.MATCH_PARENT));
         // 将MyVisualizerView组件添加到layout容器中
-        layout.addView(mVisualizerView);
+        visualizerContainer.addView(mVisualizerView);
         // 以MediaPlayer的AudioSessionId创建Visualizer
         // 相当于设置Visualizer负责显示该MediaPlayer的音频数据
         mVisualizer = new Visualizer(mPlayer.getAudioSessionId());
@@ -94,19 +133,17 @@ public class SoundSettingActivity extends AppCompatActivity {
 
          */
         mVisualizer.setDataCaptureListener(
-                new Visualizer.OnDataCaptureListener()
-                {
+                new Visualizer.OnDataCaptureListener() {
                     //这个回调应该采集的是快速傅里叶变换有关的数据
                     @Override
                     public void onFftDataCapture(Visualizer visualizer,
-                                                 byte[] fft, int samplingRate)
-                    {
+                                                 byte[] fft, int samplingRate) {
                     }
+
                     //这个回调应该采集的是波形数据
                     @Override
                     public void onWaveFormDataCapture(Visualizer visualizer,
-                                                      byte[] waveform, int samplingRate)
-                    {
+                                                      byte[] waveform, int samplingRate) {
                         // 用waveform波形数据更新mVisualizerView组件
                         mVisualizerView.updateVisualizer(waveform);
                     }
@@ -117,8 +154,7 @@ public class SoundSettingActivity extends AppCompatActivity {
     /**
      * 初始化均衡控制器
      */
-    private void setupEqualizer()
-    {
+    private void setupEqualizer() {
         // 以MediaPlayer的AudioSessionId创建Equalizer
         // 相当于设置Equalizer负责控制该MediaPlayer
         mEqualizer = new Equalizer(0, mPlayer.getAudioSessionId());
@@ -126,14 +162,13 @@ public class SoundSettingActivity extends AppCompatActivity {
         mEqualizer.setEnabled(true);
         TextView eqTitle = new TextView(this);
         eqTitle.setText("均衡器：");
-        layout.addView(eqTitle);
+        container.addView(eqTitle);
         // 获取均衡控制器支持最小值和最大值
         final short minEQLevel = mEqualizer.getBandLevelRange()[0];//第一个下标为最低的限度范围
         short maxEQLevel = mEqualizer.getBandLevelRange()[1];  // 第二个下标为最高的限度范围
         // 获取均衡控制器支持的所有频率
         short brands = mEqualizer.getNumberOfBands();
-        for (short i = 0; i < brands; i++)
-        {
+        for (short i = 0; i < brands; i++) {
             TextView eqTextView = new TextView(this);
             // 创建一个TextView，用于显示频率
             eqTextView.setLayoutParams(new ViewGroup.LayoutParams(
@@ -143,7 +178,7 @@ public class SoundSettingActivity extends AppCompatActivity {
             // 设置该均衡控制器的频率
             eqTextView.setText((mEqualizer.getCenterFreq(i) / 1000)
                     + " Hz");
-            layout.addView(eqTextView);
+            container.addView(eqTextView);
             // 创建一个水平排列组件的LinearLayout
             LinearLayout tmpLayout = new LinearLayout(this);
             tmpLayout.setOrientation(LinearLayout.HORIZONTAL);
@@ -174,23 +209,21 @@ public class SoundSettingActivity extends AppCompatActivity {
             final short brand = i;
             // 为SeekBar的拖动事件设置事件监听器
             bar.setOnSeekBarChangeListener(new SeekBar
-                    .OnSeekBarChangeListener()
-            {
+                    .OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar,
-                                              int progress, boolean fromUser)
-                {
+                                              int progress, boolean fromUser) {
                     // 设置该频率的均衡值
                     mEqualizer.setBandLevel(brand,
                             (short) (progress + minEQLevel));
                 }
+
                 @Override
-                public void onStartTrackingTouch(SeekBar seekBar)
-                {
+                public void onStartTrackingTouch(SeekBar seekBar) {
                 }
+
                 @Override
-                public void onStopTrackingTouch(SeekBar seekBar)
-                {
+                public void onStopTrackingTouch(SeekBar seekBar) {
                 }
             });
             // 使用水平排列组件的LinearLayout“盛装”3个组件
@@ -198,15 +231,14 @@ public class SoundSettingActivity extends AppCompatActivity {
             tmpLayout.addView(bar);
             tmpLayout.addView(maxDbTextView);
             // 将水平排列组件的LinearLayout添加到myLayout容器中
-            layout.addView(tmpLayout);
+            container.addView(tmpLayout);
         }
     }
 
     /**
      * 初始化重低音控制器
      */
-    private void setupBassBoost()
-    {
+    private void setupBassBoost() {
         // 以MediaPlayer的AudioSessionId创建BassBoost
         // 相当于设置BassBoost负责控制该MediaPlayer
         mBass = new BassBoost(0, mPlayer.getAudioSessionId());
@@ -214,7 +246,7 @@ public class SoundSettingActivity extends AppCompatActivity {
         mBass.setEnabled(true);
         TextView bbTitle = new TextView(this);
         bbTitle.setText("重低音：");
-        layout.addView(bbTitle);
+        container.addView(bbTitle);
         // 使用SeekBar做为重低音的调整工具
         SeekBar bar = new SeekBar(this);
         // 重低音的范围为0～1000
@@ -222,85 +254,85 @@ public class SoundSettingActivity extends AppCompatActivity {
         bar.setProgress(0);
         // 为SeekBar的拖动事件设置事件监听器
         bar.setOnSeekBarChangeListener(new SeekBar
-                .OnSeekBarChangeListener()
-        {
+                .OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar
-                    , int progress, boolean fromUser)
-            {
+                    , int progress, boolean fromUser) {
                 // 设置重低音的强度
                 mBass.setStrength((short) progress);
             }
+
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar)
-            {
+            public void onStartTrackingTouch(SeekBar seekBar) {
             }
+
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar)
-            {
+            public void onStopTrackingTouch(SeekBar seekBar) {
             }
         });
-        layout.addView(bar);
+        container.addView(bar);
     }
 
     /**
      * 初始化预设音场控制器
      */
-    private void setupPresetReverb()
-    {
+    private void setupPresetReverb() {
         // 以MediaPlayer的AudioSessionId创建PresetReverb
         // 相当于设置PresetReverb负责控制该MediaPlayer
         mPresetReverb = new PresetReverb(0,
                 mPlayer.getAudioSessionId());
         // 设置启用预设音场控制
         mPresetReverb.setEnabled(true);
-        TextView prTitle = new TextView(this);
-        prTitle.setText("音场");
-        layout.addView(prTitle);
+//        TextView prTitle = new TextView(this);
+//        prTitle.setText("音场");
+//        container.addView(prTitle);
         // 获取系统支持的所有预设音场
-        for (short i = 0; i < mEqualizer.getNumberOfPresets(); i++)
-        {
+        for (short i = 0; i < mEqualizer.getNumberOfPresets(); i++) {
             reverbNames.add(i);
             reverbVals.add(mEqualizer.getPresetName(i));
         }
         // 使用Spinner做为音场选择工具
-        Spinner sp = new Spinner(this);
-        sp.setAdapter(new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, reverbVals));
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, reverbVals);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mode.setAdapter(adapter);
         // 为Spinner的列表项选中事件设置监听器
-        sp.setOnItemSelectedListener(new Spinner
-                .OnItemSelectedListener()
-        {
+        mode.setOnItemSelectedListener(new Spinner
+                .OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> arg0
-                    , View arg1, int arg2, long arg3)
-            {
+                    , View arg1, int arg2, long arg3) {
                 // 设定音场
                 mPresetReverb.setPreset(reverbNames.get(arg2));
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> arg0)
-            {
+            public void onNothingSelected(AdapterView<?> arg0) {
             }
         });
-        layout.addView(sp);
+//        container.addView(mode);
     }
 
     @Override
-    protected void onPause()
-    {
+    protected void onPause() {
         super.onPause();
-        if (isFinishing() && mPlayer != null)
-        {
+        if (isFinishing() && mPlayer != null) {
             // 释放所有对象
             mVisualizer.release();
             mEqualizer.release();
             mPresetReverb.release();
             mBass.release();
-            mPlayer.release();
-            mPlayer = null;
         }
     }
 
+    @OnClick(R.id.back)
+    void back() {
+        finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+        unBind.unbind();
+    }
 }
