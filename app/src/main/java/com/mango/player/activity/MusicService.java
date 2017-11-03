@@ -298,7 +298,14 @@ public class MusicService extends Service {
                 }
                 break;
             case MODE_RADOM:
-                currentIndex = AppUtil.getRandomNum(0, musics.size() - 1);
+                int temp = -1;
+                while (true){
+                    temp = AppUtil.getRandomNum(0, musics.size());
+                    if (temp != currentIndex){
+                        break;
+                    }
+                }
+                currentIndex = temp;
                 break;
         }
         play();
@@ -338,8 +345,9 @@ public class MusicService extends Service {
 
     private void setIndex(int index) {
         this.currentIndex = index;
+        music = musics.get(currentIndex);
+        updateView();
     }
-
 
     private void seekTo(int msec) {
         mMediaPlayer.seekTo(msec);

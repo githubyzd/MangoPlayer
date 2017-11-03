@@ -16,7 +16,7 @@
             android:orientation="horizontal"
             android:weightSum="3">
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/library"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -24,22 +24,42 @@
                 android:background="#448FE0"
                 android:orientation="vertical">
 
-                <ImageView
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:padding="@dimen/margin_20dp"
-                    android:src="@drawable/library" />
+                    android:layout_height="match_parent"
+                    android:background="#448FE0"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:padding="@dimen/margin_20dp"
+                        android:src="@drawable/library" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/margin_8dp"
+                        android:gravity="center_horizontal"
+                        android:text="媒体库"
+                        android:textColor="#C6E0EA"
+                        android:textSize="@dimen/sp_18sp" />
+                </LinearLayout>
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:id="@+id/tv_library"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/margin_8dp"
-                    android:gravity="center_horizontal"
-                    android:text="媒体库"
-                    android:textColor="#C6E0EA"
-                    android:textSize="@dimen/sp_18sp" />
-            </LinearLayout>
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginRight="@dimen/margin_4dp"
+                    android:layout_marginTop="@dimen/margin_4dp"
+                    android:text="8"
+                    android:textColor="@color/snow" />
+
+            </RelativeLayout>
+
 
             <LinearLayout
                 android:id="@+id/file"
@@ -69,7 +89,7 @@
                     android:textSize="@dimen/sp_18sp" />
             </LinearLayout>
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/favorite"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -77,22 +97,40 @@
                 android:background="#D48E96"
                 android:orientation="vertical">
 
-                <ImageView
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:padding="@dimen/margin_20dp"
-                    android:src="@drawable/favorite" />
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:padding="@dimen/margin_20dp"
+                        android:src="@drawable/favorite" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/margin_8dp"
+                        android:gravity="center_horizontal"
+                        android:text="我的最爱"
+                        android:textColor="#C6E0EA"
+                        android:textSize="@dimen/sp_18sp" />
+                </LinearLayout>
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:id="@+id/tv_favorite"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/margin_8dp"
-                    android:gravity="center_horizontal"
-                    android:text="我的最爱"
-                    android:textColor="#C6E0EA"
-                    android:textSize="@dimen/sp_18sp" />
-            </LinearLayout>
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginRight="@dimen/margin_4dp"
+                    android:layout_marginTop="@dimen/margin_4dp"
+                    android:text="8"
+                    android:textColor="@color/snow" />
+            </RelativeLayout>
+
 
         </LinearLayout>
 

@@ -195,6 +195,7 @@ public class SoundSettingActivity extends AppCompatActivity {
      * 初始化均衡控制器
      */
     private void setupEqualizer() {
+        container.removeAllViews();
         // 以MediaPlayer的AudioSessionId创建Equalizer
         // 相当于设置Equalizer负责控制该MediaPlayer
         mEqualizer = new Equalizer(0, mPlayer.getAudioSessionId());
@@ -202,6 +203,8 @@ public class SoundSettingActivity extends AppCompatActivity {
         mEqualizer.setEnabled(true);
         TextView eqTitle = new TextView(this);
         eqTitle.setText("均衡器：");
+        eqTitle.setTextColor(getResources().getColor(R.color.snow));
+        eqTitle.setTextSize(18);
         container.addView(eqTitle);
         // 获取均衡控制器支持最小值和最大值
         final short minEQLevel = mEqualizer.getBandLevelRange()[0];//第一个下标为最低的限度范围
@@ -218,6 +221,8 @@ public class SoundSettingActivity extends AppCompatActivity {
             // 设置该均衡控制器的频率
             eqTextView.setText((mEqualizer.getCenterFreq(i) / 1000)
                     + " Hz");
+            eqTextView.setTextColor(getResources().getColor(R.color.snow));
+            eqTextView.setTextSize(16);
             container.addView(eqTextView);
             // 创建一个水平排列组件的LinearLayout
             LinearLayout tmpLayout = new LinearLayout(this);
@@ -229,6 +234,8 @@ public class SoundSettingActivity extends AppCompatActivity {
                     ViewGroup.LayoutParams.WRAP_CONTENT));
             // 显示均衡控制器的最小值
             minDbTextView.setText((minEQLevel / 100) + " dB");
+            minDbTextView.setTextColor(getResources().getColor(R.color.snow));
+            minDbTextView.setTextSize(16);
             // 创建显示均衡控制器最大值的TextView
             TextView maxDbTextView = new TextView(this);
             maxDbTextView.setLayoutParams(new ViewGroup.LayoutParams(
@@ -236,6 +243,8 @@ public class SoundSettingActivity extends AppCompatActivity {
                     ViewGroup.LayoutParams.WRAP_CONTENT));
             // 显示均衡控制器的最大值
             maxDbTextView.setText((maxEQLevel / 100) + " dB");
+            maxDbTextView.setTextColor(getResources().getColor(R.color.snow));
+            maxDbTextView.setTextSize(16);
             LinearLayout.LayoutParams layoutParams = new
                     LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
@@ -291,7 +300,7 @@ public class SoundSettingActivity extends AppCompatActivity {
             @Override
             public void onDutyChanged(int currentDuty) {
                 // 设置重低音的强度
-                short i = (short) currentDuty;
+                short i = (short) (currentDuty * 10);
                 LogUtil.logByD(i + "---bass");
                 mBass.setStrength(i);
             }
@@ -312,7 +321,7 @@ public class SoundSettingActivity extends AppCompatActivity {
             public void onDutyChanged(int currentDuty) {
                 // 设置环绕音的强度
                 if (mVirtualizer.getStrengthSupported()) {
-                    short strength = (short) currentDuty;
+                    short strength = (short) (currentDuty * 10);
                     LogUtil.logByD(strength + "---virtualize");
                     mVirtualizer.setStrength(strength);
                 }
@@ -324,13 +333,11 @@ public class SoundSettingActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if (isFinishing() && mPlayer != null) {
-            // 释放所有对象
-            mVisualizer.release();
-            mEqualizer.release();
-            mPresetReverb.release();
-            mBass.release();
-        }
+        // 释放所有对象
+        mVisualizer.release();
+        mEqualizer.release();
+        mPresetReverb.release();
+        mBass.release();
     }
 
     @OnClick(R.id.back)

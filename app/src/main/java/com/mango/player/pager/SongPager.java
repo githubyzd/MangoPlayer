@@ -13,6 +13,7 @@ import com.mango.player.adapter.MusicSongListAdapter;
 import com.mango.player.base.BasePager;
 import com.mango.player.bean.Music;
 import com.mango.player.bean.MusicServiceBean;
+import com.mango.player.bean.PlayMode;
 import com.mango.player.util.FileManager;
 import com.mango.player.util.LogUtil;
 
@@ -20,7 +21,10 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 
+import static com.mango.player.bean.PlayMode.MODE_RADOM;
 import static com.mango.player.bean.PlayMode.PLAY_INDEX;
+import static com.mango.player.bean.PlayMode.PLAY_NEXT;
+import static com.mango.player.bean.PlayMode.SET_INDEX;
 
 
 /**
@@ -72,12 +76,29 @@ public class SongPager extends BasePager implements View.OnClickListener, MusicS
         rank.setOnClickListener(this);
     }
 
+    void randomPlay() {
+        PlayMode playMode = MODE_RADOM;
+        EventBus.getDefault().post(playMode);
+
+        EventBus.getDefault().post(App.musicList);
+
+        MusicServiceBean bean = new MusicServiceBean();
+        playMode = SET_INDEX;
+        bean.setIndex(0);
+        bean.setPlayMode(playMode);
+        EventBus.getDefault().post(bean);
+
+        playMode = PLAY_NEXT;
+        bean.setPlayMode(playMode);
+        EventBus.getDefault().post(bean);
+    }
+
     @Override
     protected void processClick(View view) {
         switch (view.getId()) {
             case R.id.iv_random:
             case R.id.tv_random:
-
+                randomPlay();
                 break;
             case R.id.edit:
                 break;

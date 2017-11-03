@@ -26,7 +26,7 @@ public class DutyView extends ViewGroup implements View.OnTouchListener {
     /**
      * duty最大值
      */
-    public static final int MAX_DUTY = 1000;
+    public static final int MAX_DUTY = 100;
 
     public int getMaxDuty() {
         return MAX_DUTY;
@@ -490,6 +490,8 @@ public class DutyView extends ViewGroup implements View.OnTouchListener {
                     last_x = x;
                     last_y = y;
                     calculateThumbPosition();
+                    if (listener != null)
+                        listener.onDutyChanged(duty);
                 }
                 break;
             case MotionEvent.ACTION_UP:

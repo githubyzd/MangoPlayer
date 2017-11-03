@@ -56,6 +56,7 @@ public class MusciNativeLibraryFragment extends BaseFragment {
         pagers.add(new SpecialPager(getActivity()));
     }
 
+
     private class MyOnTabSelectedListener implements TabLayout.OnTabSelectedListener {
 
         @Override

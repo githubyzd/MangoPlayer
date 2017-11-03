@@ -10,10 +10,13 @@ import android.widget.TextView;
 import com.mango.player.R;
 import com.mango.player.activity.App;
 import com.mango.player.base.BaseFragment;
+import com.mango.player.bean.Music;
 import com.mango.player.util.ACache;
 import com.mango.player.util.ExceptionUtil;
 import com.mango.player.util.LogUtil;
 import com.mango.player.util.MusicController;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import io.reactivex.Observable;
@@ -22,6 +25,7 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
+import static com.mango.player.util.ApplicationConstant.MUSIC_FAVORITE_KEY;
 import static com.mango.player.util.ApplicationConstant.MUSIC_INDEX;
 
 /**
@@ -51,6 +55,9 @@ public class MusicNativeFragment extends BaseFragment {
 
     private BaseFragment baseFragment;
     private int index;
+    private ArrayList<String> favoritePath;
+    private ArrayList<Music> list = new ArrayList<>();
+
     @Override
     public int getLayoutId() {
         return R.layout.fragment_music_native;
@@ -72,10 +79,11 @@ public class MusicNativeFragment extends BaseFragment {
 
             @Override
             public void subscribe(ObservableEmitter<Observer> emitter) throws Exception {
+                favoritePath = (ArrayList<String>) ACache.getInstance(getActivity()).getAsObject(MUSIC_FAVORITE_KEY);
+                String indexStr = ACache.getInstance(getContext()).getAsString(MUSIC_INDEX);
                 while (true) {
                     if (App.musicList != null) {
                         controller.initData(App.musicList);
-                        String indexStr = ACache.getInstance(getContext()).getAsString(MUSIC_INDEX);
                         if (indexStr == null) {
                             indexStr = "0";
                         }
@@ -105,6 +113,18 @@ public class MusicNativeFragment extends BaseFragment {
             @Override
             public void onComplete() {
                 controller.initController();
+                list.clear();
+                for (String path : favoritePath) {
+                    for (Music music : App.musicList) {
+                        LogUtil.logByD("bbbb");
+                        if (path.equals(music.getPath())) {
+                            list.add(music);
+                            LogUtil.logByD("aaaa");
+                            break;
+                        }
+                    }
+                }
+                App.favoriteList = list;
             }
         };
         //建立连接

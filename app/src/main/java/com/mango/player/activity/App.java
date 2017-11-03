@@ -20,6 +20,7 @@ import java.util.concurrent.Executors;
 
 public class App extends Application {
     public static ArrayList<Music> musicList;
+    public static ArrayList<Music>  favoriteList;
     private static List<Video> videoList;
     public static ExecutorService executorService;
     public static Timer timer = new Timer();
