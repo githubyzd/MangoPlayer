@@ -54,5 +54,10 @@
         <item name="android:progressDrawable">@drawable/layer_voice_bar</item>
         <item name="android:thumb">@drawable/voice_btn</item>
     </style>
+    <style name="MyEditText" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">@android:color/darker_gray</item>
+        <item name="colorControlActivated">@color/colorPrimaryDark</item>
+    </style>
+
 
 </resources>

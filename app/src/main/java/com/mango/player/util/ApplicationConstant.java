@@ -39,6 +39,7 @@ public class ApplicationConstant {
     public static final String MUSIC_PLAYMODE_KEY = "music_playmode_key";
 
 
+
     public final static int ACTIVITY_REQUEST_TK_CODE = 1024;
     public final static int ACTIVITY_REQUEST_RESET_PWD_CODE = ACTIVITY_REQUEST_TK_CODE + 1;
     public final static int ACTIVITY_REQUEST_IMAGE = ACTIVITY_REQUEST_RESET_PWD_CODE + 1;

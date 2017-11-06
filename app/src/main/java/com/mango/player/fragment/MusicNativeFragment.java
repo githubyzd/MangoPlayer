@@ -114,6 +114,8 @@ public class MusicNativeFragment extends BaseFragment {
             public void onComplete() {
                 controller.initController();
                 list.clear();
+                if (favoritePath == null)
+                    favoritePath = new ArrayList<>();
                 for (String path : favoritePath) {
                     for (Music music : App.musicList) {
                         LogUtil.logByD("bbbb");
