@@ -6,25 +6,24 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.mango.player.R;
-import com.mango.player.bean.Music;
+import com.mango.player.activity.App;
+import com.mango.player.bean.MusicList;
 import com.mango.player.holder.MusicNativeListHolder;
+import com.mango.player.util.AppUtil;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
  * Created by yzd on 2017/10/18 0018.
  */
 
-public class MusicSingerListAdapter extends RecyclerView.Adapter<MusicNativeListHolder> implements View.OnClickListener {
-    private LinkedHashMap<String, List<Music>> mSinger;
+public class MusicPlayListAdapter extends RecyclerView.Adapter<MusicNativeListHolder> implements View.OnClickListener {
+    private List<MusicList> mMusic;
     private MusicNativeListHolder mHolder;
     private OnItemClickListener mOnItemClickListener = null;
-    private List<String> list = new ArrayList<>();
-    public MusicSingerListAdapter(LinkedHashMap<String, List<Music>> map,List<String> list) {
-        this.mSinger = map;
-        this.list = list;
+
+    public MusicPlayListAdapter(List<MusicList> list) {
+        this.mMusic = list;
     }
 
     @Override
@@ -37,36 +36,23 @@ public class MusicSingerListAdapter extends RecyclerView.Adapter<MusicNativeList
 
     @Override
     public void onBindViewHolder(MusicNativeListHolder holder, int position) {
-        if (position >= list.size()){
-            return;
-        }
-        String singer = list.get(position);
-        List<Music> musics = mSinger.get(singer);
-        if (musics == null)
-            return;
-        for (Music music : musics) {
-            if (music.getThumbnail() != null) {
-                holder.iv_thumbnail.setImageBitmap(music.getThumbnail());
-                break;
-            } else {
-                holder.iv_thumbnail.setImageResource(R.drawable.music);
-            }
-        }
-
-        holder.name.setText(singer);
-        holder.singer.setText(musics.size() + " 首");
+        MusicList music = mMusic.get(position);
+        holder.name.setText(music.getName());
+        holder.singer.setText(music.getMusics().size() + " 首");
+        int padding = AppUtil.dp2px(App.mContext, 14f);
+        holder.iv_thumbnail.setPadding(padding, padding, padding, padding);
+        holder.iv_thumbnail.setImageResource(R.drawable.music_list);
         holder.mItemView.setTag(position);
         holder.detail.setTag(position);
     }
 
     @Override
     public int getItemCount() {
-        return mSinger.size();
+        return mMusic.size();
     }
 
-    public void setData(LinkedHashMap<String, List<Music>> musics,List<String> list) {
-        mSinger = musics;
-        this.list = list;
+    public void setData(List<MusicList> musics) {
+        mMusic = musics;
         notifyDataSetChanged();
     }
 

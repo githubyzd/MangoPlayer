@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/dp_100dp"
+    android:layout_marginRight="@dimen/margin_8dp"
+    android:layout_height="@dimen/dp_100dp">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#78B6DB"
+        android:padding="@dimen/dp_26dp"
+        android:src="@drawable/music_list" />
+
+    <TextView
+        android:id="@+id/list_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#33000000"
+        android:gravity="center"
+        android:padding="@dimen/margin_4dp"
+        android:text="默认列表"
+        android:textColor="@color/snow" />
+
+    <TextView
+        android:id="@+id/num"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="@dimen/margin_4dp"
+        android:layout_marginTop="@dimen/margin_4dp"
+        android:text="0"
+        android:textColor="@color/snow" />
+
+</RelativeLayout>

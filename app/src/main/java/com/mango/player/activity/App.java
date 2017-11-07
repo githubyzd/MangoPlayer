@@ -5,6 +5,7 @@ import android.app.Application;
 import android.content.Context;
 
 import com.mango.player.bean.Music;
+import com.mango.player.bean.MusicList;
 import com.mango.player.bean.Video;
 import com.mango.player.util.FileManager;
 
@@ -21,6 +22,7 @@ import java.util.concurrent.Executors;
 public class App extends Application {
     public static ArrayList<Music> musicList;
     public static ArrayList<Music>  favoriteList;
+    public static List<MusicList>  listData;
     private static List<Video> videoList;
     public static ExecutorService executorService;
     public static Timer timer = new Timer();

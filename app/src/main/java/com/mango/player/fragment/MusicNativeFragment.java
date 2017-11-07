@@ -1,5 +1,7 @@
 package com.mango.player.fragment;
 
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.widget.FrameLayout;
@@ -15,6 +17,10 @@ import com.mango.player.util.ACache;
 import com.mango.player.util.ExceptionUtil;
 import com.mango.player.util.LogUtil;
 import com.mango.player.util.MusicController;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 
@@ -64,7 +70,14 @@ public class MusicNativeFragment extends BaseFragment {
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
     public void initView() {
+        EventBus.getDefault().post("本地音乐");
         initController();
         MusicNativeHomeFragment fragment = new MusicNativeHomeFragment();
         fragment.setController(this);
@@ -118,10 +131,8 @@ public class MusicNativeFragment extends BaseFragment {
                     favoritePath = new ArrayList<>();
                 for (String path : favoritePath) {
                     for (Music music : App.musicList) {
-                        LogUtil.logByD("bbbb");
                         if (path.equals(music.getPath())) {
                             list.add(music);
-                            LogUtil.logByD("aaaa");
                             break;
                         }
                     }
@@ -134,6 +145,7 @@ public class MusicNativeFragment extends BaseFragment {
 
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true, priority = 100)
     public void switchFragment(BaseFragment fragment) {
         if (fragment == null) {
             ExceptionUtil.illegaArgument("fragment is null");
@@ -145,17 +157,23 @@ public class MusicNativeFragment extends BaseFragment {
         transaction.commit();
     }
 
+    @Override
     public boolean onBackPressed() {
         if (baseFragment instanceof MusicNativeHomeFragment) {
             return false;
         } else {
-            initView();
-            return true;
+            if (baseFragment.onBackPressed()) {
+                initView();
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 }

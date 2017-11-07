@@ -30,6 +30,11 @@ import com.mango.player.fragment.VideoOnlineDebugFragment;
 import com.mango.player.fragment.VideoOnlineFragment;
 import com.mango.player.util.AppUtil;
 import com.mango.player.util.ApplicationConstant;
+import com.mango.player.util.LogUtil;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -51,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     FrameLayout mainContainer;
     private Button bt_login;
 
-    private final int DEFAULT_FRATGMENT  = 3;
+    private final int DEFAULT_FRATGMENT = 3;
 
     private final int FRAGMENT_VIDEO_ONLINE = 100;
     private final int FRAGMENT_VIDEO_NATIVE = FRAGMENT_VIDEO_ONLINE + 1;
@@ -63,10 +68,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Unbinder unbinder;
     private BaseFragment fragment;
     private MusicNativeFragment musicNativeFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        EventBus.getDefault().register(this);
         unbinder = ButterKnife.bind(this);
         setStatus();
         initView();
@@ -78,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
         unbinder.unbind();
     }
 
@@ -133,6 +141,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN, priority = 100)
+    void setTitle(String title) {
+        LogUtil.logByD("aaa");
+        toolbar.setTitle(title);
     }
 
     //左侧菜单item点击时回调
@@ -202,12 +216,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         }
-        if (fragmentType == FRAGMENT_MUSIC_NATIVE){
-            MusicNativeFragment nativeFragment = (MusicNativeFragment) fragment;
-            if (!nativeFragment.onBackPressed()){
+        if (fragmentType == FRAGMENT_MUSIC_NATIVE) {
+            if (!fragment.onBackPressed()) {
                 super.onBackPressed();
             }
-        }else {
+        } else {
             super.onBackPressed();
         }
     }

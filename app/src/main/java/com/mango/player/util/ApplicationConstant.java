@@ -37,6 +37,7 @@ public class ApplicationConstant {
     public static final String MUSIC_DATA_KEY = "music_data_key";
     public static final String MUSIC_FAVORITE_KEY = "music_favorite_key";
     public static final String MUSIC_PLAYMODE_KEY = "music_playmode_key";
+    public static final String MUSIC_LIST_DATA = "music_list_data";
 
 
 

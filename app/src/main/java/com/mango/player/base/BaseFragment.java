@@ -16,7 +16,7 @@ import butterknife.Unbinder;
 
 public abstract class BaseFragment extends Fragment {
 
-    private View rootView;
+    protected View rootView;
     private Unbinder unbinder;
 
     @Override
@@ -48,4 +48,8 @@ public abstract class BaseFragment extends Fragment {
     public abstract int getLayoutId();
     public abstract void initView();
     public void initData(){}
+    public boolean onBackPressed() {
+        return false;
+    }
+
 }

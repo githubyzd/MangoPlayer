@@ -3,6 +3,7 @@ package com.mango.player.fragment;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +19,7 @@ import com.mango.player.R;
 import com.mango.player.activity.App;
 import com.mango.player.activity.MusicPlayActivity;
 import com.mango.player.activity.SoundSettingActivity;
+import com.mango.player.adapter.MusicListAdapter;
 import com.mango.player.base.BaseFragment;
 import com.mango.player.bean.MusicList;
 import com.mango.player.bean.UpdateViewBean;
@@ -35,6 +37,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -50,7 +53,7 @@ import static com.mango.player.util.ApplicationConstant.MUSIC_INDEX;
  * Created by yzd on 2017/10/18 0018.
  */
 
-public class MusicNativeHomeFragment extends BaseFragment implements View.OnClickListener {
+public class MusicNativeHomeFragment extends BaseFragment implements View.OnClickListener, MusicListAdapter.OnItemClickListener {
     @BindView(R.id.library)
     RelativeLayout library;
     @BindView(R.id.file)
@@ -77,11 +80,15 @@ public class MusicNativeHomeFragment extends BaseFragment implements View.OnClic
     TextView tvLibrary;
     @BindView(R.id.tv_favorite)
     TextView tvFavorite;
+    @BindView(R.id.play_list)
+    LinearLayout playList;
+    Unbinder unbinder;
     private MusicNativeFragment controller;
     private BaseFragment fragment;
     private int currentIndex = -1;
     private AlertDialog alertDialog;
     private EditText etListName;
+    private MusicListAdapter adapter;
 
     @Override
     public int getLayoutId() {
@@ -110,14 +117,32 @@ public class MusicNativeHomeFragment extends BaseFragment implements View.OnClic
             }
         });
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
+        if (App.listData == null) {
+            App.listData = new ArrayList<>();
+        }
+        adapter = new MusicListAdapter(App.listData);
         manager.setOrientation(HORIZONTAL);
         listRecyclerview.setLayoutManager(manager);
-        listRecyclerview.setAdapter(null);
+        listRecyclerview.setAdapter(adapter);
+        adapter.setOnItemClickListener(this);
     }
 
     @Override
     public void initData() {
         super.initData();
+        App.listData = DBManager.getInstance(getContext()).querylistList();
+        if (App.listData == null || App.listData.isEmpty()) {
+            App.listData = new ArrayList<>();
+            MusicList list = new MusicList();
+            List path = new ArrayList();
+            path.clear();
+            list.setMusics(path);
+            list.setName("默认列表");
+            DBManager.getInstance(getContext()).insertList(list);
+            App.listData.add(list);
+        }
+        LogUtil.logByD(App.listData.size() + "");
+        adapter.setData(App.listData);
         Observable<Observer> observable = Observable.create(new ObservableOnSubscribe<Observer>() {
 
             @Override
@@ -159,6 +184,7 @@ public class MusicNativeHomeFragment extends BaseFragment implements View.OnClic
 
     @OnClick(R.id.library)
     void library() {
+        EventBus.getDefault().post("媒体库");
         fragment = new MusciNativeLibraryFragment();
         if (controller != null) {
             controller.switchFragment(fragment);
@@ -173,8 +199,12 @@ public class MusicNativeHomeFragment extends BaseFragment implements View.OnClic
 
     @OnClick(R.id.playing)
     void toPlaying() {
+        String index = ACache.getInstance(getContext()).getAsString(MUSIC_INDEX);
         if (currentIndex == -1) {
-            currentIndex = Integer.parseInt(ACache.getInstance(getContext()).getAsString(MUSIC_INDEX));
+            if (index == null){
+                index = "0";
+            }
+            currentIndex = Integer.parseInt(index);
         }
         Intent intent = new Intent(getActivity(), MusicPlayActivity.class);
         intent.putExtra(MUSIC_INDEX, currentIndex);
@@ -183,6 +213,7 @@ public class MusicNativeHomeFragment extends BaseFragment implements View.OnClic
 
     @OnClick(R.id.favorite)
     void toFavorite() {
+        EventBus.getDefault().post("我的最爱");
         fragment = new MyFavoriteFragment();
         if (controller != null) {
             controller.switchFragment(fragment);
@@ -210,13 +241,24 @@ public class MusicNativeHomeFragment extends BaseFragment implements View.OnClic
         alertDialog.show();
     }
 
-    public void setController(MusicNativeFragment controller) {
-        this.controller = controller;
+    @OnClick(R.id.play_list)
+    void toList() {
+        LogUtil.logByD("播放列表");
+        EventBus.getDefault().post("播放列表");
+        fragment = new MusciNativePlayListFragment();
+        if (controller != null) {
+            controller.switchFragment(fragment);
+        }
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        initData();
+//    }
+
+    public void setController(MusicNativeFragment controller) {
+        this.controller = controller;
     }
 
     @Override
@@ -238,6 +280,7 @@ public class MusicNativeHomeFragment extends BaseFragment implements View.OnClic
                 list.setName(etListName.getText().toString());
                 long insertID = DBManager.getInstance(getContext()).insertList(list);
                 if (insertID >= 0) {
+                    App.listData.add(list);
                     AppUtil.showSnackbar(listAdd, "创建成功");
                 } else {
                     AppUtil.showSnackbar(listAdd, "创建成功");
@@ -245,5 +288,22 @@ public class MusicNativeHomeFragment extends BaseFragment implements View.OnClic
                 alertDialog.dismiss();
                 break;
         }
+    }
+
+    @Override
+    public void onItemClick(View view, final int position) {
+        BaseFragment fragment = new MusicPlayItemFragment();
+        EventBus.getDefault().post(fragment);
+        EventBus.getDefault().post(App.listData.get(position).getName());
+        new Handler().postDelayed(new Runnable() {
+            public void run() {
+                EventBus.getDefault().postSticky(App.listData.get(position));
+            }
+        }, 0);
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        return fragment.onBackPressed();
     }
 }
