@@ -22,8 +22,10 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <!--音效-->
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <!--设置铃声-->
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
 
     <application
         android:name=".activity.App"

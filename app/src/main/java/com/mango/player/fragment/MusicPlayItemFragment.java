@@ -17,6 +17,7 @@ import com.mango.player.bean.Music;
 import com.mango.player.bean.MusicList;
 import com.mango.player.bean.MusicServiceBean;
 import com.mango.player.bean.PlayMode;
+import com.mango.player.util.ACache;
 import com.mango.player.util.LogUtil;
 
 import org.greenrobot.eventbus.EventBus;
@@ -33,6 +34,7 @@ import static com.mango.player.bean.PlayMode.MODE_RADOM;
 import static com.mango.player.bean.PlayMode.PLAY_INDEX;
 import static com.mango.player.bean.PlayMode.PLAY_NEXT;
 import static com.mango.player.bean.PlayMode.SET_INDEX;
+import static com.mango.player.util.ApplicationConstant.MUSIC_LIST_ADD_DATA;
 
 /**
  * Created by yzd on 2017/11/7 0007.
@@ -59,6 +61,7 @@ public class MusicPlayItemFragment extends BaseFragment implements MusicSongList
     private MusicSongListAdapter adapter;
     private int clickPosition;
     private List<String> pathList;
+    private BaseFragment fragment;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -82,9 +85,16 @@ public class MusicPlayItemFragment extends BaseFragment implements MusicSongList
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true, priority = 100)
     public void getData(MusicList musicList) {
         this.music = musicList;
+        EventBus.getDefault().post(musicList.getName());
         pathList = music.getMusics();
         if (pathList == null) {
             pathList = new ArrayList<>();
+        }
+        if (pathList == null){
+            LogUtil.logByD("pathList == null");
+        }
+        if (tvRandom == null){
+            LogUtil.logByD("tvRandom == null");
         }
         tvRandom.setText("全部随机(" + pathList.size() + ")");
         for (String path : pathList) {
@@ -126,7 +136,9 @@ public class MusicPlayItemFragment extends BaseFragment implements MusicSongList
 
     @OnClick(R.id.add_music)
     void addMusic(){
-
+        fragment = new MusicAddListFragment();
+        EventBus.getDefault().post(fragment);
+        ACache.getInstance(getContext()).put(MUSIC_LIST_ADD_DATA,music.getName());
     }
 
     @Override
@@ -160,6 +172,10 @@ public class MusicPlayItemFragment extends BaseFragment implements MusicSongList
 
     @Override
     public boolean onBackPressed() {
-        return true;
+        if (fragment == null){
+            return true;
+        }else {
+           return fragment.onBackPressed();
+        }
     }
 }

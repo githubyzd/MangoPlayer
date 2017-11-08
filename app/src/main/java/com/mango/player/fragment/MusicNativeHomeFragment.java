@@ -47,6 +47,7 @@ import io.reactivex.disposables.Disposable;
 import static android.support.v7.widget.LinearLayoutManager.HORIZONTAL;
 import static com.mango.player.R.id.list_recyclerview;
 import static com.mango.player.R.id.tv_play_list;
+import static com.mango.player.activity.App.listData;
 import static com.mango.player.util.ApplicationConstant.MUSIC_INDEX;
 
 /**
@@ -117,10 +118,10 @@ public class MusicNativeHomeFragment extends BaseFragment implements View.OnClic
             }
         });
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
-        if (App.listData == null) {
-            App.listData = new ArrayList<>();
+        if (listData == null) {
+            listData = new ArrayList<>();
         }
-        adapter = new MusicListAdapter(App.listData);
+        adapter = new MusicListAdapter(listData);
         manager.setOrientation(HORIZONTAL);
         listRecyclerview.setLayoutManager(manager);
         listRecyclerview.setAdapter(adapter);
@@ -130,19 +131,15 @@ public class MusicNativeHomeFragment extends BaseFragment implements View.OnClic
     @Override
     public void initData() {
         super.initData();
-        App.listData = DBManager.getInstance(getContext()).querylistList();
-        if (App.listData == null || App.listData.isEmpty()) {
-            App.listData = new ArrayList<>();
+        listData = DBManager.getInstance(getContext()).querylistList();
+        if (listData == null || listData.isEmpty()) {
+            listData = new ArrayList<>();
             MusicList list = new MusicList();
-            List path = new ArrayList();
-            path.clear();
-            list.setMusics(path);
             list.setName("默认列表");
             DBManager.getInstance(getContext()).insertList(list);
-            App.listData.add(list);
+            listData.add(list);
         }
-        LogUtil.logByD(App.listData.size() + "");
-        adapter.setData(App.listData);
+        adapter.setData(listData);
         Observable<Observer> observable = Observable.create(new ObservableOnSubscribe<Observer>() {
 
             @Override
@@ -150,7 +147,6 @@ public class MusicNativeHomeFragment extends BaseFragment implements View.OnClic
                 while (true) {
                     if (App.favoriteList != null && App.musicList != null) {
                         emitter.onComplete();
-                        LogUtil.logByD("test");
                         break;
                     }
                 }
@@ -201,7 +197,7 @@ public class MusicNativeHomeFragment extends BaseFragment implements View.OnClic
     void toPlaying() {
         String index = ACache.getInstance(getContext()).getAsString(MUSIC_INDEX);
         if (currentIndex == -1) {
-            if (index == null){
+            if (index == null) {
                 index = "0";
             }
             currentIndex = Integer.parseInt(index);
@@ -243,7 +239,6 @@ public class MusicNativeHomeFragment extends BaseFragment implements View.OnClic
 
     @OnClick(R.id.play_list)
     void toList() {
-        LogUtil.logByD("播放列表");
         EventBus.getDefault().post("播放列表");
         fragment = new MusciNativePlayListFragment();
         if (controller != null) {
@@ -274,13 +269,17 @@ public class MusicNativeHomeFragment extends BaseFragment implements View.OnClic
                     AppUtil.showSnackbar(etListName, "请输入名称");
                     return;
                 }
+                for (MusicList list : App.listData) {
+                    if (etListName.equals(list.getName())){
+                        AppUtil.showSnackbar(etListName, "列表已存在");
+                        return;
+                    }
+                }
                 MusicList list = new MusicList();
-                List path = new ArrayList();
-                list.setMusics(path);
                 list.setName(etListName.getText().toString());
                 long insertID = DBManager.getInstance(getContext()).insertList(list);
                 if (insertID >= 0) {
-                    App.listData.add(list);
+                    listData.add(list);
                     AppUtil.showSnackbar(listAdd, "创建成功");
                 } else {
                     AppUtil.showSnackbar(listAdd, "创建成功");
@@ -294,10 +293,10 @@ public class MusicNativeHomeFragment extends BaseFragment implements View.OnClic
     public void onItemClick(View view, final int position) {
         BaseFragment fragment = new MusicPlayItemFragment();
         EventBus.getDefault().post(fragment);
-        EventBus.getDefault().post(App.listData.get(position).getName());
+        EventBus.getDefault().post(listData.get(position).getName());
         new Handler().postDelayed(new Runnable() {
             public void run() {
-                EventBus.getDefault().postSticky(App.listData.get(position));
+                EventBus.getDefault().postSticky(listData.get(position));
             }
         }, 0);
     }

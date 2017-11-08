@@ -38,7 +38,11 @@ public class MusicPlayListAdapter extends RecyclerView.Adapter<MusicNativeListHo
     public void onBindViewHolder(MusicNativeListHolder holder, int position) {
         MusicList music = mMusic.get(position);
         holder.name.setText(music.getName());
-        holder.singer.setText(music.getMusics().size() + " 首");
+        if (music.getMusics() == null) {
+            holder.singer.setText("0 首");
+        } else {
+            holder.singer.setText(music.getMusics().size() + " 首");
+        }
         int padding = AppUtil.dp2px(App.mContext, 14f);
         holder.iv_thumbnail.setPadding(padding, padding, padding, padding);
         holder.iv_thumbnail.setImageResource(R.drawable.music_list);

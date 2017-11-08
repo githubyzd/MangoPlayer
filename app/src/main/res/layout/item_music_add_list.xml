@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:id="@+id/music_native_lib_item"
+    android:background="?android:attr/selectableItemBackground"
+    android:layout_height="@dimen/dp_60dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_60dp"
+        android:padding="@dimen/margin_4dp">
+
+
+        <ImageView
+            android:id="@+id/iv_thumbnail"
+            android:layout_width="@dimen/dp_60dp"
+            android:layout_height="@dimen/dp_60dp"
+            android:background="#356D86"
+            android:src="@drawable/music" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:padding="@dimen/margin_4dp">
+
+            <TextView
+                android:id="@+id/music_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin_4dp"
+                android:ellipsize="marquee"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:text="名字"
+                android:textColor="#F6FFFF"
+                android:textSize="@dimen/sp_16sp" />
+
+            <TextView
+                android:id="@+id/music_singer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:text="作者"
+                android:textColor="#7CAAC1"
+                android:textSize="@dimen/sp_14sp" />
+
+        </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/check"
+            android:layout_width="wrap_content"
+            android:src="@drawable/arrow_down"
+            android:layout_marginRight="@dimen/margin_10dp"
+            android:gravity="center"
+            android:layout_gravity="center_vertical"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:background="#89BFDA"
+        android:layout_alignParentBottom="true"
+        android:layout_height="1px"/>
+</RelativeLayout>

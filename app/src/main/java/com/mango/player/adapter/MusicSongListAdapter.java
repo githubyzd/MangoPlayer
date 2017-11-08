@@ -43,6 +43,7 @@ public class MusicSongListAdapter extends RecyclerView.Adapter<MusicNativeListHo
         holder.name.setText(music.getName());
         holder.singer.setText(music.getArtist());
         holder.mItemView.setTag(position);
+        holder.detail.setOnClickListener(this);
         holder.detail.setTag(position);
     }
 

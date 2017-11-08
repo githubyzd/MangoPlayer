@@ -30,7 +30,6 @@ import com.mango.player.fragment.VideoOnlineDebugFragment;
 import com.mango.player.fragment.VideoOnlineFragment;
 import com.mango.player.util.AppUtil;
 import com.mango.player.util.ApplicationConstant;
-import com.mango.player.util.LogUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -145,7 +144,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Subscribe(threadMode = ThreadMode.MAIN, priority = 100)
     void setTitle(String title) {
-        LogUtil.logByD("aaa");
         toolbar.setTitle(title);
     }
 

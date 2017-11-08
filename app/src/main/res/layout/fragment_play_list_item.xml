@@ -40,7 +40,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin_8dp"
                 android:background="@drawable/list_music_add_selector"
-                android:padding="@dimen/margin_12dp"
+                android:paddingTop="@dimen/margin_10dp"
+                android:paddingBottom="@dimen/margin_10dp"
+                android:paddingLeft="@dimen/margin_14dp"
+                android:paddingRight="@dimen/margin_14dp"
                 android:text="添加歌曲"
                 android:textColor="@color/snow" />
         </LinearLayout>

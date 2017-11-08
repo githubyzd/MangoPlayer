@@ -34,7 +34,11 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListHolder> impl
     public void onBindViewHolder(MusicListHolder holder, int position) {
         MusicList musicList = list.get(position);
         holder.name.setText(musicList.getName());
-        holder.num.setText(musicList.getMusics().size() + "");
+        if (musicList.getMusics() == null){
+            holder.num.setText("0");
+        }else {
+            holder.num.setText(musicList.getMusics().size() + "");
+        }
         holder.mItemView.setOnClickListener(this);
         holder.mItemView.setTag(position);
     }
