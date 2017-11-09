@@ -163,6 +163,11 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
         postPlay();
     }
 
+    @OnClick(R.id.back)
+    void back(){
+        finish();
+    }
+
     @OnClick(R.id.music_pre)
     void playPre() {
         serviceBean.setPlayMode(PLAY_PRE);

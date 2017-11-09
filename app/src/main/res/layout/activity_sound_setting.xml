@@ -18,8 +18,8 @@
             android:id="@+id/back"
             android:layout_width="@dimen/dp_40dp"
             android:layout_height="match_parent"
-            android:padding="@dimen/margin_8dp"
-            android:src="@drawable/back" />
+            android:padding="@dimen/margin_6dp"
+            android:src="@drawable/back_image" />
 
         <TextView
             android:layout_width="0dp"

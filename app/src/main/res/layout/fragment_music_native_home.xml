@@ -144,30 +144,46 @@
             android:orientation="horizontal"
             android:weightSum="3">
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/current"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="#6EB1DB"
-                android:orientation="vertical">
+                android:layout_weight="1">
 
-                <ImageView
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:padding="@dimen/margin_20dp"
-                    android:src="@drawable/current" />
+                    android:layout_height="match_parent"
+                    android:background="#6EB1DB"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:padding="@dimen/margin_20dp"
+                        android:src="@drawable/current" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/margin_8dp"
+                        android:gravity="center_horizontal"
+                        android:text="最近播放"
+                        android:textColor="#C6E0EA"
+                        android:textSize="@dimen/sp_18sp" />
+                </LinearLayout>
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:id="@+id/tv_current"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/margin_8dp"
-                    android:gravity="center_horizontal"
-                    android:text="最近播放"
-                    android:textColor="#C6E0EA"
-                    android:textSize="@dimen/sp_18sp" />
-            </LinearLayout>
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginRight="@dimen/margin_4dp"
+                    android:layout_marginTop="@dimen/margin_4dp"
+                    android:text="8"
+                    android:textColor="@color/snow" />
+            </RelativeLayout>
 
             <LinearLayout
                 android:id="@+id/playing"
@@ -267,8 +283,8 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/list_recyclerview"
             android:layout_width="match_parent"
-            android:padding="@dimen/margin_8dp"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:padding="@dimen/margin_8dp">
 
         </android.support.v7.widget.RecyclerView>
 

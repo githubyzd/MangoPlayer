@@ -2,7 +2,9 @@ package com.mango.player.fragment;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -32,6 +34,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,7 +65,7 @@ public class MusicNativeHomeFragment extends BaseFragment implements View.OnClic
     @BindView(R.id.favorite)
     RelativeLayout favorite;
     @BindView(R.id.current)
-    LinearLayout current;
+    RelativeLayout current;
     @BindView(R.id.playing)
     LinearLayout playing;
     @BindView(R.id.equalizer)
@@ -187,6 +190,16 @@ public class MusicNativeHomeFragment extends BaseFragment implements View.OnClic
         }
     }
 
+    @OnClick(R.id.file)
+    void openFile() {
+        File skRoot = Environment.getExternalStorageDirectory();
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.addCategory(Intent.CATEGORY_DEFAULT);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setDataAndType(Uri.fromFile(skRoot), "file/*");
+        startActivity(intent);
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true, priority = 100)
     public void updateView(UpdateViewBean viewBean) {
         LogUtil.logByD("updateView: " + viewBean.toString());
@@ -218,6 +231,7 @@ public class MusicNativeHomeFragment extends BaseFragment implements View.OnClic
 
     @OnClick(R.id.equalizer)
     void equalizer() {
+        EventBus.getDefault().post("本地音乐");
         Intent intent = new Intent(getActivity(), SoundSettingActivity.class);
         startActivity(intent);
     }
@@ -246,11 +260,11 @@ public class MusicNativeHomeFragment extends BaseFragment implements View.OnClic
         }
     }
 
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        initData();
-//    }
+    @Override
+    public void onStart() {
+        super.onStart();
+        initData();
+    }
 
     public void setController(MusicNativeFragment controller) {
         this.controller = controller;
@@ -270,7 +284,7 @@ public class MusicNativeHomeFragment extends BaseFragment implements View.OnClic
                     return;
                 }
                 for (MusicList list : App.listData) {
-                    if (etListName.equals(list.getName())){
+                    if (etListName.equals(list.getName())) {
                         AppUtil.showSnackbar(etListName, "列表已存在");
                         return;
                     }
@@ -291,6 +305,10 @@ public class MusicNativeHomeFragment extends BaseFragment implements View.OnClic
 
     @Override
     public void onItemClick(View view, final int position) {
+        if (position == listData.size()){
+            addList();
+            return;
+        }
         BaseFragment fragment = new MusicPlayItemFragment();
         EventBus.getDefault().post(fragment);
         EventBus.getDefault().post(listData.get(position).getName());

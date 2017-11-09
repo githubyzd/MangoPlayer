@@ -174,6 +174,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 fragmentType = FRAGMENT_VIDEO_ONLINE;
                 break;
             case R.id.common_setting:
+                AppUtil.startSettingActivity(this, SettingsActivity.class);
                 return true;
         }
         switchFragment();

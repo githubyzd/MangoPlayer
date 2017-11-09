@@ -15,6 +15,7 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.mango.player.activity.ScanActivity;
+import com.mango.player.activity.SettingsActivity;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -39,6 +40,12 @@ public class AppUtil {
         Intent intent = new Intent(context, clazz);
         context.startActivity(intent);
     }
+
+    public static void startSettingActivity(Context context, Class<SettingsActivity> clazz) {
+        Intent intent = new Intent(context, clazz);
+        context.startActivity(intent);
+    }
+
 
     /**
      * 返回byte的数据大小对应的文本

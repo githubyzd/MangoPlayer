@@ -11,6 +11,7 @@ import android.provider.MediaStore;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -19,11 +20,15 @@ import android.widget.TextView;
 
 import com.mango.player.R;
 import com.mango.player.activity.App;
+import com.mango.player.adapter.AddListPopuAdapter;
 import com.mango.player.adapter.MusicSongListAdapter;
 import com.mango.player.base.BasePager;
 import com.mango.player.bean.Music;
+import com.mango.player.bean.MusicList;
 import com.mango.player.bean.MusicServiceBean;
 import com.mango.player.bean.PlayMode;
+import com.mango.player.dao.DBManager;
+import com.mango.player.util.ACache;
 import com.mango.player.util.AppUtil;
 import com.mango.player.util.FileManager;
 import com.mango.player.util.LogUtil;
@@ -33,6 +38,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.mango.player.R.id.iv_random;
 import static com.mango.player.R.id.tv_random;
@@ -40,13 +46,14 @@ import static com.mango.player.bean.PlayMode.MODE_RADOM;
 import static com.mango.player.bean.PlayMode.PLAY_INDEX;
 import static com.mango.player.bean.PlayMode.PLAY_NEXT;
 import static com.mango.player.bean.PlayMode.SET_INDEX;
+import static com.mango.player.util.ApplicationConstant.MUSIC_FAVORITE_KEY;
 
 
 /**
  * Created by yzd on 2017/10/18 0018.
  */
 
-public class SongPager extends BasePager implements View.OnClickListener, MusicSongListAdapter.OnItemClickListener {
+public class SongPager extends BasePager implements View.OnClickListener, MusicSongListAdapter.OnItemClickListener, AddListPopuAdapter.OnItemClickListener {
 
     private View view;
     private ImageView ivRandom;
@@ -68,6 +75,9 @@ public class SongPager extends BasePager implements View.OnClickListener, MusicS
     private LinearLayout share;
     private LinearLayout delete;
     private int popuIndex = -1;
+    private View addListView;
+    private RecyclerView addRecyclerView;
+    private List<String> listData;
 
     public SongPager(Activity context) {
         super(context);
@@ -103,6 +113,9 @@ public class SongPager extends BasePager implements View.OnClickListener, MusicS
     }
 
     void randomPlay() {
+        if (musics == null || musics.isEmpty()) {
+            return;
+        }
         PlayMode playMode = MODE_RADOM;
         EventBus.getDefault().post(playMode);
 
@@ -135,6 +148,7 @@ public class SongPager extends BasePager implements View.OnClickListener, MusicS
             case R.id.add_list:
                 break;
             case R.id.add_to:
+                add2List();
                 break;
             case R.id.bell:
                 setBell();
@@ -150,6 +164,38 @@ public class SongPager extends BasePager implements View.OnClickListener, MusicS
             default:
                 break;
         }
+    }
+
+    private void add2List() {
+        popupHelper.dismiss();
+        listData = new ArrayList<>();
+        listData.add("我的最爱");
+        for (MusicList musicList : App.listData) {
+            listData.add(musicList.getName());
+        }
+        if (addListView == null) {
+            addListView = LayoutInflater.from(mContext)
+                    .inflate(R.layout.add_to_list_popu_layout, null, false);
+
+            addRecyclerView = (RecyclerView) addListView.findViewById(R.id.recyclerview_add);
+        }
+        RecyclerView.LayoutManager manager = new LinearLayoutManager(mContext);
+        addRecyclerView.setLayoutManager(manager);
+        AddListPopuAdapter addListPopuAdapter = new AddListPopuAdapter(listData);
+        addRecyclerView.setAdapter(addListPopuAdapter);
+        addListPopuAdapter.setOnItemClickListener(this);
+
+        popupHelper = new PopupHelper.Builder(mContext)
+                .contentView(addListView)
+                .width(ViewGroup.LayoutParams.MATCH_PARENT)
+                .height(AppUtil.getScreenHeight(mContext) / 2 + AppUtil.dp2px(mContext, 80))
+                .anchorView(view)
+                .parentView(view)
+                .gravity(Gravity.BOTTOM)
+                .outSideTouchable(true)
+                .animationStyle(R.style.anim_bottom)
+                .build()
+                .showAtLocation();
     }
 
     private void delete() {
@@ -243,10 +289,47 @@ public class SongPager extends BasePager implements View.OnClickListener, MusicS
                 playMusic();
                 break;
             case R.id.detail:
-                LogUtil.logByD("点击音乐条目" + musics.get(position));
                 showDetail(position);
                 break;
+            case R.id.item_music_list_popu:
+                addToList(position);
+                break;
         }
+    }
+
+    private void addToList(int position) {
+        popupHelper.dismiss();
+        Music music = musics.get(popuIndex);
+        if (position == 0) {
+            LogUtil.logByD(popuIndex+"");
+            LogUtil.logByD(music.getName());
+            App.favoriteList.add(music);
+            ArrayList<String> favoritePath = (ArrayList<String>) ACache.getInstance(mContext).getAsObject(MUSIC_FAVORITE_KEY);
+            if (favoritePath == null) {
+                favoritePath = new ArrayList<>();
+            }
+            favoritePath.add(music.getPath());
+            ACache.getInstance(mContext).put(MUSIC_FAVORITE_KEY, favoritePath);
+        } else {
+            LogUtil.logByD(popuIndex+"");
+            LogUtil.logByD(music.getName());
+            String name = listData.get(position);
+            for (MusicList musicList : App.listData) {
+                if (musicList.getName().equals(name)) {
+                    List<String> temp = musicList.getMusics();
+                    ArrayList<String> data = new ArrayList<>();
+                    if (temp == null) {
+                        temp = new ArrayList<>();
+                    }
+                    data.add(music.getPath());
+                    data.addAll(temp);
+                    musicList.setMusics(data);
+                    DBManager.getInstance(mContext).updatelist(musicList);
+                    break;
+                }
+            }
+        }
+        AppUtil.showSnackbar(view, "添加歌曲成功");
     }
 
     private void showDetail(int position) {
