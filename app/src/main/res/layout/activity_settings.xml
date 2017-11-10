@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.mango.player.activity.SettingsActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="#443598DB"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+    </android.support.design.widget.AppBarLayout>
+
+    <RelativeLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/shadow" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/equalizer"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_50dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="@dimen/dp_30dp"
+                    android:layout_height="@dimen/dp_30dp"
+                    android:layout_marginLeft="@dimen/margin_14dp"
+                    android:padding="@dimen/margin_2dp"
+                    android:src="@drawable/setting_equalizer" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/margin_16dp"
+                    android:gravity="center_vertical"
+                    android:text="均衡器" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_alignParentBottom="true"
+                android:background="#89BFDA" />
+
+            <LinearLayout
+                android:id="@+id/skin"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_50dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="@dimen/dp_30dp"
+                    android:layout_height="@dimen/dp_30dp"
+                    android:layout_marginLeft="@dimen/margin_14dp"
+                    android:src="@drawable/setting_skin" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/margin_16dp"
+                    android:gravity="center_vertical"
+                    android:text="换肤" />
+
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_alignParentBottom="true"
+                android:background="#89BFDA" />
+
+            <LinearLayout
+                android:id="@+id/sleep"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_50dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="@dimen/dp_30dp"
+                    android:layout_height="@dimen/dp_30dp"
+                    android:layout_marginLeft="@dimen/margin_14dp"
+                    android:src="@drawable/setting_sleep" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/margin_16dp"
+                    android:gravity="center_vertical"
+                    android:text="睡眠" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_alignParentBottom="true"
+                android:background="#89BFDA" />
+
+            <LinearLayout
+                android:id="@+id/setting"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_50dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="@dimen/dp_30dp"
+                    android:layout_height="@dimen/dp_30dp"
+                    android:layout_marginLeft="@dimen/margin_14dp"
+                    android:src="@drawable/setting_setting" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/margin_16dp"
+                    android:gravity="center_vertical"
+                    android:text="设置" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_alignParentBottom="true"
+                android:background="#89BFDA" />
+
+            <LinearLayout
+                android:id="@+id/share"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_50dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/imageView2"
+                    android:layout_width="@dimen/dp_30dp"
+                    android:layout_height="@dimen/dp_30dp"
+                    android:layout_marginLeft="@dimen/margin_14dp"
+                    android:src="@drawable/setting_share" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/margin_16dp"
+                    android:gravity="center_vertical"
+                    android:text="分享" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_alignParentBottom="true"
+                android:background="#89BFDA" />
+
+            <LinearLayout
+                android:id="@+id/quit"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_50dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="@dimen/dp_30dp"
+                    android:layout_height="@dimen/dp_30dp"
+                    android:layout_marginLeft="@dimen/margin_14dp"
+                    android:src="@drawable/setting_quit" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/margin_16dp"
+                    android:gravity="center_vertical"
+                    android:text="退出" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_alignParentBottom="true"
+                android:background="#89BFDA" />
+        </LinearLayout>
+    </RelativeLayout>
+
+</LinearLayout>

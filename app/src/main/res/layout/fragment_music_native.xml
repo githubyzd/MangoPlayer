@@ -1,20 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ll_home"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#3C7B96"
-    android:elevation="4dp"
-    android:orientation="vertical">
-
-    <FrameLayout
-        android:id="@+id/ll_container"
+    android:elevation="4dp">
+    <View
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:background="@color/shadow"
+        android:layout_height="match_parent"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:elevation="4dp"
+        android:orientation="vertical">
 
-    </FrameLayout>
+        <FrameLayout
+            android:id="@+id/ll_container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
-    <include layout="@layout/music_controll_trip"/>
+        </FrameLayout>
 
-</LinearLayout>
+        <include layout="@layout/music_controll_trip" />
+
+    </LinearLayout>
+</RelativeLayout>

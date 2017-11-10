@@ -242,7 +242,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_20dp"
-            android:background="#4182A0" />
+            android:background="@color/shadow_1" />
 
         <LinearLayout
             android:id="@+id/play_list"
@@ -291,7 +291,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_30dp"
-            android:background="#4182A0" />
+            android:background="@color/shadow_1" />
 
     </LinearLayout>
 </ScrollView>

@@ -2,6 +2,7 @@ package com.mango.player.activity;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,7 +11,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -76,7 +77,7 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
     @BindView(R.id.sound_effect)
     ImageView soundEffect;
     @BindView(R.id.container)
-    LinearLayout container;
+    RelativeLayout container;
     @BindView(R.id.current_duration)
     TextView currentDuration;
     @BindView(R.id.duration)
@@ -99,6 +100,7 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
     private ArrayList<String> favoritePath;
     private boolean isLike = false;
     private PlayMode playMode = MODE_LOOP_ALL;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,6 +112,7 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void initView() {
+        setBg("skin");
         favoritePath = (ArrayList<String>) ACache.getInstance(this).getAsObject(MUSIC_FAVORITE_KEY);
         playMode = (PlayMode) ACache.getInstance(this).getAsObject(ApplicationConstant.MUSIC_PLAYMODE_KEY);
         if (favoritePath != null) {
@@ -126,7 +129,7 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
             playMode = MODE_LOOP_ALL;
         }
         LogUtil.logByD(playMode.toString());
-        switch (playMode){
+        switch (playMode) {
             case MODE_ALL:
                 pattern.setImageResource(R.drawable.play_order);
                 break;
@@ -141,6 +144,16 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
                 break;
         }
         EventBus.getDefault().post(playMode);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = false, priority = 100)
+    private void setBg(String type) {
+        if (!type.equals("skin")){
+            return;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            container.setBackground(AppUtil.loadImageFromAsserts(this));
+        }
     }
 
     @Override
@@ -164,7 +177,7 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
     }
 
     @OnClick(R.id.back)
-    void back(){
+    void back() {
         finish();
     }
 
@@ -237,8 +250,8 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
     }
 
     @OnClick(R.id.pattern)
-    void pattern(){
-        switch (playMode){
+    void pattern() {
+        switch (playMode) {
             case MODE_LOOP_ALL:
                 playMode = MODE_ALL;
                 pattern.setImageResource(R.drawable.play_order);
@@ -260,8 +273,8 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
     }
 
     @OnClick(R.id.sound_effect)
-    void sound_effect(){
-        Intent intent = new Intent(this,SoundSettingActivity.class);
+    void sound_effect() {
+        Intent intent = new Intent(this, SoundSettingActivity.class);
         startActivity(intent);
     }
 

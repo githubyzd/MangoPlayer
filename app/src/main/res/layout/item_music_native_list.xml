@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
     android:id="@+id/music_native_lib_item"
-    android:background="?android:attr/selectableItemBackground"
-    android:layout_height="@dimen/dp_60dp">
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/dp_60dp"
+    android:background="?android:attr/selectableItemBackground">
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_60dp"
-        android:padding="@dimen/margin_4dp">
-
+        android:layout_height="@dimen/dp_60dp">
 
         <ImageView
             android:id="@+id/iv_thumbnail"
-            android:layout_width="@dimen/dp_60dp"
-            android:layout_height="@dimen/dp_60dp"
-            android:background="#356D86"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:background="#99356D86"
+            android:padding="@dimen/margin_4dp"
+            android:layout_margin="@dimen/margin_4dp"
             android:src="@drawable/music" />
 
         <LinearLayout
@@ -51,17 +52,18 @@
         <ImageView
             android:id="@+id/detail"
             android:layout_width="@dimen/dp_60dp"
-            android:src="@drawable/arrow_down"
-            android:padding="@dimen/margin_14dp"
-            android:layout_marginRight="-10dp"
-            android:layout_marginBottom="@dimen/margin_4dp"
+            android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
-            android:layout_height="match_parent" />
+            android:layout_marginBottom="@dimen/margin_4dp"
+            android:layout_marginRight="-10dp"
+            android:padding="@dimen/margin_14dp"
+            android:src="@drawable/arrow_down" />
 
     </LinearLayout>
+
     <View
         android:layout_width="match_parent"
-        android:background="#89BFDA"
+        android:layout_height="1px"
         android:layout_alignParentBottom="true"
-        android:layout_height="1px"/>
+        android:background="#89BFDA" />
 </RelativeLayout>

@@ -1,10 +1,14 @@
 package com.mango.player.fragment;
 
+import android.os.Build;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import com.mango.player.R;
 import com.mango.player.base.BaseFragment;
@@ -12,11 +16,17 @@ import com.mango.player.base.BasePager;
 import com.mango.player.pager.SingerPager;
 import com.mango.player.pager.SongPager;
 import com.mango.player.pager.SpecialPager;
+import com.mango.player.util.AppUtil;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.Unbinder;
 
 /**
  * Created by yzd on 2017/10/18 0018.
@@ -27,15 +37,22 @@ public class MusciNativeLibraryFragment extends BaseFragment {
     TabLayout tablayout;
     @BindView(R.id.viewpager)
     ViewPager viewpager;
+    @BindView(R.id.container)
+    RelativeLayout container;
+    Unbinder unbinder;
     private String[] tabs = {"歌曲", "歌手", "专辑"};
     private List<BasePager> pagers;
+
     @Override
     public int getLayoutId() {
         return R.layout.fragment_music_native_library;
     }
 
+
     @Override
     public void initView() {
+        EventBus.getDefault().register(this);
+       setBg("skin");
         for (String tab : tabs) {
             tablayout.addTab(tablayout.newTab().setText(tab));
         }
@@ -54,6 +71,28 @@ public class MusciNativeLibraryFragment extends BaseFragment {
         pagers.add(new SongPager(getActivity()));
         pagers.add(new SingerPager(getActivity()));
         pagers.add(new SpecialPager(getActivity()));
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = false, priority = 100)
+    public void setBg(String type) {
+        if (!type.equals("skin")){
+            return;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            container.setBackground(AppUtil.loadImageFromAsserts(getContext()));
+        }
     }
 
 
@@ -77,7 +116,7 @@ public class MusciNativeLibraryFragment extends BaseFragment {
         }
     }
 
-    private class MyPagerAdapter extends PagerAdapter{
+    private class MyPagerAdapter extends PagerAdapter {
 
         @Override
         public int getCount() {
@@ -88,6 +127,7 @@ public class MusciNativeLibraryFragment extends BaseFragment {
         public boolean isViewFromObject(View view, Object object) {
             return view == object;
         }
+
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             BasePager basePager = pagers.get(position);

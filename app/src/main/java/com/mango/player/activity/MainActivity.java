@@ -111,6 +111,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     //设置Toolbar
     private void initToobar() {
+        toolbar.setBackgroundColor(Color.GRAY);
         onNavigationItemSelected(navView.getMenu().getItem(DEFAULT_FRATGMENT));
         setSupportActionBar(toolbar);
     }

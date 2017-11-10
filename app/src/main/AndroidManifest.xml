@@ -77,9 +77,8 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity android:name=".activity.VideoOnlineDetailActivity" />
         <activity android:name=".activity.SoundSettingActivity" />
-        <activity
-            android:name=".activity.Settings2Activity"
-            android:label="@string/title_activity_settings2"></activity>
+        <activity android:name=".activity.MusicSettingsActivity" />
+        <activity android:name=".activity.SkinActivity"></activity>
     </application>
 
 </manifest>

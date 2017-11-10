@@ -1,5 +1,7 @@
 package com.mango.player.util;
 
+import com.mango.player.R;
+
 import io.vov.vitamio.MediaPlayer;
 
 /**
@@ -40,7 +42,6 @@ public class ApplicationConstant {
     public static final String MUSIC_LIST_ADD_DATA = "music_list_add_data";
 
 
-
     public final static int ACTIVITY_REQUEST_TK_CODE = 1024;
     public final static int ACTIVITY_REQUEST_RESET_PWD_CODE = ACTIVITY_REQUEST_TK_CODE + 1;
     public final static int ACTIVITY_REQUEST_IMAGE = ACTIVITY_REQUEST_RESET_PWD_CODE + 1;
@@ -61,7 +62,12 @@ public class ApplicationConstant {
     public static final String VIDEO_TYPE = "video_type";
     public static final String VIDEO_ONLINE = "video_online";
     public static final String VIDEO = "video";
+    public static final String SKIN = "skin";
 
-    public static String [] tabs = {"tab1","tab2"};
+    public static String[] tabs = {"tab1", "tab2"};
+
+    //皮肤数组
+    public static int[] skin = {R.raw.bg_000, R.raw.bg_001, R.raw.bg_002, R.raw.bg_003, R.raw.bg_004, R.raw.bg_005, R.raw.bg_006, R.raw.bg_007, R.raw.bg_008, R.raw.bg_009, R.raw.bg_010,
+            R.raw.bg_011, R.raw.bg_012, R.raw.bg_013, R.raw.bg_014, R.raw.bg_015, R.raw.bg_016, R.raw.bg_017};
 
 }

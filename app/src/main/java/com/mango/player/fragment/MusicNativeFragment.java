@@ -1,5 +1,6 @@
 package com.mango.player.fragment;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -7,6 +8,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mango.player.R;
@@ -14,6 +16,7 @@ import com.mango.player.activity.App;
 import com.mango.player.base.BaseFragment;
 import com.mango.player.bean.Music;
 import com.mango.player.util.ACache;
+import com.mango.player.util.AppUtil;
 import com.mango.player.util.ExceptionUtil;
 import com.mango.player.util.LogUtil;
 import com.mango.player.util.MusicController;
@@ -57,7 +60,7 @@ public class MusicNativeFragment extends BaseFragment {
     @BindView(R.id.music_play_controller)
     LinearLayout musicPlayController;
     @BindView(R.id.ll_home)
-    LinearLayout llHome;
+    RelativeLayout llHome;
 
     private BaseFragment baseFragment;
     private int index;
@@ -78,10 +81,21 @@ public class MusicNativeFragment extends BaseFragment {
     @Override
     public void initView() {
         EventBus.getDefault().post("本地音乐");
+        setBg("skin");
         initController();
         MusicNativeHomeFragment fragment = new MusicNativeHomeFragment();
         fragment.setController(this);
         switchFragment(fragment);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = false, priority = 100)
+    public void setBg(String type) {
+        if (!type.equals("skin")){
+            return;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            llHome.setBackground(AppUtil.loadImageFromAsserts(getContext()));
+        }
     }
 
     private void initController() {

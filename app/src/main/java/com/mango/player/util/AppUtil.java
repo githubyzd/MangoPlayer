@@ -14,16 +14,20 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.mango.player.R;
 import com.mango.player.activity.ScanActivity;
 import com.mango.player.activity.SettingsActivity;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
+
+import static com.mango.player.util.ApplicationConstant.SKIN;
 
 
 /**
@@ -293,6 +297,88 @@ public class AppUtil {
     public static int sp2px(Context context, float spValue) {
         final float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
         return (int) (spValue * fontScale + 0.5f);
+    }
+
+    /** 从assets 文件夹中读取图片 */
+    public static Drawable loadImageFromAsserts(final Context ctx) {
+        String asString = ACache.getInstance(ctx).getAsString(SKIN);
+        if (asString == null || asString.isEmpty()){
+            asString = "0";
+        }
+        int type = Integer.parseInt(asString);
+        int temp = -1;
+        switch (type){
+            case 0:
+                temp = R.raw.bg_000;
+                break;
+            case 1:
+                temp = R.raw.bg_001;
+                break;
+            case 2:
+                temp = R.raw.bg_002;
+                break;
+            case 3:
+                temp = R.raw.bg_003;
+                break;
+            case 4:
+                temp = R.raw.bg_004;
+                break;
+            case 5:
+                temp = R.raw.bg_005;
+                break;
+            case 6:
+                temp = R.raw.bg_006;
+                break;
+            case 7:
+                temp = R.raw.bg_007;
+                break;
+            case 8:
+                temp = R.raw.bg_008;
+                break;
+            case 9:
+                temp = R.raw.bg_009;
+                break;
+            case 10:
+                temp = R.raw.bg_010;
+                break;
+            case 11:
+                temp = R.raw.bg_011;
+                break;
+            case 12:
+                temp = R.raw.bg_012;
+                break;
+            case 13:
+                temp = R.raw.bg_013;
+                break;
+            case 14:
+                temp = R.raw.bg_014;
+                break;
+            case 15:
+                temp = R.raw.bg_015;
+                break;
+            case 16:
+                temp = R.raw.bg_016;
+                break;
+            case 17:
+                temp = R.raw.bg_017;
+                break;
+            default:
+                temp = R.raw.bg_016;
+                break;
+        }
+        try {
+            InputStream is = ctx.getResources().openRawResource(temp);
+            return Drawable.createFromStream(is, null);
+        } catch (OutOfMemoryError e) {
+            if (e != null) {
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+            if (e != null) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 
 
