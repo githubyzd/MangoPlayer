@@ -36,6 +36,7 @@ public class SkinActivity extends AppCompatActivity implements SkinAdapter.OnIte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_skin);
+        App.addActivity(this);
         ButterKnife.bind(this);
         initToolBar();
         initView();
@@ -44,7 +45,7 @@ public class SkinActivity extends AppCompatActivity implements SkinAdapter.OnIte
     private void initView() {
         setBg();
         GridLayoutManager manager = new GridLayoutManager(this,3);
-        adapter = new SkinAdapter();
+        adapter = new SkinAdapter(this);
         recyclerview.setLayoutManager(manager);
         recyclerview.setAdapter(adapter);
         adapter.setOnItemClickListener(this);
@@ -75,5 +76,11 @@ public class SkinActivity extends AppCompatActivity implements SkinAdapter.OnIte
         setBg();
         adapter.notifyData();
         EventBus.getDefault().post("skin");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        App.removeActivity(this);
     }
 }

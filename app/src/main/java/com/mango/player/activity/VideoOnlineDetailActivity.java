@@ -34,6 +34,7 @@ public class VideoOnlineDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_online_detail);
+        App.addActivity(this);
         unbinder = ButterKnife.bind(this);
         initData();
         initView();
@@ -66,5 +67,6 @@ public class VideoOnlineDetailActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         unbinder.unbind();
+        App.removeActivity(this);
     }
 }

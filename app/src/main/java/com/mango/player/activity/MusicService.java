@@ -13,12 +13,14 @@ import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.Build;
+import android.os.CountDownTimer;
 import android.os.IBinder;
 
 import com.mango.player.R;
 import com.mango.player.bean.Music;
 import com.mango.player.bean.MusicServiceBean;
 import com.mango.player.bean.PlayMode;
+import com.mango.player.bean.SleepBean;
 import com.mango.player.bean.UpdateViewBean;
 import com.mango.player.util.ACache;
 import com.mango.player.util.AppUtil;
@@ -41,7 +43,6 @@ public class MusicService extends Service {
     private MediaPlayer mMediaPlayer;
     private Notification.Builder mBuilder;
     private Notification mNotification;
-
     //循环模式变量
     private PlayMode play_mode = PlayMode.MODE_LOOP_ALL;
     /**
@@ -58,6 +59,8 @@ public class MusicService extends Service {
     private UpdateViewBean viewBean = new UpdateViewBean();
     private TimerTask mTimerTask;
     private Timer mTimer;
+
+    private SleepBean sleepBean = new SleepBean();
 
     @Override
     public void onCreate() {
@@ -299,9 +302,9 @@ public class MusicService extends Service {
                 break;
             case MODE_RADOM:
                 int temp = -1;
-                while (true){
+                while (true) {
                     temp = AppUtil.getRandomNum(0, musics.size());
-                    if (temp != currentIndex){
+                    if (temp != currentIndex) {
                         break;
                     }
                 }
@@ -355,7 +358,7 @@ public class MusicService extends Service {
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true, priority = 100)
     public void getMediaPlayer(String config) {
-        if (config != null && config.equals("getMediaPlay")){
+        if (config != null && config.equals("getMediaPlay")) {
             EventBus.getDefault().post(mMediaPlayer);
         }
     }
@@ -391,5 +394,56 @@ public class MusicService extends Service {
 
     };
 
+    /**
+     * CountDownTimer 实现倒计时
+     */
+    private CountDownTimer countDownTimer;
 
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void startSleep(SleepBean bean) {
+        LogUtil.logByD(bean.toString());
+        if (!bean.isUpdateView()) {
+            if (bean.isStop()) {
+                stopSlepp();
+            } else {
+                startTime(bean.getSleepTime());
+            }
+        }
+    }
+
+    private void startTime(long time) {
+        LogUtil.logByD("startSleep： " + time);
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+            countDownTimer = null;
+        }
+        countDownTimer = new CountDownTimer(time, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                sleepBean.setUpdateView(true);
+                sleepBean.setMillisUntilFinished(millisUntilFinished);
+                EventBus.getDefault().post(sleepBean);
+            }
+
+            @Override
+            public void onFinish() {
+                mMediaPlayer.stop();
+                killApp();
+            }
+        };
+        countDownTimer.start();
+    }
+
+    private void killApp() {
+        App.closeAllActivity();
+    }
+
+    public void stopSlepp() {
+        LogUtil.logByD("stop");
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+            countDownTimer = null;
+        }
+    }
 }

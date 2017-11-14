@@ -1,19 +1,17 @@
 package com.mango.player.adapter;
 
-import android.graphics.Bitmap;
+import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
 import com.mango.player.R;
 import com.mango.player.activity.App;
 import com.mango.player.holder.SkinHolder;
 import com.mango.player.util.ACache;
 import com.mango.player.util.ApplicationConstant;
-import com.mango.player.util.BitmapDecodeUtil;
-
-import java.io.InputStream;
 
 import static com.mango.player.util.ApplicationConstant.SKIN;
 
@@ -24,8 +22,9 @@ import static com.mango.player.util.ApplicationConstant.SKIN;
 public class SkinAdapter extends RecyclerView.Adapter<SkinHolder> implements View.OnClickListener {
     private OnItemClickListener mOnItemClickListener = null;
     private int index;
-
-    public SkinAdapter() {
+    private Activity mContext;
+    public SkinAdapter(Activity activity) {
+        mContext = activity;
         String asString = ACache.getInstance(App.mContext).getAsString(SKIN);
         if (asString == null || asString.isEmpty()){
             asString = "0";
@@ -53,10 +52,12 @@ public class SkinAdapter extends RecyclerView.Adapter<SkinHolder> implements Vie
     }
 
     private void setImage(SkinHolder holder, int position) {
-        int temp = ApplicationConstant.skin[position];
-        InputStream is = App.mContext.getResources().openRawResource(temp);
-        Bitmap bitmap = BitmapDecodeUtil.decodeBitmap(App.mContext,is);
-        holder.iv_thumbnail.setImageBitmap(bitmap);
+        Glide.with(mContext)
+                .load(ApplicationConstant.skin[position])
+                .asBitmap()
+                .placeholder(R.mipmap.ic_launcher)
+                .error(R.mipmap.ic_launcher)
+                .into(holder.iv_thumbnail);
     }
 
     @Override

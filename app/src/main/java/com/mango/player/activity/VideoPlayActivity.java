@@ -72,6 +72,7 @@ public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.
         if (savedInstanceState != null)
             initConfig();
         setContentView(R.layout.activity_video_play);
+        App.addActivity(this);
         ButterKnife.bind(this);
         //获取上一次保存的进度
         initView();
@@ -401,4 +402,9 @@ public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.
         return true;
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        App.removeActivity(this);
+    }
 }

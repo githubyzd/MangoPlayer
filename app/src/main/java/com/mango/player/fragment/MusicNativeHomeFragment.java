@@ -113,7 +113,7 @@ public class MusicNativeHomeFragment extends BaseFragment implements View.OnClic
 
     @Override
     public void initView() {
-        scrollView.post(new Runnable() {
+        scrollView.post(    new Runnable() {
             @Override
             public void run() {
                 if (scrollView != null)
@@ -202,7 +202,7 @@ public class MusicNativeHomeFragment extends BaseFragment implements View.OnClic
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true, priority = 100)
     public void updateView(UpdateViewBean viewBean) {
-        LogUtil.logByD("updateView: " + viewBean.toString());
+//        LogUtil.logByD("updateView: " + viewBean.toString());
         currentIndex = viewBean.getIndex();
     }
 

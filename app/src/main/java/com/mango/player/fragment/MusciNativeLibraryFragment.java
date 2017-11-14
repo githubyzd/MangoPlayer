@@ -51,7 +51,6 @@ public class MusciNativeLibraryFragment extends BaseFragment {
 
     @Override
     public void initView() {
-        EventBus.getDefault().register(this);
        setBg("skin");
         for (String tab : tabs) {
             tablayout.addTab(tablayout.newTab().setText(tab));

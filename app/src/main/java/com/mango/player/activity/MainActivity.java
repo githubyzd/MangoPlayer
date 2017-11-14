@@ -1,5 +1,6 @@
 package com.mango.player.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -12,6 +13,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -72,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        App.addActivity(this);
         EventBus.getDefault().register(this);
         unbinder = ButterKnife.bind(this);
         setStatus();
@@ -86,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onDestroy();
         EventBus.getDefault().unregister(this);
         unbinder.unbind();
+        App.removeActivity(this);
     }
 
     private void initView() {
@@ -218,11 +222,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         if (fragmentType == FRAGMENT_MUSIC_NATIVE) {
             if (!fragment.onBackPressed()) {
-                super.onBackPressed();
+                quit();
             }
         } else {
-            super.onBackPressed();
+            quit();
         }
+    }
+
+    private void quit() {
+        new AlertDialog.Builder(this)
+                .setCancelable(true)
+                .setTitle("退出")
+                .setMessage("您确认要退出吗？")
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        App.closeAllActivity();
+                    }
+                })
+                .create()
+                .show();
     }
 
     @Override

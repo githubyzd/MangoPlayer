@@ -32,6 +32,7 @@ public class ScanActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan);
+        App.addActivity(this);
         ButterKnife.bind(this);
         btnAlbum.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,5 +95,11 @@ public class ScanActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        App.removeActivity(this);
     }
 }

@@ -51,6 +51,7 @@
 
                 <TextView
                     android:layout_width="match_parent"
+                    android:textColor="@color/snow"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="@dimen/margin_16dp"
                     android:gravity="center_vertical"
@@ -79,6 +80,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:textColor="@color/snow"
                     android:layout_marginLeft="@dimen/margin_16dp"
                     android:gravity="center_vertical"
                     android:text="换肤" />
@@ -106,11 +108,26 @@
                     android:src="@drawable/setting_sleep" />
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="match_parent"
+                    android:textColor="@color/snow"
                     android:layout_marginLeft="@dimen/margin_16dp"
                     android:gravity="center_vertical"
                     android:text="睡眠" />
+
+                <TextView
+                    android:id="@+id/sleep_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/snow"
+                    android:layout_marginLeft="@dimen/margin_16dp"
+                    android:gravity="center_vertical"
+                    android:text="关闭" />
+                <ImageView
+                    android:layout_width="@dimen/dp_20dp"
+                    android:src="@drawable/arrow_right"
+                    android:layout_height="match_parent" />
 
             </LinearLayout>
 
@@ -136,6 +153,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:textColor="@color/snow"
                     android:layout_marginLeft="@dimen/margin_16dp"
                     android:gravity="center_vertical"
                     android:text="设置" />
@@ -165,6 +183,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:textColor="@color/snow"
                     android:layout_marginLeft="@dimen/margin_16dp"
                     android:gravity="center_vertical"
                     android:text="分享" />
@@ -193,6 +212,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:textColor="@color/snow"
                     android:layout_marginLeft="@dimen/margin_16dp"
                     android:gravity="center_vertical"
                     android:text="退出" />

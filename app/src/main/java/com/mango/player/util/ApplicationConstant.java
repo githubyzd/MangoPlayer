@@ -65,7 +65,6 @@ public class ApplicationConstant {
     public static final String SKIN = "skin";
 
     public static String[] tabs = {"tab1", "tab2"};
-
     //皮肤数组
     public static int[] skin = {R.raw.bg_000, R.raw.bg_001, R.raw.bg_002, R.raw.bg_003, R.raw.bg_004, R.raw.bg_005, R.raw.bg_006, R.raw.bg_007, R.raw.bg_008, R.raw.bg_009, R.raw.bg_010,
             R.raw.bg_011, R.raw.bg_012, R.raw.bg_013, R.raw.bg_014, R.raw.bg_015, R.raw.bg_016, R.raw.bg_017};

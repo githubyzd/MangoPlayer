@@ -105,6 +105,7 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music_play);
+        App.addActivity(this);
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
         initData();
@@ -160,6 +161,7 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+        App.removeActivity(this);
     }
 
 
@@ -207,6 +209,9 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
             save.setOnClickListener(this);
             close.setOnClickListener(this);
             initRecyclerview();
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            contentView.setBackground(AppUtil.loadImageFromAsserts(this));
         }
         index.setText(" (" + currentIndex + "/" + musics.size() + ")");
         popupHelper = new PopupHelper.Builder(mContext)

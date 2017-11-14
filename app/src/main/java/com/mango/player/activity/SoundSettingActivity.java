@@ -85,6 +85,7 @@ public class SoundSettingActivity extends AppCompatActivity {
         //设置音频流 - STREAM_MUSIC：音乐回放即媒体音量
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         setContentView(R.layout.activity_sound_setting);//将布局添加到 Activity
+        App.addActivity(this);
         EventBus.getDefault().register(this);
         unBind = ButterKnife.bind(this);
 
@@ -350,6 +351,7 @@ public class SoundSettingActivity extends AppCompatActivity {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
         unBind.unbind();
+        App.removeActivity(this);
     }
 
 }

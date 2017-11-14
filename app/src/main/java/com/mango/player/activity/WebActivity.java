@@ -32,6 +32,7 @@ public class WebActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web);
+        App.addActivity(this);
         ButterKnife.bind(this);
         initData();
         initView();
@@ -145,5 +146,6 @@ public class WebActivity extends AppCompatActivity {
         webview.destroy();
         webview = null;
         super.onDestroy();
+        App.removeActivity(this);
     }
 }

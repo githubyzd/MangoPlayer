@@ -45,6 +45,7 @@ public class MusicSettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music_settings);
+        App.addActivity(this);
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
         initToolBar();
@@ -78,5 +79,6 @@ public class MusicSettingsActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+        App.removeActivity(this);
     }
 }
