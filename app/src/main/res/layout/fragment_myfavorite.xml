@@ -6,9 +6,47 @@
 
     <include layout="@layout/music_list_title_layout" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/list_recyclerview"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/list_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <LinearLayout
+            android:id="@+id/no_data"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="@dimen/dp_80dp"
+                android:layout_height="@dimen/dp_80dp"
+                android:src="@drawable/music" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="一首歌曲都木有" />
+
+            <TextView
+                android:id="@+id/add_music"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:background="@drawable/list_music_add_selector"
+                android:paddingTop="@dimen/margin_10dp"
+                android:paddingBottom="@dimen/margin_10dp"
+                android:paddingLeft="@dimen/margin_14dp"
+                android:paddingRight="@dimen/margin_14dp"
+                android:text="添加歌曲"
+                android:textColor="@color/snow" />
+        </LinearLayout>
+    </RelativeLayout>
 
 </LinearLayout>

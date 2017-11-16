@@ -29,7 +29,66 @@
 }
 -keep enum org.greenrobot.eventbus.ThreadMode { *; }
 
-# Only required if you use AsyncExecutor
--keepclassmembers class * extends org.greenrobot.eventbus.util.ThrowableFailureEvent {
-    <init>(java.lang.Throwable);
+
+## ----------------------------------
+
+##   ########## Gson混淆    ##########
+
+## ----------------------------------
+
+-keepattributes Signature
+
+-keep class sun.misc.Unsafe { *; }
+
+-keep class com.google.gson.examples.android.model.** { *; }
+
+
+
+# # -------------------------------------------
+
+# #  ######## greenDao混淆  ##########
+
+# # -------------------------------------------
+
+-keep class org.greenrobot.greendao.**{*;}
+-keepclassmembers class * extends org.greenrobot.greendao.AbstractDao {
+public static java.lang.String TABLENAME;
 }
+-keep class **$Properties
+
+
+# # -------------------------------------------
+
+# #  ######## pinyin4j  ##########
+
+# # -------------------------------------------
+-dontwarn net.soureceforge.pinyin4j.**
+
+-dontwarn demo.**
+
+
+-keep class net.sourceforge.pinyin4j.** { *;}
+
+-keep class demo.** { *;}
+
+
+# # -------------------------------------------
+
+# #  ######## eventbus  ##########
+
+# # -------------------------------------------
+
+-keepclassmembers class ** {
+
+    public void onEvent*(**);
+
+}
+
+-keepclassmembers class ** {
+
+public void xxxxxx(**);
+}
+
+-ignorewarnings
+-dontwarn au.com.bytecode.**
+-keep class au.com.bytecode.**{*;}

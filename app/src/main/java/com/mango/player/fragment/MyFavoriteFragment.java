@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 
 import com.mango.player.R;
 import com.mango.player.activity.App;
+import com.mango.player.activity.MusicAddListActivity;
 import com.mango.player.adapter.AddListPopuAdapter;
 import com.mango.player.adapter.MusicSongListAdapter;
 import com.mango.player.base.BaseFragment;
@@ -40,7 +42,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 
 import static com.mango.player.R.id.iv_random;
 import static com.mango.player.R.id.tv_random;
@@ -67,6 +71,11 @@ public class MyFavoriteFragment extends BaseFragment implements MusicSongListAda
     ImageView rank;
     @BindView(R.id.list_recyclerview)
     RecyclerView listRecyclerview;
+    @BindView(R.id.add_music)
+    TextView addMusic;
+    @BindView(R.id.no_data)
+    LinearLayout noData;
+    Unbinder unbinder;
     private ArrayList<Music> musics = new ArrayList<>();
     private MusicSongListAdapter adapter;
     private int clickPosition;
@@ -84,7 +93,7 @@ public class MyFavoriteFragment extends BaseFragment implements MusicSongListAda
     private View addListView;
     private RecyclerView addRecyclerView;
     private List<String> listData;
-
+    private MusicList music;
     @Override
     public int getLayoutId() {
         return R.layout.fragment_myfavorite;
@@ -92,6 +101,9 @@ public class MyFavoriteFragment extends BaseFragment implements MusicSongListAda
 
     @Override
     public void initView() {
+        int px = AppUtil.dp2px(getContext(), 10);
+        rank.setPadding(px,px,px,px);
+        rank.setImageResource(R.drawable.add2);
         adapter = new MusicSongListAdapter(musics);
         listRecyclerview.setLayoutManager(new LinearLayoutManager(getActivity()));
         listRecyclerview.setAdapter(adapter);
@@ -107,7 +119,25 @@ public class MyFavoriteFragment extends BaseFragment implements MusicSongListAda
             musics = FileManager.getInstance(getActivity()).getMusics(getActivity());
         }
         tvRandom.setText("全部随机(" + musics.size() + ")");
-        adapter.setData(musics);
+        if (musics == null || musics.isEmpty()) {
+            noData.setVisibility(View.VISIBLE);
+            listRecyclerview.setVisibility(View.GONE);
+        } else {
+            noData.setVisibility(View.GONE);
+            listRecyclerview.setVisibility(View.VISIBLE);
+            adapter.setData(musics);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        initData();
+    }
+
+    @OnClick({R.id.add_music,R.id.rank})
+    void addMusic(){
+        startActivity(new Intent(getActivity(), MusicAddListActivity.class));
     }
 
     @OnClick({tv_random, iv_random})
@@ -151,7 +181,7 @@ public class MyFavoriteFragment extends BaseFragment implements MusicSongListAda
         popupHelper.dismiss();
         Music music = musics.get(popuIndex);
         if (position == 0) {
-            LogUtil.logByD(popuIndex+"");
+            LogUtil.logByD(popuIndex + "");
             LogUtil.logByD(music.getName());
             App.favoriteList.add(music);
             ArrayList<String> favoritePath = (ArrayList<String>) ACache.getInstance(mContext).getAsObject(MUSIC_FAVORITE_KEY);
@@ -161,7 +191,7 @@ public class MyFavoriteFragment extends BaseFragment implements MusicSongListAda
             favoritePath.add(music.getPath());
             ACache.getInstance(mContext).put(MUSIC_FAVORITE_KEY, favoritePath);
         } else {
-            LogUtil.logByD(popuIndex+"");
+            LogUtil.logByD(popuIndex + "");
             LogUtil.logByD(music.getName());
             String name = listData.get(position);
             for (MusicList musicList : App.listData) {
@@ -368,4 +398,17 @@ public class MyFavoriteFragment extends BaseFragment implements MusicSongListAda
         mContext.startActivity(Intent.createChooser(shareIntent, "分享到"));
     }
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // TODO: inflate a fragment view
+        View rootView = super.onCreateView(inflater, container, savedInstanceState);
+        unbinder = ButterKnife.bind(this, rootView);
+        return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
+    }
 }

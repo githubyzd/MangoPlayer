@@ -78,7 +78,9 @@
         <activity android:name=".activity.VideoOnlineDetailActivity" />
         <activity android:name=".activity.SoundSettingActivity" />
         <activity android:name=".activity.MusicSettingsActivity" />
-        <activity android:name=".activity.SkinActivity"></activity>
+        <activity android:name=".activity.SkinActivity" />
+        <activity android:name=".activity.MusicAddListActivity" />
+        <activity android:name=".activity.AboutUsActivity"></activity>
     </application>
 
 </manifest>

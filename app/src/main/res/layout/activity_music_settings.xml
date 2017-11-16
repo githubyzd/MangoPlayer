@@ -25,10 +25,12 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <View
             android:layout_width="match_parent"
-            android:background="@color/shadow"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:background="@color/shadow" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -41,7 +43,7 @@
                 android:layout_marginLeft="@dimen/margin_16dp"
                 android:layout_marginTop="@dimen/margin_16dp"
                 android:text="常规设置"
-                android:textColor="@color/gray_44"
+                android:textColor="@color/gray_8f"
                 android:textSize="@dimen/sp_16sp" />
 
             <LinearLayout
@@ -79,7 +81,7 @@
                         android:layout_marginBottom="@dimen/margin_10dp"
                         android:layout_marginTop="@dimen/margin_2dp"
                         android:text="切换歌曲时，音量平滑过渡"
-                        android:textColor="@color/gray_44"
+                        android:textColor="@color/gray_8f"
                         android:textSize="@dimen/sp_16sp" />
 
                     <CheckBox
@@ -110,7 +112,7 @@
                         android:layout_alignParentBottom="true"
                         android:layout_marginBottom="@dimen/margin_10dp"
                         android:text="要换切换下一曲"
-                        android:textColor="@color/gray_44"
+                        android:textColor="@color/gray_8f"
                         android:textSize="@dimen/sp_16sp" />
 
                     <CheckBox
@@ -129,7 +131,7 @@
                 android:layout_marginLeft="@dimen/margin_16dp"
                 android:layout_marginTop="@dimen/margin_16dp"
                 android:text="耳机设置"
-                android:textColor="@color/gray_44"
+                android:textColor="@color/gray_8f"
                 android:textSize="@dimen/sp_16sp" />
 
             <LinearLayout
@@ -177,7 +179,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="插入式自动播放"
+                        android:text="插入时自动播放"
                         android:textColor="@color/snow"
                         android:textSize="@dimen/sp_18sp" />
 
@@ -207,7 +209,7 @@
                         android:layout_marginBottom="@dimen/margin_10dp"
                         android:layout_marginTop="@dimen/margin_4dp"
                         android:text="打开后将可以：单击：双击：三击"
-                        android:textColor="@color/gray_44"
+                        android:textColor="@color/gray_8f"
                         android:textSize="@dimen/sp_16sp" />
 
                     <CheckBox

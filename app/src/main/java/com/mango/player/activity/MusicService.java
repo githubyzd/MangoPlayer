@@ -1,5 +1,6 @@
 package com.mango.player.activity;
 
+import android.animation.ValueAnimator;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -10,6 +11,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.Build;
@@ -247,16 +249,28 @@ public class MusicService extends Service {
 
     private void playMusic() {
         if (isFirstPlay) {
+            setMute();
             play();
+            playWithAnimation();
         } else {
             if (mMediaPlayer.isPlaying()) {
                 mMediaPlayer.pause();
             } else {
+                setMute();
                 mMediaPlayer.start();
+                playWithAnimation();
             }
         }
         updateView();
         ACache.getInstance(this).put(ApplicationConstant.MUSIC_INDEX, currentIndex + "");
+    }
+
+    private void setMute() {
+        AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        boolean isWithAnimation = (boolean) ACache.getInstance(MusicService.this).getAsObject(ApplicationConstant.MUSIC_PLAY_WITH_EFFECTS);
+        if (isWithAnimation) {
+            am.setStreamVolume(AudioManager.STREAM_MUSIC, 0, AudioManager.FLAG_PLAY_SOUND);
+        }
     }
 
     private void playPreview() {
@@ -339,6 +353,25 @@ public class MusicService extends Service {
         ACache.getInstance(this).put(ApplicationConstant.MUSIC_INDEX, currentIndex + "");
     }
 
+    private void playWithAnimation() {
+        boolean isWithAnimation = (boolean) ACache.getInstance(MusicService.this).getAsObject(ApplicationConstant.MUSIC_PLAY_WITH_EFFECTS);
+        if (!isWithAnimation) {
+            return;
+        }
+        final AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        int max = am.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        ValueAnimator animator = ValueAnimator.ofInt(0, (max / 5) * 2);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                int value = (int) animation.getAnimatedValue();
+                am.setStreamVolume(AudioManager.STREAM_MUSIC, value, AudioManager.FLAG_PLAY_SOUND);
+            }
+        });
+        animator.setDuration(3000);
+        animator.start();
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true, priority = 100)
     public void setMusic(List<Music> musics) {
         LogUtil.logByD("setMusic: " + musics.size());
@@ -381,12 +414,20 @@ public class MusicService extends Service {
             if (intent.hasExtra("state")) {
                 if (intent.getIntExtra("state", 0) == 0) {
                     LogUtil.logByD("pause");
-                    if (!isFromHeadsetPlug)
-                        mMediaPlayer.pause();
+                    if (!isFromHeadsetPlug) {
+                        boolean isOut = (boolean) ACache.getInstance(MusicService.this).getAsObject(ApplicationConstant.MUSIC_STOP_WITH_OUT);
+                        if (isOut) {
+                            mMediaPlayer.pause();
+                        }
+                    }
+
                 } else if (intent.getIntExtra("state", 0) == 1) {
                     LogUtil.logByD("start1");
                     if (!isFromHeadsetPlug) {
-                        mMediaPlayer.start();
+                        boolean isIn = (boolean) ACache.getInstance(MusicService.this).getAsObject(ApplicationConstant.MUSIC_PLAY_WITH_IN);
+                        if (isIn) {
+                            mMediaPlayer.start();
+                        }
                     }
                 }
             }

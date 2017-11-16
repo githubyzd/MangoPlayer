@@ -51,6 +51,10 @@
     <dimen name="dp_180dp">180dp</dimen>
     <dimen name="dp_190dp">190dp</dimen>
     <dimen name="dp_200dp">200dp</dimen>
+    <dimen name="dp_220dp">220dp</dimen>
+    <dimen name="dp_240dp">240dp</dimen>
+    <dimen name="dp_260dp">260dp</dimen>
+    <dimen name="dp_280dp">280dp</dimen>
 
 
     <dimen name="sp_10sp">10sp</dimen>

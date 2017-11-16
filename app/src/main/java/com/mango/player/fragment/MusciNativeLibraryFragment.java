@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.Unbinder;
 
 /**
  * Created by yzd on 2017/10/18 0018.
@@ -39,7 +38,6 @@ public class MusciNativeLibraryFragment extends BaseFragment {
     ViewPager viewpager;
     @BindView(R.id.container)
     RelativeLayout container;
-    Unbinder unbinder;
     private String[] tabs = {"歌曲", "歌手", "专辑"};
     private List<BasePager> pagers;
 

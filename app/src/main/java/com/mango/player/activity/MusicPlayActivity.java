@@ -1,5 +1,7 @@
 package com.mango.player.activity;
 
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -10,6 +12,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -145,6 +149,20 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
                 break;
         }
         EventBus.getDefault().post(playMode);
+        initAnimation();
+    }
+
+    private void initAnimation() {
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.rotate_music_play);
+        thumbnail.startAnimation(animation);
+    }
+
+    public void rotate(View v){
+        ObjectAnimator oa4 = ObjectAnimator. ofFloat(v, "rotation", 0, 270, 45, 720);
+        oa4. setDuration(2000);
+        oa4.setRepeatCount(1);
+        oa4.setRepeatMode(ValueAnimator. REVERSE);
+        oa4.start();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = false, priority = 100)

@@ -11,7 +11,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mango.player.R;
+import com.mango.player.util.ACache;
 import com.mango.player.util.AppUtil;
+import com.mango.player.util.ApplicationConstant;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -19,6 +21,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnCheckedChanged;
 
 public class MusicSettingsActivity extends AppCompatActivity {
 
@@ -60,6 +63,17 @@ public class MusicSettingsActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             container.setBackground(AppUtil.loadImageFromAsserts(this));
         }
+        boolean inAndOut = (boolean) ACache.getInstance(this).getAsObject(ApplicationConstant.MUSIC_PLAY_WITH_EFFECTS);
+        boolean shakeB = (boolean) ACache.getInstance(this).getAsObject(ApplicationConstant.MUSIC_PLAY_WITH_SHAKE);
+        boolean outB = (boolean) ACache.getInstance(this).getAsObject(ApplicationConstant.MUSIC_STOP_WITH_OUT);
+        boolean inB = (boolean) ACache.getInstance(this).getAsObject(ApplicationConstant.MUSIC_PLAY_WITH_IN);
+        boolean allowB = (boolean) ACache.getInstance(this).getAsObject(ApplicationConstant.MUSIC_PLAY_WITH_GESTURE);
+
+        inOut.setChecked(inAndOut);
+        shake.setChecked(shakeB);
+        out.setChecked(outB);
+        in.setChecked(inB);
+        allow.setChecked(allowB);
     }
 
     private void initToolBar() {
@@ -74,6 +88,32 @@ public class MusicSettingsActivity extends AppCompatActivity {
             }
         });
     }
+
+    @OnCheckedChanged(R.id.in_out)
+    void setMusicInOut() {
+        ACache.getInstance(this).put(ApplicationConstant.MUSIC_PLAY_WITH_EFFECTS,inOut.isChecked());
+    }
+
+    @OnCheckedChanged(R.id.shake)
+    void shake() {
+        ACache.getInstance(this).put(ApplicationConstant.MUSIC_PLAY_WITH_SHAKE,shake.isChecked());
+    }
+
+    @OnCheckedChanged(R.id.out)
+    void out() {
+        ACache.getInstance(this).put(ApplicationConstant.MUSIC_STOP_WITH_OUT,out.isChecked());
+    }
+
+    @OnCheckedChanged(R.id.in)
+    void in() {
+        ACache.getInstance(this).put(ApplicationConstant.MUSIC_PLAY_WITH_IN,in.isChecked());
+    }
+
+    @OnCheckedChanged(R.id.allow)
+    void allow() {
+        ACache.getInstance(this).put(ApplicationConstant.MUSIC_PLAY_WITH_GESTURE,allow.isChecked());
+    }
+
 
     @Override
     protected void onDestroy() {

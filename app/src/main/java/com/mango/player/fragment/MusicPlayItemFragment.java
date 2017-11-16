@@ -108,6 +108,9 @@ public class MusicPlayItemFragment extends BaseFragment implements MusicSongList
 
     @Override
     public void initView() {
+        int px = AppUtil.dp2px(getContext(), 10);
+        rank.setPadding(px,px,px,px);
+        rank.setImageResource(R.drawable.add2);
         adapter = new MusicSongListAdapter(musics);
         listRecyclerview.setLayoutManager(new LinearLayoutManager(getActivity()));
         listRecyclerview.setAdapter(adapter);
@@ -169,7 +172,7 @@ public class MusicPlayItemFragment extends BaseFragment implements MusicSongList
         EventBus.getDefault().post(bean);
     }
 
-    @OnClick(R.id.add_music)
+    @OnClick({R.id.add_music,R.id.rank})
     void addMusic(){
         fragment = new MusicAddListFragment();
         EventBus.getDefault().post(fragment);

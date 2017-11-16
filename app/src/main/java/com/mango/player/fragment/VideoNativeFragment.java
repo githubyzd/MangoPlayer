@@ -1,7 +1,9 @@
 package com.mango.player.fragment;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -9,6 +11,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mango.player.R;
@@ -23,6 +26,10 @@ import com.mango.player.util.LogUtil;
 import com.mango.player.util.PopupHelper;
 import com.mango.player.view.DividerItemDecoration;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -35,6 +42,8 @@ public class VideoNativeFragment extends BaseFragment implements VideoNativeAdap
 
     @BindView(R.id.recyclerview)
     RecyclerView recyclerview;
+    @BindView(R.id.container)
+    RelativeLayout container;
     private LinearLayoutManager mLayoutManager;
     private VideoNativeAdapter mAdapter;
     private ArrayList<Video> videos = new ArrayList<>();
@@ -47,7 +56,20 @@ public class VideoNativeFragment extends BaseFragment implements VideoNativeAdap
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     public void initView() {
+        setBg("skin");
         mLayoutManager = new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerview.setLayoutManager(mLayoutManager);
         recyclerview.setItemAnimator(new DefaultItemAnimator());
@@ -70,6 +92,15 @@ public class VideoNativeFragment extends BaseFragment implements VideoNativeAdap
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = false, priority = 100)
+    public void setBg(String type) {
+        if (!type.equals("skin")){
+            return;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            container.setBackground(AppUtil.loadImageFromAsserts(getContext()));
+        }
+    }
     @Override
     public void onItemClick(View view, int position) {
         clickPosition = position;
@@ -131,7 +162,7 @@ public class VideoNativeFragment extends BaseFragment implements VideoNativeAdap
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList(ApplicationConstant.VIDEO_LIST_KEY, videos);
         bundle.putInt(ApplicationConstant.VIDEO_POSITION_KEY, position);
-        intent.putExtra(ApplicationConstant.VIDEO_TYPE,ApplicationConstant.VIDEO_NATIVE_TYPE);
+        intent.putExtra(ApplicationConstant.VIDEO_TYPE, ApplicationConstant.VIDEO_NATIVE_TYPE);
         intent.putExtra(ApplicationConstant.VIDEO_DATA_KEY, bundle);
         getContext().startActivity(intent);
     }

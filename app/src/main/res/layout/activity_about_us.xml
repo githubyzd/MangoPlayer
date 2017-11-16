@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.mango.player.activity.AboutUsActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_50dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/back"
+            android:layout_width="@dimen/dp_50dp"
+            android:layout_height="match_parent"
+            android:padding="@dimen/margin_14dp"
+            android:src="@drawable/back" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginRight="@dimen/dp_50dp"
+            android:gravity="center"
+            android:text="关于我们"
+            android:textColor="@color/gray_11"
+            android:textSize="@dimen/sp_18sp" />
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="@dimen/dp_60dp"
+        android:layout_height="@dimen/dp_60dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/margin_4dp"
+        android:src="@mipmap/ic_launcher" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_6dp"
+        android:gravity="center"
+        android:text="MangoPlayer 1.0"
+        android:textSize="@dimen/sp_16sp" />
+
+    <TextView
+        android:id="@+id/tv"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_height="match_parent"
+        android:padding="@dimen/margin_12dp"
+        android:text="芒果播放器是一款轻量级的音视频播放软件，界面清新脱俗，操作流畅。本应用纯属个人爱好，不做任何商业用途。" />
+</LinearLayout>

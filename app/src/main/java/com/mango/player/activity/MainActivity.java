@@ -140,15 +140,37 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_main_about:
-            case R.id.menu_main_home_page:
-            case R.id.menu_main_top_github:
+                new AlertDialog.Builder(this)
+                        .setCancelable(true)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .setNegativeButton("详细信息", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                startActivity(new Intent(MainActivity.this, AboutUsActivity.class));
+                            }
+                        })
+                        .setTitle("MangoPlayer")
+                        .setMessage("MangoPlayer(芒果播放器)是一款免费的音视频播放器，给你飞一般的体验。")
+                        .show();
+                return true;
+            case R.id.menu_main_quit:
+                App.closeAllActivity();
+                return true;
+            case R.id.menu_main_setting:
+                startActivity(new Intent(this, SettingsActivity.class));
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, priority = 100)
-    void setTitle(String title) {
+    public void setTitle(String title) {
         toolbar.setTitle(title);
     }
 
@@ -167,7 +189,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 fragmentType = FRAGMENT_VIDEO_NATIVE;
                 break;
             case R.id.music_online:
-                fragmentType = FRAGMENT_MUSIC_ONLINE;
+//                fragmentType = FRAGMENT_MUSIC_ONLINE;
+                fragmentType = FRAGMENT_MUSIC_NATIVE;
                 break;
             case R.id.music_native:
                 fragmentType = FRAGMENT_MUSIC_NATIVE;
